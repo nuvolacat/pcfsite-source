@@ -1,0 +1,35 @@
+# Comprueba que el lanzador de la app compila en Linux (x86_64 y arm64) con SDL3 estática, como lo empaqueta
+# app/linux/empaquetar.sh. Los juegos no se pueden compilar aquí: su C generado sale de los binarios originales, que no
+# están en el repo.
+name: linux
+on:
+  push:
+    paths: ["app/**", "core/platform/src/compat*", ".github/workflows/linux.yml"]
+  workflow_dispatch:
+jobs:
+  lanzador:
+    strategy:
+      matrix:
+        os: [ubuntu-24.04, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: dependencias
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q ninja-build cmake pkg-config libasound2-dev libpulse-dev libx11-dev libxext-dev libxrandr-dev \
+            libxcursor-dev libxi-dev libxtst-dev libxss-dev libxkbcommon-dev libwayland-dev libdecor-0-dev libegl1-mesa-dev libgl1-mesa-dev \
+            libdbus-1-dev libudev-dev
+      - uses: actions/cache@v4
+        with:
+          path: ~/pcfsite-linux/sdl3
+          key: sdl3-3.4.18-${{ matrix.os }}
+      - name: SDL3 estática
+        run: app/linux/preparar.sh
+      - name: lanzador
+        run: |
+          cmake -S app -B build-lanzador -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=$HOME/pcfsite-linux/sdl3 -DPCF_VERSION=ci
+          cmake --build build-lanzador
+          file build-lanzador/lanzador
+          ldd build-lanzador/lanzador
+          build-lanzador/lanzador --listar

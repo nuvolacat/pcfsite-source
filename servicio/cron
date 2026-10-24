@@ -1,0 +1,5 @@
+# source.pcfsite.com: partidas en la cuenta (servicio/ de pcfsite-source)
+# copia diaria (local 14 días + cifrada para el servidor de copias, antes de que se la lleve a las 05:30)
+50 4 * * * root /usr/local/sbin/source-partidas-copia
+# partidas de cuentas borradas del foro (pcfsite.com/legal)
+42 4 * * * source-partidas /usr/bin/python3 /opt/source-partidas/limpiar.py >> /var/lib/source-partidas/limpiar.log 2>&1

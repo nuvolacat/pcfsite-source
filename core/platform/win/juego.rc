@@ -1,0 +1,3 @@
+// recursos de Windows de cada programa traducido: icono y manifiesto (UTF-8 como página de códigos, DPI por monitor)
+1 ICON "pcfsite.ico"
+1 24 "manifest.xml"

@@ -1,0 +1,47 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<!-- Imagen para redes (1200×630). La genera tools/og.sh: sirve site/ y captura esta página (?j=pcf7 para la ficha). -->
+<link rel="stylesheet" href="/pcf/fonts.css">
+<link rel="stylesheet" href="/pcf/ds.css">
+<link rel="stylesheet" href="/pcf/comun.css">
+<style>
+html,body{margin:0;background:var(--color-bg);min-height:0}
+.og{width:1200px;height:630px;box-sizing:border-box;padding:40px 46px 46px;display:flex;flex-direction:column;gap:26px}
+.top{display:flex;align-items:center;justify-content:space-between}
+.top .brand{font-size:30px;gap:12px;margin:0;display:flex;align-items:center;text-transform:uppercase;letter-spacing:.02em}
+.top .brand img{width:32px;height:32px;image-rendering:pixelated;display:block}
+.top .brand .gold{color:var(--gold)}.top .brand .dot{color:var(--color-accent)}
+.top .tag{font-family:var(--font-heading);font-weight:600;font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:var(--color-accent-700);border:1px solid var(--color-divider);padding:7px 14px}
+.card{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);margin:0}
+.txt{padding:36px 40px;display:flex;flex-direction:column;justify-content:center;gap:18px}
+.txt .kicker{font-size:17px;letter-spacing:.14em}
+.txt h1{font-family:var(--font-heading);font-weight:var(--font-heading-weight);font-size:58px;line-height:.95;text-transform:uppercase;margin:0;color:var(--color-text)}
+.txt p{margin:0;font-size:21px;line-height:1.4;color:color-mix(in srgb,var(--color-text) 78%,transparent);max-width:30ch}
+.art{border-left:1px solid var(--color-divider);position:relative;overflow:hidden;margin:0}
+.art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.art figcaption{position:absolute;left:0;right:0;bottom:0;padding:9px 16px;background:var(--color-bg);border-top:1px solid var(--color-divider);font-size:13px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;display:flex;justify-content:space-between}
+.art figcaption span+span{opacity:.6}
+</style></head><body>
+<div class="og">
+  <div class="top">
+    <span class="brand"><img src="/pcf/img/favicon.svg" alt=""><span><span class="gold">source</span>.pcfsite<span class="dot">.com</span></span></span>
+    <span class="tag" id="tag">PCF 7 · 6.0 · 5.0 · 4.0</span>
+  </div>
+  <section class="blueprint card">
+    <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+    <div class="txt">
+      <span class="kicker" id="kick">El código de los PC Fútbol</span>
+      <h1 id="h1">Los clásicos, traducidos desde su propio código</h1>
+      <p id="p">El juego original convertido en código moderno, sin emuladores.</p>
+    </div>
+    <figure class="art"><img src="/pcf/img/capturas/pcf7/partido-3d.jpg" alt=""><figcaption><span>PC Fútbol 7 · simulador 3D</span><span>captura real</span></figcaption></figure>
+  </section>
+</div>
+<script>
+if (/j=pcf7/.test(location.search)) {
+  document.getElementById("tag").textContent = "Temporada 98/99";
+  document.getElementById("kick").textContent = "En curso";
+  document.getElementById("h1").textContent = "PC Fútbol 7, traducido desde su propio código";
+  document.getElementById("p").textContent = "Manager, simulador 3D, base de datos y vídeos, como aplicación nativa.";
+}
+</script>
+</body></html>

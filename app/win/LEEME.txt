@@ -1,0 +1,19 @@
+PCFSite - Source para Windows
+=============================
+
+Descomprime esta carpeta donde quieras (por ejemplo en Documentos o en Archivos de programa) y abre
+«PCFSite - Source.exe». No hace falta instalar nada más. Los juegos traducidos van en programas\ (una DLL
+por programa) y los carga ese mismo ejecutable.
+
+- Hace falta Windows 10 (versión 1903 o posterior) o Windows 11, de 64 bits. Hay una versión para PC
+  (x64) y otra para Windows ARM (arm64): la de ARM también abre la de x64, pero más lenta.
+- La app no lleva ningún fichero de los juegos: pide la imagen ISO del CD original (o la carpeta con su
+  contenido) y, en el 2001, la carpeta ACTUALIZ con las 13 actualizaciones. Los juegos se preparan en
+  Documentos\PCFSite - Source.
+- Las ISO se montan como una unidad mientras se juega (lo hace Windows, sin programas externos). Una ISO
+  que esté en una carpeta de red se copia antes a AppData\Local\PCFSite - Source\isos, porque Windows no
+  monta imágenes desde la red.
+- Si Windows SmartScreen avisa de que es una app desconocida: «Más información» → «Ejecutar de todas
+  formas» (la app no está firmada con certificado).
+
+Comunidad: www.pcfsite.com — creada por @jordirubo.

@@ -1,0 +1,97 @@
+{
+  "id": "pcf7",
+  "nombre": "PC Fútbol 7",
+  "carpeta": "FUTBOL7",
+  "trabajo": "~/pcf7-work",
+  "principal": "manager.exe",
+  "salida_menu": "0x874588",
+  "dlls": [
+    [
+      "MFC42.DLL",
+      "0x02000000"
+    ],
+    [
+      "MSVCRT.DLL",
+      "0x02200000"
+    ]
+  ],
+  "programas": {
+    "proquini.exe": {
+      "carpeta": "proquini",
+      "apiladas": [
+        "msvbvm50.dll",
+        "oleaut32.dll",
+        "olepro32.dll",
+        "asycfilt.dll",
+        "msvcrt.dll",
+        "msvcrt40.dll",
+        "msvcirt.dll",
+        "mfc40.dll",
+        "threed32.ocx",
+        "msflxgrd.ocx",
+        "comctl32.ocx",
+        "comdlg32.ocx",
+        "actbar.ocx",
+        "graph32.ocx",
+        "gswdll32.dll",
+        "win1x2.dll",
+        "win1x2r.dll",
+        "win1x2re.dll",
+        "gsw32.exe"
+      ]
+    }
+  },
+  "lanzador": {
+    "2": [
+      "infosurf",
+      "2"
+    ],
+    "3": [
+      "dbasewin",
+      "0"
+    ],
+    "4": [
+      "dbasewin",
+      "1"
+    ],
+    "5": [
+      "dbasewin",
+      "2"
+    ],
+    "6": [
+      "dbasewin",
+      "3"
+    ],
+    "7": [
+      "infosurf",
+      "1"
+    ],
+    "8": [
+      "infosurf",
+      "0"
+    ],
+    "10": [
+      "actwin",
+      null
+    ],
+    "11": [
+      "infosurf",
+      "4"
+    ],
+    "12": [
+      "infosurf",
+      "5"
+    ],
+    "13": [
+      "dbasewin",
+      "4"
+    ]
+  },
+  "lanzador_notas": "apartado del menú (salida_menu) → programa y argumento (tabla de PCF7.EXE). 3 Historia, 4 Base de datos, 5/6 Seguimiento online/manual, 7 actualizaciones, 8 InfoFútbol, 13 Los 100 mejores goles; 9 ProQuinielas (desfasado) y 14/15 MANAGER2 (no está en el CD) no hacen nada",
+  "web": {
+    "excluir": [
+      "game/FUTBOL7/save/manager/022-0/main.dat",
+      "game/FUTBOL7/infosurf.err"
+    ]
+  }
+}

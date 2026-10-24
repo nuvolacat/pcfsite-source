@@ -1,0 +1,69 @@
+{
+  "id": "pcf6",
+  "nombre": "PC Fútbol 6.0",
+  "carpeta": "FUTBOL6",
+  "trabajo": "~/pcf6-work",
+  "principal": "manager.exe",
+  "salida_menu": "0x67ff5c",
+  "dlls": [
+    [
+      "MFC42.DLL",
+      "0x02000000"
+    ],
+    [
+      "MSVCRT.DLL",
+      "0x02200000"
+    ]
+  ],
+  "lanzador": {
+    "2": [
+      "infosurf",
+      "2"
+    ],
+    "3": [
+      "dbasewin",
+      "0"
+    ],
+    "4": [
+      "dbasewin",
+      "1"
+    ],
+    "5": [
+      "dbasewin",
+      "2"
+    ],
+    "6": [
+      "dbasewin",
+      "3"
+    ],
+    "7": [
+      "infosurf",
+      "1"
+    ],
+    "8": [
+      "infosurf",
+      "0"
+    ],
+    "10": [
+      "actwin",
+      null
+    ],
+    "11": [
+      "infosurf",
+      "4"
+    ],
+    "12": [
+      "infosurf",
+      "5"
+    ],
+    "13": [
+      "dbasewin",
+      "4"
+    ]
+  },
+  "web": {
+    "excluir": []
+  },
+  "lanzador_notas": "misma tabla que PCF7.EXE (el lanzador del CD tiene las mismas entradas en el mismo orden)",
+  "estado_notas": "2026-10-19: menú, liga, grabar/cargar. El partido corre (reloj, nombres) pero el campo sale con texturas rotas: juega en 640x480x8 y el Direct3D por software no pinta en superficies de 8 bits (d3d.cpp solo 16/32). Pendiente."
+}

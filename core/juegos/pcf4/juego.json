@@ -1,0 +1,57 @@
+{
+  "id": "pcf4",
+  "nombre": "PC Fútbol 4.0",
+  "carpeta": "FUTBOL4",
+  "trabajo": "~/pcf4-work",
+  "principal": "pcfutbol.exe",
+  "dos": true,
+  "dlls": [],
+  "lanzador": {
+    "0": [
+      "pcfutbol",
+      null
+    ],
+    "1": [
+      "pcfutbol",
+      null
+    ],
+    "2": [
+      "",
+      null
+    ],
+    "3": [
+      "pcmanag",
+      null
+    ],
+    "6": [
+      "historia",
+      null
+    ],
+    "7": [
+      "",
+      null
+    ],
+    "8": [
+      "promanag",
+      null
+    ]
+  },
+  "lanzador_notas": "FUTBOL4.EXE (16 bits) no es un menú: lee el estado de COMFILE.DAT (palabra en 0x50; lo deja cada programa al salir) y, con su tabla (cs:0673 del segmento 18FE), lanza 0/1 PCFUTBOL.DAT (menú principal y base de datos), 3 PCMANAG.DAT, 4 HOBBYL.EXE, 5 ACTUALIZ.EXE, 6 HISTORIA.DAT, 8 PROMANAG.DAT, 9 INFOFUT.DAT; 2 y 7 (y 10 o más) terminan. Siempre con los argumentos «0 C C». Aquí lo hace la plataforma (dos.cpp: dos_siguiente); \"\" = salir; los que no vienen en el CD vuelven al menú.",
+  "web": {
+    "excluir": [],
+    "cd": [
+      "INSTALL.DAT"
+    ],
+    "cd_notas": "el juego no lee nada del CD (se instala entero en C:\\FUTBOL4 y los programas van con «0 C C»): del CD se publica solo un fichero pequeño"
+  },
+  "estado_notas": "2026-10-20: versión 4.1 del CD (se muestra como 4.0). MS-DOS con DOS4GW: los programas LE de Watcom (PCFUTBOL, PCMANAG, PROMANAG, HISTORIA .DAT) se convierten en PE con tools/le2pe.py (~/pcf4-work/bin/*.exe). Vídeo VGA modo 12h (640x480x16, planar).",
+  "parches": {
+    "pcfutbol.exe": [
+      [
+        "0x41d64c",
+        "b801000000c3",
+        "protección anticopia (escudo de la página del manual): siempre correcta, como en las reediciones"
+      ]
+    ]
+  }
+}

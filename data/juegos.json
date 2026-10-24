@@ -1,0 +1,600 @@
+{
+ "cifras": [
+  {
+   "valor": "6",
+   "texto": "juegos traducidos y completados"
+  },
+  {
+   "valor": "9",
+   "texto": "versiones jugables en el navegador"
+  },
+  {
+   "valor": "0",
+   "texto": "emuladores: todo recompilado"
+  }
+ ],
+ "juegos": [
+  {
+   "id": "pcf4",
+   "nombre": "PC Fútbol 4.0",
+   "temporada": "95/96",
+   "anio": 1995,
+   "estado": "completado",
+   "estado_texto": "Completado",
+   "resumen": "PC Fútbol 4.0 (la versión 4.1 del CD-ROM), traducido desde el programa original de MS-DOS: Liga Manager, Liga Promanager, partidos, base de datos e historia. Se juega en el navegador, sin instalar nada, con las partidas guardadas en tu cuenta.",
+   "portada": "menu",
+   "versiones": [
+    {
+     "id": "pcf4",
+     "nombre": "PC Fútbol 4.0",
+     "jugar": "/jugar/pcf4/"
+    }
+   ],
+   "capturas": [
+    {
+     "id": "menu",
+     "texto": "Menú principal"
+    },
+    {
+     "id": "oficina",
+     "texto": "Oficina de la Liga Manager"
+    },
+    {
+     "id": "partido",
+     "texto": "Partido: saque de centro"
+    },
+    {
+     "id": "partido-2",
+     "texto": "Partido: llegada al área"
+    },
+    {
+     "id": "base-datos",
+     "texto": "Base de datos: ficha de un equipo"
+    },
+    {
+     "id": "historia",
+     "texto": "Historia: la liga 1928-29"
+    },
+    {
+     "id": "promanager",
+     "texto": "Liga Promanager"
+    }
+   ],
+   "funciona": [
+    "Menú principal y todos los modos: Liga Manager, Liga Promanager, Partido amistoso",
+    "Base de datos e Historia (programas del CD, también en el navegador)",
+    "Partidos con el motor original (VGA, 320×200 con scroll)",
+    "Sonido Sound Blaster: efectos y ambiente del partido",
+    "Guarda partidas: en el navegador, en tu cuenta de pcfsite y en una copia que puedes descargar",
+    "En el navegador (WebAssembly), sin instalar nada"
+   ],
+   "notas": [
+    "Es la versión 4.1 del CD-ROM (la 4.0 con la liga 95-96 actualizada), presentada como PC Fútbol 4.0.",
+    "El sonido se activa en Configuración, en el menú principal: la Sound Blaster emulada se detecta ahí. Después, en la pantalla previa al partido, Efectos y Ambiente.",
+    "El partido se juega con el teclado (F, O, P, V y espacio): en la pantalla previa, «Cambiar control».",
+    "HobbyLink, la actualización por módem e InfoFútbol no vienen en el CD: sus botones vuelven al menú."
+   ],
+   "hitos": [
+    {
+     "fecha": "2026-10-20",
+     "texto": "Empieza PC Fútbol 4.0 desde el CD del 4.1: es un programa de MS-DOS con DOS/4GW, así que el traductor aprende a cargar ejecutables LE y nace una capa de MS-DOS (DOS, DPMI, VGA, teclado, ratón, temporizador)."
+    },
+    {
+     "fecha": "2026-10-20",
+     "texto": "Menú principal (sin la protección anticopia del manual), Liga Manager y partido en modo X funcionando."
+    },
+    {
+     "fecha": "2026-10-20",
+     "texto": "Arreglos de traducción propios del código de Watcom: rutinas que devuelven valores en registros, el int86 que entra en una tabla con push y ret, y los punteros a código que viven dentro de otras funciones."
+    },
+    {
+     "fecha": "2026-10-20",
+     "texto": "Sound Blaster emulada (DSP, DMA e IRQ): efectos y ambiente del partido. Base de datos, Historia y Promanager; grabar y cargar la liga."
+    },
+    {
+     "fecha": "2026-10-20",
+     "texto": "PC Fútbol 4.0 se puede jugar en el navegador, con las partidas guardadas."
+    },
+    {
+     "fecha": "2026-10-20",
+     "texto": "Arreglados los petardazos del partido: el ratón iba a trompicones (se fusionan los movimientos), el sonido no arrancaba hasta la primera orden al DSP, y el mezclador del juego leía basura al meter un efecto (un pushf de 16 bits que el traductor apilaba como de 32): cada pase dejaba un escalón brusco en la onda."
+    }
+   ]
+  },
+  {
+   "id": "pcf5",
+   "nombre": "PC Fútbol 5.0",
+   "temporada": "96/97",
+   "anio": 1996,
+   "estado": "completado",
+   "estado_texto": "Completado",
+   "resumen": "PC Fútbol 5.0 completo, traducido desde el programa original, en su edición base y en la Edición de Oro: Liga Manager, Promanager, partidos en 3D, base de datos e historia. Se juega en el navegador, sin instalar nada, con las partidas guardadas en tu cuenta.",
+   "portada": "menu",
+   "versiones": [
+    {
+     "id": "pcf5",
+     "nombre": "PC Fútbol 5.0",
+     "jugar": "/jugar/pcf5/"
+    },
+    {
+     "id": "pcf5oro",
+     "nombre": "PC Fútbol 5.0 Edición de Oro",
+     "jugar": "/jugar/pcf5oro/"
+    }
+   ],
+   "capturas": [
+    {
+     "id": "menu",
+     "texto": "Menú principal"
+    },
+    {
+     "id": "menu-oro",
+     "texto": "Menú de la Edición de Oro"
+    },
+    {
+     "id": "pretemporada",
+     "texto": "Pretemporada de la Liga Manager"
+    },
+    {
+     "id": "oficina",
+     "texto": "Menú manager"
+    },
+    {
+     "id": "partido-3d",
+     "texto": "Partido en el simulador 3D"
+    },
+    {
+     "id": "partido-3d-oro",
+     "texto": "Partido en la Edición de Oro"
+    }
+   ],
+   "funciona": [
+    "Menú principal y todos los modos: Liga Manager, Liga Promanager, Partido amistoso",
+    "Base de datos, Historia, Seguimiento (programas del CD, también en el navegador)",
+    "Simulador 3D (pintado por software, como el original)",
+    "Música y sonido",
+    "Guarda partidas: en el navegador, en tu cuenta de pcfsite y en una copia que puedes descargar",
+    "En el navegador (WebAssembly), sin instalar nada"
+   ],
+   "hitos": [
+    {
+     "fecha": "2026-10-19",
+     "texto": "PC Fútbol 5.0 y la Edición de Oro, traducidos: menú, liga y partido 3D."
+    },
+    {
+     "fecha": "2026-10-20",
+     "texto": "PC Fútbol 5.0 y la Edición de Oro se juegan en el navegador."
+    },
+    {
+     "fecha": "2026-10-20",
+     "texto": "PC Fútbol 5.0 y su Edición de Oro, completados: todos los modos y los programas del CD, también en el navegador."
+    },
+    {
+     "fecha": "2026-10-20",
+     "texto": "Arreglado el texto que el juego recorta en pantalla (p. ej. el sueldo de los entrenadores disponibles): salía como un borrón porque todas las letras se pintaban encima de la primera. Afecta a la edición base y a la de Oro."
+    },
+    {
+     "fecha": "2026-10-20",
+     "texto": "En el navegador, la precarga incluye el fichero grande de datos (PCF5DAT.PKF): el sonido ya no se queda en bucle mientras descarga."
+    },
+    {
+     "fecha": "2026-10-20",
+     "texto": "El sonido ya no se queda en bucle mientras el juego espera datos que aún se descargan (o tras un aviso): si la música no llega a tiempo, suena un corte breve de silencio en vez de repetir el último trozo."
+    }
+   ],
+   "notas": [
+    "InfoFútbol y las actualizaciones on line arrancan, pero no pueden conectar: el servicio de entonces ya no existe.",
+    "ProQuinielas queda fuera: estaba desfasado."
+   ]
+  },
+  {
+   "id": "pcf6",
+   "nombre": "PC Fútbol 6.0",
+   "temporada": "97/98",
+   "anio": 1997,
+   "estado": "completado",
+   "estado_texto": "Completado",
+   "resumen": "PC Fútbol 6.0 completo, traducido desde el programa original, en su edición base y en la Edición de Oro: Liga Manager, Promanager, partidos en 3D, base de datos e historia. Se juega en el navegador, sin instalar nada, con las partidas guardadas en tu cuenta.",
+   "portada": "menu",
+   "versiones": [
+    {
+     "id": "pcf6",
+     "nombre": "PC Fútbol 6.0",
+     "jugar": "/jugar/pcf6/"
+    },
+    {
+     "id": "pcf6oro",
+     "nombre": "PC Fútbol 6.0 Edición de Oro",
+     "jugar": "/jugar/pcf6oro/"
+    }
+   ],
+   "capturas": [
+    {
+     "id": "menu",
+     "texto": "Menú principal"
+    },
+    {
+     "id": "pretemporada",
+     "texto": "Pretemporada de la Liga Manager"
+    },
+    {
+     "id": "sorteo",
+     "texto": "Sorteo de la Copa de Europa"
+    },
+    {
+     "id": "liga",
+     "texto": "La oficina de la Liga Manager"
+    },
+    {
+     "id": "previa",
+     "texto": "Presentación del partido"
+    },
+    {
+     "id": "partido-3d",
+     "texto": "Partido en el simulador 3D"
+    }
+   ],
+   "funciona": [
+    "Menú principal y todos los modos: Liga Manager, Liga Promanager, Partido amistoso y Desafío América-Europa",
+    "Base de datos, Historia, Seguimiento y Los goles de la liga (programas del CD, también en el navegador)",
+    "Simulador 3D (Direct3D 5 reimplementado por software)",
+    "Música y sonido",
+    "Guarda partidas: en el navegador, en tu cuenta de pcfsite y en una copia que puedes descargar",
+    "En el navegador (WebAssembly), sin instalar nada"
+   ],
+   "hitos": [
+    {
+     "fecha": "2026-10-19",
+     "texto": "Empieza PC Fútbol 6.0 Edición de Oro con el núcleo de PC Fútbol 7: en unas horas llega al menú, a la liga y al partido 3D."
+    },
+    {
+     "fecha": "2026-10-19",
+     "texto": "PC Fútbol 6.0 Edición de Oro se puede jugar en el navegador."
+    },
+    {
+     "fecha": "2026-10-20",
+     "texto": "La edición base de PC Fútbol 6.0 también se juega en el navegador."
+    },
+    {
+     "fecha": "2026-10-20",
+     "texto": "PC Fútbol 6.0 y su Edición de Oro, completados: todos los modos y los programas del CD, también en el navegador."
+    },
+    {
+     "fecha": "2026-10-20",
+     "texto": "Arreglado el texto que el juego recorta en pantalla (p. ej. el sueldo de los entrenadores disponibles): salía como un borrón porque todas las letras se pintaban encima de la primera. Afecta a la edición base y a la de Oro."
+    },
+    {
+     "fecha": "2026-10-20",
+     "texto": "PC Fútbol 6.0 Edición de Oro en el navegador: la precarga incluye todos los ficheros del CD que lee el juego, para que no se corte el sonido mientras descarga."
+    },
+    {
+     "fecha": "2026-10-20",
+     "texto": "El sonido ya no se queda en bucle mientras el juego espera datos que aún se descargan (o tras un aviso): si la música no llega a tiempo, suena un corte breve de silencio en vez de repetir el último trozo."
+    }
+   ],
+   "notas": [
+    "InfoFútbol y las actualizaciones on line arrancan, pero no pueden conectar: el servicio de entonces ya no existe.",
+    "ProQuinielas queda fuera: estaba desfasado."
+   ]
+  },
+  {
+   "id": "pcf7",
+   "nombre": "PC Fútbol 7",
+   "temporada": "98/99",
+   "anio": 1998,
+   "estado": "completado",
+   "estado_texto": "Completado",
+   "resumen": "PC Fútbol 7 completo, traducido desde el programa original de 1998: el manager, el simulador 3D, la base de datos, InfoFútbol y los vídeos. Se juega en el navegador, sin instalar nada, y como aplicación nativa.",
+   "portada": "menu",
+   "plataformas": [
+    {
+     "nombre": "macOS (Apple Silicon)",
+     "estado": "funciona"
+    },
+    {
+     "nombre": "Windows y Linux",
+     "estado": "previsto"
+    },
+    {
+     "nombre": "Navegador (WebAssembly)",
+     "estado": "funciona"
+    }
+   ],
+   "capturas": [
+    {
+     "id": "menu",
+     "texto": "Menú principal"
+    },
+    {
+     "id": "liga",
+     "texto": "La oficina de la Liga Manager"
+    },
+    {
+     "id": "partido-3d",
+     "texto": "Partido en el simulador 3D"
+    },
+    {
+     "id": "partido",
+     "texto": "Pantalla de partido"
+    },
+    {
+     "id": "base-de-datos",
+     "texto": "Base de datos"
+    },
+    {
+     "id": "infofutbol",
+     "texto": "InfoFútbol"
+    }
+   ],
+   "funciona": [
+    "Menú principal, selector de modo y lanzador de los programas del CD",
+    "Liga Manager: cargar y grabar partidas, la oficina, alineación y volver al menú",
+    "Simulador 3D (Direct3D 6 reimplementado por software)",
+    "Sonido, música y vídeos (la intro y los 100 mejores goles)",
+    "Historia, Base de datos, Seguimiento, InfoFútbol y actualizaciones",
+    "Guarda partidas: en el navegador, en tu cuenta de pcfsite y en una copia que puedes descargar",
+    "En el navegador (WebAssembly), sin instalar nada, también PC Fútbol 7 Plus"
+   ],
+   "notas": [
+    "InfoFútbol arranca, pero no puede conectar: el servicio de 1998 ya no existe.",
+    "ProQuinielas 3 queda fuera: estaba desfasado y su botón vuelve al menú.",
+    "En PC Fútbol 7 Plus, las vallas publicitarias del partido usan una textura provisional: las originales no vienen en los CD."
+   ],
+   "hitos": [
+    {
+     "fecha": "2026-10-17",
+     "texto": "Empieza el proyecto desde el CD original (MANAGER.EXE del 28-dic-1998)."
+    },
+    {
+     "fecha": "2026-10-18",
+     "texto": "El juego llega al menú principal y responde al ratón, nativo en macOS."
+    },
+    {
+     "fecha": "2026-10-18",
+     "texto": "Simulador 3D, sonido y música funcionando."
+    },
+    {
+     "fecha": "2026-10-18",
+     "texto": "Base de datos, Historia, InfoFútbol, actualizaciones y vídeos: todos los programas del CD."
+    },
+    {
+     "fecha": "2026-10-18",
+     "texto": "Salir de la liga vuelve al menú principal (excepciones de C++ entre funciones traducidas)."
+    },
+    {
+     "fecha": "2026-10-19",
+     "texto": "PC Fútbol 7 se puede jugar en el navegador (WebAssembly), sin instalar nada."
+    },
+    {
+     "fecha": "2026-10-19",
+     "texto": "PC Fútbol 7, completado."
+    },
+    {
+     "fecha": "2026-10-19",
+     "texto": "Partidas guardadas en el navegador y en la cuenta de pcfsite; grabar una liga pasa de 7 minutos a 3 segundos."
+    },
+    {
+     "fecha": "2026-10-20",
+     "texto": "Base de datos, Historia, Seguimiento, los goles e InfoFútbol también en el navegador. PC Fútbol 7 Plus, completo."
+    },
+    {
+     "fecha": "2026-10-20",
+     "texto": "Arreglado el texto que el juego recorta en pantalla (p. ej. el sueldo de los entrenadores disponibles): salía como un borrón porque todas las letras se pintaban encima de la primera. Afecta a PC Fútbol 7 y a 7 Plus."
+    },
+    {
+     "fecha": "2026-10-20",
+     "texto": "PC Fútbol 7 Plus en el navegador: la precarga incluye todos los ficheros del CD que lee el juego, para que no se corte el sonido mientras descarga."
+    },
+    {
+     "fecha": "2026-10-20",
+     "texto": "El sonido ya no se queda en bucle mientras el juego espera datos que aún se descargan (o tras un aviso): si la música no llega a tiempo, suena un corte breve de silencio en vez de repetir el último trozo."
+    }
+   ],
+   "versiones": [
+    {
+     "id": "pcf7",
+     "nombre": "PC Fútbol 7",
+     "jugar": "/jugar/pcf7/"
+    },
+    {
+     "id": "pcf7plus",
+     "nombre": "PC Fútbol 7 Plus",
+     "jugar": "/jugar/pcf7plus/"
+    }
+   ]
+  },
+  {
+   "id": "pcf2000",
+   "nombre": "PC Fútbol 2000",
+   "temporada": "00/01",
+   "anio": 2000,
+   "estado": "completado",
+   "estado_texto": "Completado",
+   "resumen": "PC Fútbol 2000 con la Extensión, traducido desde el programa original y sus seis DLL propias: el motor nuevo de Dinamic (Direct3D 7, menús incluidos) reimplementado por software. Euromanager, oficina, alineaciones y partidos en 3D, con la música MIDI y el panel de ayuda, más Historia, Base de datos, Seguimiento y FutbolQuiz. Se juega en el navegador, con las partidas guardadas en tu cuenta.",
+   "portada": "principal",
+   "capturas": [
+    {
+     "id": "principal",
+     "texto": "Pantalla principal de la Extensión"
+    },
+    {
+     "id": "menu-manager",
+     "texto": "La oficina del Menú Manager"
+    },
+    {
+     "id": "alineacion",
+     "texto": "Alineación con la plantilla real"
+    },
+    {
+     "id": "historia",
+     "texto": "Historia: la Liga 1928-29"
+    },
+    {
+     "id": "base-de-datos",
+     "texto": "Base de datos: ficha de equipo"
+    },
+    {
+     "id": "futbolquiz",
+     "texto": "FutbolQuiz"
+    },
+    {
+     "id": "partido-3d",
+     "texto": "Partido en el simulador 3D (Direct3D 7 por software)"
+    },
+    {
+     "id": "partido-3d-2",
+     "texto": "Ataque en el área"
+    },
+    {
+     "id": "torneos",
+     "texto": "Torneos de verano"
+    },
+    {
+     "id": "comienzo-liga",
+     "texto": "Comienzo de Liga"
+    },
+    {
+     "id": "tipo-de-partido",
+     "texto": "Tipo de partido y control"
+    },
+    {
+     "id": "ayuda",
+     "texto": "El panel de ayuda del SIP, con el texto de las páginas originales"
+    }
+   ],
+   "funciona": [
+    "Menú principal, Euromanager (personalización, nombre y equipo, torneos de verano, pretemporada, comienzo de liga)",
+    "Menú Manager: la oficina con sus empleados, alineación, tácticas, goles, noticias; grabar y cargar partidas",
+    "Partido en 3D: el motor Direct3D 7 del juego (dcsfx) sobre un rasterizador por software",
+    "Historia, Base de datos, Seguimiento (online y manual) y FutbolQuiz: el programa DBASEWIN traducido, encadenado desde el menú y con vuelta al menú",
+    "Editor de equipos y Competición Virtual (van dentro del manager)",
+    "Música MIDI (DirectMusic reimplementado con un sintetizador propio y el banco GS original), con la reverberación que pide el juego, y efectos",
+    "El panel de ayuda y del SIP con el texto de las páginas originales, con las negritas en su sitio",
+    "En el navegador (WebAssembly), sin instalar nada"
+   ],
+   "notas": [
+    "Solo la versión con la Extensión instalada (los binarios de PCF2000\\Extension)."
+   ],
+   "hitos": [
+    {
+     "fecha": "2026-10-20",
+     "texto": "Empieza PC Fútbol 2000 con el núcleo: instalación reproducida desde los dos CD, traducción del EXE y sus seis DLL (65.000 funciones) y capa DirectX 7 (DirectDraw 7 y Direct3D 7) sobre el rasterizador existente. En el día llega al menú, al Euromanager y al partido 3D."
+    },
+    {
+     "fecha": "2026-10-20",
+     "texto": "Arreglado el aborto al empezar la temporada: el control WebBrowser del panel de ayuda no existía y el juego llamaba a través de NULL; ahora hay un control propio que además dibuja el texto de las páginas de ayuda."
+    },
+    {
+     "fecha": "2026-10-20",
+     "texto": "Música: DirectMusic reimplementado con TinySoundFont y el banco General MIDI/GS original convertido a SoundFont."
+    },
+    {
+     "fecha": "2026-10-21",
+     "texto": "Arreglado el cuelgue del panel de ayuda a partir de la segunda pantalla (el control WebBrowser propio no avisaba a la MFC al desactivarse). Traducido DBASEWIN.EXE y reproducido el DM Loader: Historia, Base de datos, Seguimiento y FutbolQuiz se abren desde el menú y vuelven a él."
+    },
+    {
+     "fecha": "2026-10-21",
+     "texto": "Completado: datos en R2, negritas en línea del panel de ayuda y reverberación de DirectMusic (IKsControl) calibrada a los valores del juego. Lo que queda (una temporada entera) lo prueban los usuarios."
+    }
+   ],
+   "versiones": [
+    {
+     "id": "pcf2000",
+     "nombre": "PC Fútbol 2000 + Extensión",
+     "jugar": "/jugar/pcf2000/"
+    }
+   ],
+   "destacada": "principal",
+   "destacado": true
+  },
+  {
+   "id": "pcf2001",
+   "nombre": "PC Fútbol 2001",
+   "temporada": "00/01",
+   "anio": 2000,
+   "estado": "completado",
+   "estado_texto": "Completado",
+   "resumen": "PC Fútbol 2001 con las 13 actualizaciones oficiales (versión 3.6), traducido desde el programa original y sus seis DLL propias sobre el mismo motor Direct3D 7 que el 2000, reimplementado por software. Euromanager, oficina y partidos en modo resultado y en 3D; la música MP3 suena a través de un DirectShow propio. Se juega en el navegador.",
+   "portada": "principal",
+   "capturas": [
+    {
+     "id": "principal",
+     "texto": "Pantalla principal (V3.6, con las 13 actualizaciones)"
+    },
+    {
+     "id": "partido-3d",
+     "texto": "Partido en 3D: el motor del juego (dcsfx, Direct3D 7) sobre el rasterizador por software"
+    },
+    {
+     "id": "oficina",
+     "texto": "La oficina del Menú Manager en pretemporada"
+    },
+    {
+     "id": "partido-resultado",
+     "texto": "Partido en modo resultado"
+    },
+    {
+     "id": "ofertas",
+     "texto": "Selección de ofertas"
+    },
+    {
+     "id": "firmado",
+     "texto": "Contrato firmado con el Guixols"
+    },
+    {
+     "id": "equipo",
+     "texto": "La ficha del equipo que hace la oferta"
+    },
+    {
+     "id": "competiciones",
+     "texto": "Equipos en competiciones europeas"
+    },
+    {
+     "id": "pretemporada",
+     "texto": "La pretemporada: amistosos"
+    },
+    {
+     "id": "oficina-ayuda",
+     "texto": "El panel de ayuda con el texto de las páginas originales"
+    },
+    {
+     "id": "opciones",
+     "texto": "Opciones generales del Euromanager"
+    }
+   ],
+   "funciona": [
+    "Menú principal y Euromanager: opciones generales, selección de ofertas (con la negociación del contrato), equipos en competiciones y pretemporada con amistosos",
+    "La oficina del Menú Manager con sus empleados y el panel de ayuda",
+    "Partido en modo resultado y en 3D (el motor dcsfx del juego sobre el rasterizador por software)",
+    "Partidas guardadas en el navegador y en la cuenta (probado: grabar, recargar la página y cargar)",
+    "Música MP3 del juego (DirectShow reimplementado: el grafo lee las pistas con el filtro fuente del propio juego y las decodifica con minimp3)",
+    "Las 13 actualizaciones oficiales aplicadas: plantillas, jornadas y el programa 3.6",
+    "En el navegador (WebAssembly), con los datos en datos.pcfsite.com"
+   ],
+   "notas": [
+    "Instalación completa del CD más las 13 actualizaciones, en el orden de su nombre (PCFACT01 a 04, PCFPATCH, PCFACT05 a 12)."
+   ],
+   "hitos": [
+    {
+     "fecha": "2026-10-21",
+     "texto": "Empieza PC Fútbol 2001 con el núcleo: instalación del CD con las 13 actualizaciones (parches binarios RTPatch, verificados fichero a fichero), traducción del programa y sus DLL (91.000 funciones) y arranque en el día hasta el menú principal, el Euromanager (ofertas y contrato), la oficina y el partido en 3D."
+    },
+    {
+     "fecha": "2026-10-21",
+     "texto": "Música: el juego la pide a DirectShow con su propio filtro fuente y su propio renderer PCM y espera que el sistema ponga en medio el divisor MPEG-1 y el decodificador; el grafo propio hace ese trabajo con minimp3. De paso, WaitForMultipleObjects era un stub que devolvía siempre 0 y el renderer creía que cambiaba el estado en cada muestra."
+    },
+    {
+     "fecha": "2026-10-21",
+     "texto": "Versión web desplegada con los datos en R2 y las partidas guardadas comprobadas (grabar, recargar la página y cargar). Con el 2001 queda cubierta la serie entera, del 4.0 al 2001; a partir de aquí, arreglos puntuales."
+    }
+   ],
+   "versiones": [
+    {
+     "id": "pcf2001",
+     "nombre": "PC Fútbol 2001 (3.6)",
+     "jugar": "/jugar/pcf2001/"
+    }
+   ]
+  }
+ ]
+}

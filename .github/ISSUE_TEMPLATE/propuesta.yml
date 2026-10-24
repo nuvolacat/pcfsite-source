@@ -1,0 +1,33 @@
+name: Propuesta
+description: Una mejora de la app o de la plataforma, o un juego de Dinamic que portar
+labels: [propuesta]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Para preguntas y conversación general está el [hilo del foro](https://foro.pcfsite.com/t/526). Aquí, una
+        propuesta concreta.
+  - type: dropdown
+    id: tipo
+    attributes:
+      label: Tipo
+      options:
+        - Mejora de la app de escritorio
+        - Mejora de la plataforma (algo de Windows, DirectX o MS-DOS que falta o va mal)
+        - Mejora de la web (source.pcfsite.com)
+        - Portar otro juego
+        - Otra cosa
+    validations:
+      required: true
+  - type: textarea
+    id: que
+    attributes:
+      label: Qué propones y por qué
+      description: Qué problema resuelve o qué permite hacer que hoy no se puede. Recuerda el criterio del proyecto, imitar lo que hacía Windows, no cambiar el juego.
+    validations:
+      required: true
+  - type: textarea
+    id: como
+    attributes:
+      label: Cómo lo harías
+      description: Si tienes una idea de por dónde va (qué carpeta, qué función), cuéntala. Si no, no pasa nada.

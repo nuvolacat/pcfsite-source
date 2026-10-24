@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="es" data-juego="pcf7">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PC Fútbol 7</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #000; color: #ccc; font: 15px system-ui, sans-serif; overflow: hidden; }
+  #pantalla { position: fixed; inset: 0; }
+  canvas { width: 100%; height: 100%; display: block; outline: none; }
+  #carga { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+           gap: 14px; background: #000; transition: opacity .4s; }
+  #carga.fuera { opacity: 0; pointer-events: none; }
+  #carga .barra { width: 220px; height: 3px; background: #222; overflow: hidden; }
+  #carga .barra i { display: block; width: 40%; height: 100%; background: #c9d4e8; animation: ir 1.2s ease-in-out infinite; }
+  @keyframes ir { from { transform: translateX(-100%); } to { transform: translateX(250%); } }
+  #carga .aviso { max-width: 420px; text-align: center; color: #e88; display: none; }
+  #precarga { position: fixed; right: 10px; bottom: 10px; padding: 5px 10px; background: rgba(0,0,0,.65); color: #c9d4e8;
+              font-size: 12px; border-radius: 3px; display: none; transition: opacity .6s; pointer-events: none; }
+  #precarga.fuera { opacity: 0; }
+  #partida { position: fixed; left: 10px; bottom: 10px; max-width: 60%; padding: 5px 10px; background: rgba(0,0,0,.7);
+             color: #d8e6d0; font-size: 12px; border-radius: 3px; opacity: 0; transition: opacity .5s; pointer-events: none; }
+  #partida.ver { opacity: 1; }
+  #registro { position: fixed; left: 0; right: 0; bottom: 0; padding: 8px 12px; background: rgba(0,0,0,.75);
+              font: 12px ui-monospace, monospace; white-space: pre-wrap; max-height: 30vh; overflow: auto; display: none; }
+</style>
+</head>
+<body>
+<div id="pantalla"><canvas id="canvas" tabindex="0"></canvas></div>
+<div id="carga"><div id="carga-texto">Cargando…</div><div class="barra"><i></i></div><div class="aviso" id="aviso"></div></div>
+<div id="precarga"></div>
+<div id="partida"></div>
+<div id="registro"></div>
+<script src="partidas.js"></script>
+<script src="inicio.js"></script>
+</body>
+</html>

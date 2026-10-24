@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=PCFSite - Source
+Comment=Los PC Fútbol traducidos desde su propio código
+Exec=@CARPETA@/pcfsite-source
+Icon=@CARPETA@/pcfsite.png
+Path=@CARPETA@
+Terminal=false
+Categories=Game;SportsGame;
+StartupNotify=true
