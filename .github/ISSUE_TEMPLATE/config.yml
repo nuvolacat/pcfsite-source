@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Hilo oficial en el foro de pcfsite.com
+    url: https://foro.pcfsite.com/t/526
+    about: Preguntas, dudas de instalación y conversación general. Las versiones nuevas se anuncian ahí.
+  - name: Avisar de un fallo de seguridad
+    url: https://github.com/nuvolacat/pcfsite-source/security/advisories/new
+    about: En privado, nunca en un issue público (ver SECURITY.md).

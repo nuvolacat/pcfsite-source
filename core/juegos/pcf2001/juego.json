@@ -1,0 +1,86 @@
+{
+  "id": "pcf2001",
+  "nombre": "PC Fútbol 2001",
+  "carpeta": "PCF2001",
+  "trabajo": "~/pcf2001src-work",
+  "principal": "manager.exe",
+  "dlls": [
+    [
+      "utils.dll",
+      "0x02000000"
+    ],
+    [
+      "gfxwin.dll",
+      "0x02070000"
+    ],
+    [
+      "d2s2.dll",
+      "0x021e0000"
+    ],
+    [
+      "dcsf.dll",
+      "0x02260000"
+    ],
+    [
+      "dcsfx.dll",
+      "0x02280000"
+    ],
+    [
+      "dcd3d.dll",
+      "0x022a0000"
+    ],
+    [
+      "MFC42.DLL",
+      "0x022b0000"
+    ],
+    [
+      "MSVCRT.DLL",
+      "0x023b0000"
+    ],
+    [
+      "MSVCP60.DLL",
+      "0x023f0000"
+    ],
+    [
+      "MSVCIRT.DLL",
+      "0x02460000"
+    ]
+  ],
+  "programas": {
+    "dbasewin.exe": {}
+  },
+  "web": {
+    "excluir": [],
+    "cd": [
+      "DISK.ID",
+      "3DDXF",
+      "CAMPO",
+      "CONTROL",
+      "PLAY3D",
+      "GOLES.ODE",
+      "JUGADOR.PIE",
+      "PARTIDA.EYF"
+    ],
+    "cd_notas": "D: = solo lo que no está en C:\\PCF2001 (instalación completa: GRAFICOS.PAK, SFX, Simuldat y DBDAT ya están en C:): DISK.ID (el juego lo busca al arrancar) y los datos del partido 3D (3DDXF, CAMPO, CONTROL, PLAY3D, GOLES.ODE, JUGADOR.PIE, PARTIDA.EYF). Sin el instalador, DirectX, IE5, MMX ni INTROPCF.MPG. Con PCF7_TRACE_FILES=1 el juego solo pide del CD DISK.ID hasta la selección de ofertas."
+  },
+  "origen_notas": "CD original (PCF_2001.iso: volumen PCF_2001, 4-dic-2000, 687 MB, DISK.ID «PCF9 00») y la carpeta ACTUALIZ con las 13 actualizaciones oficiales en el orden de su nombre (01-04 PCFACT01-04, 05 PCFPATCH, 06-13 PCFACT05-12), que Dinamic publicó entre diciembre de 2000 y julio de 2001.",
+  "parches_notas": "Las 13 actualizaciones son envoltorios PackageForTheWeb (un CAB de Microsoft, MSZIP) con RTPatch dentro: PCFPATCH.exe (el diálogo con marca de Dinamic, distinto en cada parche: nombre del .RTP y jornadas que espera), patchw32.dll (idéntica en los que la traen) y el .RTP (diferencias binarias, formato propietario sin implementación abierta). Doce son de datos (DBDAT: eq/jug/ent/est00022.fdi y las jornadas jorn112-138 y jorn214-242 nuevas, jornad1m/2m) y la 05 (PCFPATCH36, 2-feb-2001, «3.6») es la de código: manager.exe (7.852.032 → 7.991.296 B), gfxwin, d2s2, dcd3d, DllDPlay, DLLSockets, DBaseWin y Utils; su PCFPATCH.exe copia además UtilsMMX.dll como Utils.dll si la CPU tiene MMX (CPUID.dll) y deja update.ini = «V3.6». La app las aplica con la propia patchw32.dll traducida (juegos/pcfpatch, platform/src/pcfpatch.cpp: PCF7_RTPATCH llama a RTPatchApply32 con un callback), en orden 01-04, PCFPATCH, 05-12; verificado el 2026-10-24: la instalación resultante es idéntica fichero a fichero a la de Windows 98. Para que la DLL funcionara hubo que arreglar tres cosas del traductor (push/pop de 16 bits, el jmp eax de __chkstk, bt/bts con el bit fuera del operando) y la plataforma (vistas de MapViewOfFile de escritura, SetFileTime, MoveFileEx).",
+  "instalacion_notas": "~/pcf2001src-work: iso/ = el CD (D:), stage/ = DATA1.CAB desempaquetado con unshield (InstallShield 6: Root, Exe_&_Dll, Shared_DLLs), game/PCF2001 = instalación completa parcheada (referencia: de la imagen de Windows 98; incluye GRAFICOS.PAK, SFX y Simuldat copiados del CD), bin/ = los binarios que se traducen (del juego parcheado + MFC42/MSVCRT/MSVCP60/MSVCIRT de Shared DLLs), drive_c/WINDOWS/SYSTEM = Shared DLLs, parches/ = las 13 actualizaciones. La app reproduce la instalación desde el CD (app/lanzador/is6.cpp: grupos Exe & Dll y Root a la raíz, Shared DLLs a WINDOWS\\\\SYSTEM, y DBDAT, SIMULDAT, SFX, GRAFICOS.PAK y RC_DBASE.PAK copiados del CD; reglas deducidas comparando con game/) y aplica las actualizaciones (ver parches_notas).",
+  "dlls_notas": "manager.exe 7,8 MB (base 0x400000, imagen hasta 0xbd3000; MFC 4.2, con TLS) importa gfxwin, d2s2, MFC42, MSVCRT, MSVCIRT, KERNEL32/USER32/GDI32, ole32, WINMM, comdlg32, ADVAPI32 y WSOCK32 (online: fuera). gfxwin importa Utils, MFC42, MSVCRT, MSVCP60, DDRAW, ole32, OLEAUT32, WININET y carga por LoadLibrary dcsf/dcsfx/dcd3d/dcogl (motores de dibujo, todos sobre Direct3D 7; dcsfx = «Software MMX» es el de fábrica) y dlldplay/dllsockets (multijugador, no se traducen). d2s2 importa DSOUND, ole32, OleAut32 (DirectMusic para arrancar; música MP3 por DirectShow con filtro fuente y renderer propios). Las DLL van apiladas desde 0x2000000 (64 KB entre imágenes).",
+  "lanzador_notas": "pcf2001.exe (40 KB) comprueba DISK.ID («PCF9 00») en el CD, pasa INTROPCF.MPG con playvid.exe y arranca MANAGER.EXE con su propia ruta entre comillas como argumento; también lanza DBASEWIN.EXE 0..4. Aquí se arranca MANAGER.EXE directamente con ese argumento (manager \"C:\\PCF2001\\pcf2001.exe\").",
+  "estado_notas": "2026-10-21: nativo: menú principal (V3.6), Euromanager (opciones generales, selección de ofertas con negociación del contrato, equipos en competiciones, pretemporada con amistosos), oficina (Menú Manager con el panel de ayuda), partido en modo resultado y partido 3D (estadio y jugadores con el motor dcsfx sobre el rasterizador por software). Música MP3 por DirectShow (platform/src/dshow.cpp). Versión web compilada y desplegada (/jugar/pcf2001, datos en R2). Pendiente: partido entero y vuelta a la oficina, temporada larga, grabar/cargar, DBaseWin y los demás apartados del menú.",
+  "sha256": {
+    "d2s2.dll": "deb4d32ba35a1d21c76096141bda6b5bbc1cfcceadf2dc5975f4bb21cb8c0856",
+    "dbasewin.exe": "ca310df2230ebf858fde8eefc1a0002afdc6712a22ecf5e6415a88b9d4c2d72c",
+    "dcd3d.dll": "0844ccb1df64b02c2efd702adebf044f1661eab4fa3b113824b28cfdb405a441",
+    "dcsf.dll": "ec581d48fda3221d2544d154434862613d7c860b64c0ed3eb3209fde1d9a1fff",
+    "dcsfx.dll": "583aa62bda79ceda553e748de59cf0f79c6d29583cb37a413a2d497943126bc6",
+    "gfxwin.dll": "d11c89b34f3d5aef1db32ef38b2259d6b0633ec2aa49fed66e582a00fa12a4c9",
+    "manager.exe": "bcbb057e80e370dfd1647c7124cac80cd8ac4bdcdc51abb36caa43a828dd63bc",
+    "MFC42.DLL": "aa8c615c8bbcd8ad4a9b624addb512e0702223eb5f266ce8f6a9a005f718a483",
+    "MSVCIRT.DLL": "647f7534aaaedffa93534e4cb9b24bfcf91524828ff0364d88973be58139e255",
+    "MSVCP60.DLL": "2b6b93c2d66969eb00258e2b5ad6172decebada096e3b1b077a3380c80e4a072",
+    "MSVCRT.DLL": "2d5670881a6d13a100e37da297f6eeb876f68b63073a28eb5d650625c60f9bf7",
+    "utils.dll": "11b9eb2fd977ae672cd80b2cf41fd7df64596dd54e6d05fad257ffc4c378d2c7"
+  }
+}

@@ -1,0 +1,72 @@
+name: Fallo en un juego
+description: Algo no funciona como en el original (en la app de escritorio o en source.pcfsite.com)
+labels: [fallo]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Gracias por avisar. Con el juego, la pantalla y el registro se encuentra casi todo. **No adjuntes ficheros de
+        los juegos** (ISO, ejecutables, datos): registros y capturas sí.
+  - type: dropdown
+    id: juego
+    attributes:
+      label: Juego
+      options:
+        - PC Fútbol 4.0
+        - PC Fútbol 5.0
+        - PC Fútbol 5.0 Edición de Oro
+        - PC Fútbol 6.0
+        - PC Fútbol 6.0 Edición de Oro
+        - PC Fútbol 7
+        - PC Fútbol 7 Plus
+        - PC Fútbol 2000
+        - PC Fútbol 2001
+        - La app en sí (biblioteca, preparar, mods)
+    validations:
+      required: true
+  - type: dropdown
+    id: donde
+    attributes:
+      label: Dónde
+      options:
+        - App de escritorio en macOS
+        - App de escritorio en Windows
+        - App de escritorio en Linux (compilada del fuente)
+        - En el navegador (source.pcfsite.com)
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Versión de la app o navegador
+      description: En la app, «Acerca de» (por ejemplo 1.26.1025.0103). En la web, el navegador y su versión.
+      placeholder: 1.26.1025.0103 · macOS 15.1 · MacBook Air M2
+    validations:
+      required: true
+  - type: textarea
+    id: que
+    attributes:
+      label: Qué pasó
+      description: En qué pantalla estabas, qué hiciste y qué viste (cuelgue, cierre, imagen mal, sonido, partida que no carga…). Si sabes qué hace el original en ese punto, dilo.
+    validations:
+      required: true
+  - type: textarea
+    id: pasos
+    attributes:
+      label: Cómo repetirlo
+      placeholder: |
+        1. Liga Manager, cargar la partida X
+        2. Ir a Alineación y pulsar…
+        3. …
+  - type: textarea
+    id: log
+    attributes:
+      label: Registro
+      description: |
+        App: el fichero `<juego>.log` dentro de `Documentos/PCFSite - Source/<juego>/`. Web: añade `?log` a la dirección y copia lo que sale. Pégalo aquí o adjúntalo (se puede arrastrar).
+      render: text
+  - type: textarea
+    id: capturas
+    attributes:
+      label: Capturas
+      description: Arrastra aquí las imágenes si ayudan.

@@ -1,0 +1,113 @@
+{
+  "id": "pcf2000",
+  "nombre": "PC Fútbol 2000",
+  "carpeta": "PCF2000",
+  "trabajo": "~/pcf2000src-work",
+  "principal": "manager.exe",
+  "salida_menu": "0x953ca0",
+  "dlls": [
+    [
+      "utils.dll",
+      "0x02000000"
+    ],
+    [
+      "gfxwin.dll",
+      "0x02070000"
+    ],
+    [
+      "d2s2.dll",
+      "0x021d0000"
+    ],
+    [
+      "dcsf.dll",
+      "0x02240000"
+    ],
+    [
+      "dcsfx.dll",
+      "0x02260000"
+    ],
+    [
+      "dcd3d.dll",
+      "0x02280000"
+    ],
+    [
+      "MFC42.DLL",
+      "0x02290000"
+    ],
+    [
+      "MSVCRT.DLL",
+      "0x02390000"
+    ]
+  ],
+  "programas": {
+    "dbasewin.exe": {}
+  },
+  "lanzador": {
+    "3": [
+      "dbasewin",
+      "0"
+    ],
+    "4": [
+      "dbasewin",
+      "1"
+    ],
+    "5": [
+      "dbasewin",
+      "2"
+    ],
+    "6": [
+      "dbasewin",
+      "3"
+    ],
+    "10": [
+      "dbasewin",
+      "4"
+    ]
+  },
+  "web": {
+    "excluir": [],
+    "cd": [
+      "DISK.ID",
+      "GRAFICOS.PAK",
+      "NGI.PAK",
+      "IMG.PAK",
+      "RC_DBASE.PAK",
+      "DBDAT",
+      "SIMULDAT",
+      "SFX",
+      "CAMP",
+      "BETIQIUI.FOY",
+      "CIZOEAAI.LIV",
+      "DEKOWITO.FII",
+      "EIMAIOII.PEH",
+      "IADOXATO.VOY",
+      "PCFUTFX.DDT",
+      "HSTADIUM.IPX",
+      "UQPRIME.IPX",
+      "OMANAGER.ODL",
+      "OPUBLIC.001",
+      "2KSCORE.SC0",
+      "SPLAND.SC0",
+      "BDRVISA.DRV",
+      "GPRINTER.DLL"
+    ],
+    "cd_notas": "D: = CD base sin el instalador, DirectX, IE5, XCONTROL ni INTROPCF.MPG (lo pasa el DM Loader, no el manager)"
+  },
+  "dlls_notas": "Binarios de la EXPANSIÓN (PCF2000\\Extension: MANAGER.EXE 5.591.040 B y sus DLL) con Utils.dll en su versión MMX (carpeta MMX del CD de la expansión; el instalador la copia si HasMMX). MFC42 y MSVCRT del CD base (Shared DLLs del instalador). Las DLL propias de Dinamic se traducen con el EXE: el EXE casi no habla con Windows (809 importaciones de gfxwin, 48 de d2s2); gfxwin importa Utils (76) y MFC42 (178); DCSF/DCSFX/dcd3d importan DDRAW. Sin MSVCP60.",
+  "lanzador_notas": "El DM Loader (pcf2000.exe, 20 KB) comprueba DISK.ID («PCF8 00») en el CD, pasa INTROPCF.MPG con playvid.exe y arranca MANAGER.EXE con su propia ruta entre comillas como argumento. El manager sale del menú lanzando una excepción C++ con 0x4e1e+apartado (0x4e3b = salir) y deja el apartado en DAT_00953ca0 (salida_menu); si existe el evento PCF5_Loader_Event1 relanza «pcf2000.exe PCF5%X» (CreateProcess, FUN_00407c70) y el DM Loader abre el programa de la tabla: 3→dbasewin 0, 4→dbasewin 1, 5→dbasewin 2, 6→dbasewin 3, A(10)→dbasewin 4, cualquier otro→manager.exe 0; VIDEO2 = intro. Aquí el apartado se lee de salida_menu al salir y el núcleo encadena el programa hermano (pcf2000-dbasewin N) como en PCF7.",
+  "instalacion_notas": "Base + expansión instaladas desde los dos CD con unshield (InstallShield 5): grupos del CAB base → raíz (Program DLLs, Program Executable Files con DbDat/Tactics/Simuldat/CURSORES), AYUDA (Help Files); CAB de la expansión → DBDAT (DataBase Files), Extension (Dll Extension, Exe Extension), Simuldat, raíz (Graphics Files: Graficos.pak y rc_dbase.pak; Root Extension: aviso022.022, UninstPCF.dll, PCF2000.EXE), AYUDA. Verificado fichero a fichero contra una instalación real en Windows 98 (QEMU, jun-2026). Shared DLLs → drive_c/WINDOWS/SYSTEM. El CD base es D: (DISK.ID, GRAFICOS.PAK, NGI.PAK, IMG.PAK, SFX, DBDAT/BIGFOTO…); el CD de la expansión solo trae el instalador.",
+  "estado_notas": "2026-10-20: jugable en nativo: menú, Euromanager (personalización, nombre y equipo, torneos de verano, pretemporada, comienzo de liga), Menú Manager (alineación, diálogos) y partido 3D con la capa DirectX 7 nueva (platform/src/ddraw.cpp y d3d.cpp). Música MIDI por DirectMusic (platform/src/dmusic.cpp: TinySoundFont + TinyMidiLoader, banco platform/fonts/gm.sf2 (no versionado) = el GM.DLS de Windows 98 (Microsoft GS Wavetable, muestras Roland GS, 3,2 MB) convertido con tools/dls2sf2.py; copia en ~/pcf2000src-work/bancos/). Panel de ayuda/SIP: control WebBrowser falso (platform/src/webbrowser.cpp) que dibuja el texto de los .htm; clic en el texto pasa de página. Pendiente: jugar un partido entero y volver a la oficina, grabar/cargar, temporada larga, versión web.",
+  "sonido_notas": "d2s2.dll: efectos por DirectSound; música = los 3 MIDI de SFX\\MUSICAS (magia efcdab00 + ficheros MThd) por DirectMusic: EnumPort (3 puertos iguales de clase OUTPUT, sin EXTERNAL; sound.ini guarda un índice de dispositivo), CreatePort, Performance Init/AddPort/AssignPChannelBlock/PlaySegment/Stop/IsPlaying/SetGlobalParam(PerfMasterVolume), Loader::GetObject(DMUS_OBJ_MEMORY, CLSID_DirectMusicSegment), Segment::SetParam/SetRepeats, SegmentState::GetSeek.",
+  "sha256": {
+    "d2s2.dll": "3e34486809e4e37f83dfc6cdde16be91b6860e54ce02a644fc049fac0b2b6e81",
+    "dbasewin.exe": "49ffebbcf0d46f1e3822fb45e0fb53c66200d8aff30d0f3fe440246f7cc05673",
+    "dcd3d.dll": "121c5f59bedc2bae33d7e70896d28c3ac260b17c67ca2da35a902daa197717ff",
+    "dcsf.dll": "d1af7e50411f81f344ff9b2ecb8fa36daa6da576f6212c0abe44bf55214b716e",
+    "dcsfx.dll": "2954af45e2592dba5230d270ffd0a29640a1276bb6546c105c824ded5648b27f",
+    "gfxwin.dll": "2ed0420cb94761ed134689a1048a05fefb21a10b9ca4f0f8c1a575e4077862ab",
+    "manager.exe": "e1efd5e99008f5da2dc6500a5d9cc7c2bc3ee84887b9d351ab6055ab42f2fa9b",
+    "MFC42.DLL": "aa8c615c8bbcd8ad4a9b624addb512e0702223eb5f266ce8f6a9a005f718a483",
+    "MSVCRT.DLL": "2d5670881a6d13a100e37da297f6eeb876f68b63073a28eb5d650625c60f9bf7",
+    "utils.dll": "060c923784fe39bbec72b641ead2d06278f95b7640580677b71f2d2856acf616"
+  }
+}

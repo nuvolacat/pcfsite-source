@@ -1,0 +1,65 @@
+{
+  "id": "pcf5",
+  "nombre": "PC Fútbol 5.0",
+  "carpeta": "FUTBOL5",
+  "trabajo": "~/pcf5-work",
+  "principal": "manager.exe",
+  "salida_menu": "0x6490dc",
+  "dlls": [
+    [
+      "MFC42.DLL",
+      "0x02000000"
+    ],
+    [
+      "MSVCRT.DLL",
+      "0x02200000"
+    ],
+    [
+      "MSVCIRT.DLL",
+      "0x02280000"
+    ]
+  ],
+  "lanzador": {
+    "2": [
+      "infosurf",
+      "2"
+    ],
+    "3": [
+      "dbasewin",
+      "0"
+    ],
+    "4": [
+      "dbasewin",
+      "1"
+    ],
+    "5": [
+      "dbasewin",
+      "2"
+    ],
+    "6": [
+      "dbasewin",
+      "3"
+    ],
+    "7": [
+      "infosurf",
+      "1"
+    ],
+    "8": [
+      "infosurf",
+      "0"
+    ]
+  },
+  "web": {
+    "excluir": []
+  },
+  "lanzador_notas": "2 Instrucciones (infosurf 2), 3 Historia, 4 Base de datos, 5/6 Seguimiento, 7 Actualización on line, 8 InfoFútbol (comprobado pulsando el menú)",
+  "estado_notas": "2026-10-19: menú, liga nueva (nivel, pretemporada), oficina, grabar/cargar (TACTICS\\MANAGER.000), partido 3D por software (800x600x8) y sonido. El pintado en ensamblador salta a mitad de bucles desenrollados: sus entradas (tablas que se rellenan en ejecución) están en unresolved.txt.",
+  "sha256": {
+    "dbasewin.exe": "19ee77b91ac15f552076bd078bd98599afc706fa2e44764c6e654df789dfff3c",
+    "infosurf.exe": "98f92dde903e657539f925013daa6b5bfc1fa971494a5cad2cd9bccbcd12b173",
+    "manager.exe": "1043611eb5330f901dd09a7144ba0a03888dbbbf597fe279914342c9ad3428a1",
+    "MFC42.DLL": "0b12a5a74c5de70bb454fb55a302173bca922a03063fa8fc6e970360d4ae4d5c",
+    "MSVCIRT.DLL": "95e7c5cbae8b3f2c9bbded2ffde11c673e43922f77f9aa5802b6ef9fba1dd51a",
+    "MSVCRT.DLL": "10b7483ac554b79c81c1039332a846bbd3e2ecac742b4de41e1dee56db900ffc"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "id": "pcfpatch",
+  "nombre": "Actualizaciones de PC Fútbol 2001",
+  "carpeta": "PCF2001",
+  "trabajo": "~/pcfpatch-work",
+  "principal": "PCFPATCH.exe",
+  "dlls": [
+    ["patchw32.dll", "0x02000000"]
+  ],
+  "programas": {},
+  "origen_notas": "No es un juego: es el parcheador RTPatch (Pocket Soft) que llevan dentro las 13 actualizaciones oficiales de PC Fútbol 2001 (PCFACTxx.exe = envoltorio PackageForTheWeb con un CAB: PCFACTxx.RTP + PCFPATCH.exe + patchw32.dll). patchw32.dll (164.864 B, idéntica en los parches que la traen: 01-04 y PCFPATCH) exporta RTPatchApply32@12; PCFPATCH.exe es el diálogo con marca de Dinamic (118.784 B, distinto en cada parche: nombre del .RTP y jornadas esperadas) que carga la DLL y llama a RTPatchApply32 con un callback. La app traduce la DLL y llama al export desde la plataforma (platform/src/pcfpatch.cpp) para aplicar los .RTP sobre la instalación recién hecha desde el CD, sin ventana.",
+  "instalacion_notas": "~/pcfpatch-work: bin/ = PCFPATCH.exe y patchw32.dll (del PCFACT01), decomp/ = Ghidra, parches/<nombre>/ = el contenido de cada actualización (7zz x sobre el .exe).",
+  "sha256": {
+    "patchw32.dll": "47d60404e6d18a5ccd3a4e63062b09716b9769ab6f42331d54e684ab9217c26f",
+    "PCFPATCH.exe": "03b1e2587d24b56559a264909df7fa782cd71406af37d516cbddc03aa5e51360"
+  }
+}

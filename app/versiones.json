@@ -1,0 +1,1994 @@
+{
+ "generado": "2026-10-24",
+ "versiones": [
+  {
+   "id": "pcf4",
+   "nombre": "PC Fútbol 4.0",
+   "detalle": "versión 4.1 del CD (MS-DOS)",
+   "anio": 1995,
+   "corto": "4.0",
+   "portada": "1995.jpg",
+   "etiqueta": "",
+   "carpeta": "FUTBOL4",
+   "programas": [
+    "pcf4",
+    "pcf4-historia",
+    "pcf4-pcmanag",
+    "pcf4-promanag"
+   ],
+   "dos": true,
+   "necesita_cd": false,
+   "solo_instalada": false,
+   "discos": [
+    {
+     "rol": "cd",
+     "nombre": "CD de PC Fútbol 4.0",
+     "firmas": [
+      [
+       "FILES/PCFUTBOL.DAT",
+       "d900afcd331ca53b2fb6aae95e649f0ce1e90a0cf2211a3fb1e44680b8fc12ec",
+       333923
+      ],
+      [
+       "INSTALL.DAT",
+       "6aad0f90c1a02efc1a8d1c4176cb44aaa4eff6a95bc013dd735053c8aa292288",
+       22659
+      ]
+     ],
+     "instalar": [
+      [
+       "arbol",
+       "FILES",
+       ""
+      ]
+     ],
+     "copiar": [
+      "INSTALL.DAT"
+     ],
+     "sistema": []
+    }
+   ],
+   "binarios": [
+    {
+     "nombre": "PCFUTBOL.DAT",
+     "tam": 333923,
+     "sha256": "d900afcd331ca53b2fb6aae95e649f0ce1e90a0cf2211a3fb1e44680b8fc12ec",
+     "origen": [
+      [
+       "cd",
+       "FILES/PCFUTBOL.DAT"
+      ],
+      [
+       "instalacion",
+       "PCFUTBOL.DAT"
+      ]
+     ]
+    },
+    {
+     "nombre": "HISTORIA.DAT",
+     "tam": 156059,
+     "sha256": "37c9e2a08d7b0e19638bae4154eaa74fde99f63e65b90b9ac4473a856e51a16d",
+     "origen": [
+      [
+       "cd",
+       "FILES/HISTORIA.DAT"
+      ],
+      [
+       "instalacion",
+       "HISTORIA.DAT"
+      ]
+     ]
+    },
+    {
+     "nombre": "PCMANAG.DAT",
+     "tam": 750119,
+     "sha256": "0d66fcbd6b721e25da0b690227acd3c029df38cbac5af0738063d183e132ac3d",
+     "origen": [
+      [
+       "cd",
+       "FILES/PCMANAG.DAT"
+      ],
+      [
+       "instalacion",
+       "PCMANAG.DAT"
+      ]
+     ]
+    },
+    {
+     "nombre": "PROMANAG.DAT",
+     "tam": 768923,
+     "sha256": "3e1466d056ccc8e52c74a3e4b10a68a09f111b8c807b783571923a1dedd53c16",
+     "origen": [
+      [
+       "cd",
+       "FILES/PROMANAG.DAT"
+      ],
+      [
+       "instalacion",
+       "PROMANAG.DAT"
+      ]
+     ]
+    }
+   ],
+   "instalada": {
+    "firmas": [
+     [
+      "PCFUTBOL.DAT",
+      "d900afcd331ca53b2fb6aae95e649f0ce1e90a0cf2211a3fb1e44680b8fc12ec",
+      333923
+     ],
+     [
+      "HISTORIA.DAT",
+      "37c9e2a08d7b0e19638bae4154eaa74fde99f63e65b90b9ac4473a856e51a16d",
+      156059
+     ]
+    ]
+   }
+  },
+  {
+   "id": "pcf5",
+   "nombre": "PC Fútbol 5.0",
+   "detalle": "diciembre de 1996",
+   "anio": 1996,
+   "corto": "5.0",
+   "portada": "1996.jpg",
+   "etiqueta": "",
+   "carpeta": "FUTBOL5",
+   "programas": [
+    "pcf5",
+    "pcf5-dbasewin",
+    "pcf5-infosurf"
+   ],
+   "dos": false,
+   "necesita_cd": true,
+   "solo_instalada": false,
+   "discos": [
+    {
+     "rol": "cd",
+     "nombre": "CD de PC Fútbol 5.0",
+     "firmas": [
+      [
+       "MANAGER.EXE",
+       "1043611eb5330f901dd09a7144ba0a03888dbbbf597fe279914342c9ad3428a1",
+       2507264
+      ],
+      [
+       "AUTORUN.INF",
+       "1c155e6f428a6324741e6688ea5505a67b9131d118ce20c1c949d9acb0d765b9",
+       53
+      ],
+      [
+       "INST_100.NFO",
+       "ab054040af0a54756a5ec743d16fb8368e25f22cd592a17d0aa79558d4bb968b",
+       183
+      ]
+     ],
+     "instalar": [
+      [
+       "nfo",
+       "INST_100.NFO"
+      ],
+      [
+       "nfo",
+       "INST_101.NFO"
+      ],
+      [
+       "nfo",
+       "INST_102.NFO"
+      ],
+      [
+       "nfo",
+       "INST_103.NFO"
+      ],
+      [
+       "nfo",
+       "INST_104.NFO"
+      ],
+      [
+       "nfo",
+       "INST_105.NFO"
+      ],
+      [
+       "nfo",
+       "INST_106.NFO"
+      ],
+      [
+       "nfo",
+       "INST_107.NFO"
+      ],
+      [
+       "nfo",
+       "INST_108.NFO"
+      ],
+      [
+       "nfo",
+       "INST_109.NFO"
+      ],
+      [
+       "nfo",
+       "INST_110.NFO"
+      ]
+     ],
+     "copiar": "*",
+     "sistema": [
+      [
+       "MFC42.DLL",
+       "MFC42.DLL"
+      ],
+      [
+       "MSVCRT.DLL",
+       "MSVCRT.DLL"
+      ],
+      [
+       "MSVCIRT.DLL",
+       "MSVCIRT.DLL"
+      ]
+     ]
+    }
+   ],
+   "binarios": [
+    {
+     "nombre": "manager.exe",
+     "tam": 2507264,
+     "sha256": "1043611eb5330f901dd09a7144ba0a03888dbbbf597fe279914342c9ad3428a1",
+     "origen": [
+      [
+       "cd",
+       "MANAGER.EXE"
+      ],
+      [
+       "instalacion",
+       "MANAGER.EXE"
+      ]
+     ]
+    },
+    {
+     "nombre": "dbasewin.exe",
+     "tam": 891392,
+     "sha256": "19ee77b91ac15f552076bd078bd98599afc706fa2e44764c6e654df789dfff3c",
+     "origen": [
+      [
+       "cd",
+       "DBASEWIN.EXE"
+      ],
+      [
+       "instalacion",
+       "DBASEWIN.EXE"
+      ]
+     ]
+    },
+    {
+     "nombre": "infosurf.exe",
+     "tam": 455680,
+     "sha256": "98f92dde903e657539f925013daa6b5bfc1fa971494a5cad2cd9bccbcd12b173",
+     "origen": [
+      [
+       "cd",
+       "INFOSURF.EXE"
+      ],
+      [
+       "instalacion",
+       "INFOSURF.EXE"
+      ]
+     ]
+    },
+    {
+     "nombre": "MFC42.DLL",
+     "tam": 1011472,
+     "sha256": "0b12a5a74c5de70bb454fb55a302173bca922a03063fa8fc6e970360d4ae4d5c",
+     "origen": [
+      [
+       "cd",
+       "MFC42.DLL"
+      ],
+      [
+       "sistema",
+       "MFC42.DLL"
+      ]
+     ]
+    },
+    {
+     "nombre": "MSVCRT.DLL",
+     "tam": 267536,
+     "sha256": "10b7483ac554b79c81c1039332a846bbd3e2ecac742b4de41e1dee56db900ffc",
+     "origen": [
+      [
+       "cd",
+       "MSVCRT.DLL"
+      ],
+      [
+       "sistema",
+       "MSVCRT.DLL"
+      ]
+     ]
+    },
+    {
+     "nombre": "MSVCIRT.DLL",
+     "tam": 74752,
+     "sha256": "95e7c5cbae8b3f2c9bbded2ffde11c673e43922f77f9aa5802b6ef9fba1dd51a",
+     "origen": [
+      [
+       "cd",
+       "MSVCIRT.DLL"
+      ],
+      [
+       "sistema",
+       "MSVCIRT.DLL"
+      ]
+     ]
+    }
+   ],
+   "instalada": {
+    "firmas": [
+     [
+      "MANAGER.EXE",
+      "1043611eb5330f901dd09a7144ba0a03888dbbbf597fe279914342c9ad3428a1",
+      2507264
+     ],
+     [
+      "DBASEWIN.EXE",
+      "19ee77b91ac15f552076bd078bd98599afc706fa2e44764c6e654df789dfff3c",
+      891392
+     ]
+    ]
+   }
+  },
+  {
+   "id": "pcf5oro",
+   "nombre": "PC Fútbol 5.0 Edición de Oro",
+   "detalle": "Edición de Oro, octubre de 1997",
+   "anio": 1997,
+   "corto": "5.0 ORO",
+   "portada": "1996.jpg",
+   "etiqueta": "Edición de Oro",
+   "carpeta": "FUTBOL5",
+   "programas": [
+    "pcf5oro",
+    "pcf5oro-dbasewin",
+    "pcf5oro-infosurf"
+   ],
+   "dos": false,
+   "necesita_cd": true,
+   "solo_instalada": false,
+   "discos": [
+    {
+     "rol": "cd",
+     "nombre": "CD de PC Fútbol 5.0 Edición de Oro",
+     "firmas": [
+      [
+       "manager.exe",
+       "5b6f8fcc813234aef1268b1cb6ac1ee0e7fb10f4f83cd6e2653d214d192d003c",
+       2461184
+      ],
+      [
+       "AUTORUN.INF",
+       "3d08f3d6b3f9f051cc9b89aa5e5fc0477db69278a2a4b5a096bdc720813a2717",
+       50
+      ],
+      [
+       "INST_100.NFO",
+       "91a650f7103d2d6f0ded1a051e3b986755ffda1b33506a95d95335b3253a13e2",
+       256
+      ]
+     ],
+     "instalar": [
+      [
+       "nfo",
+       "INST_100.NFO"
+      ],
+      [
+       "nfo",
+       "INST_101.NFO"
+      ],
+      [
+       "nfo",
+       "INST_104.NFO"
+      ],
+      [
+       "nfo",
+       "INST_105.NFO"
+      ],
+      [
+       "nfo",
+       "INST_106.NFO"
+      ],
+      [
+       "nfo",
+       "INST_107.NFO"
+      ],
+      [
+       "nfo",
+       "INST_108.NFO"
+      ],
+      [
+       "nfo",
+       "INST_109.NFO"
+      ],
+      [
+       "nfo",
+       "INST_110.NFO"
+      ],
+      [
+       "nfo",
+       "Inst_111.nfo"
+      ],
+      [
+       "nfo",
+       "Inst_112.nfo"
+      ],
+      [
+       "nfo",
+       "Inst_113.nfo"
+      ],
+      [
+       "nfo",
+       "Inst_116.nfo"
+      ]
+     ],
+     "copiar": "*",
+     "sistema": [
+      [
+       "MFC42.DLL",
+       "MFC42.DLL"
+      ],
+      [
+       "MSVCRT.DLL",
+       "MSVCRT.DLL"
+      ],
+      [
+       "MSVCIRT.DLL",
+       "MSVCIRT.DLL"
+      ]
+     ]
+    }
+   ],
+   "binarios": [
+    {
+     "nombre": "manager.exe",
+     "tam": 2461184,
+     "sha256": "5b6f8fcc813234aef1268b1cb6ac1ee0e7fb10f4f83cd6e2653d214d192d003c",
+     "origen": [
+      [
+       "cd",
+       "manager.exe"
+      ],
+      [
+       "instalacion",
+       "MANAGER.EXE"
+      ]
+     ]
+    },
+    {
+     "nombre": "dbasewin.exe",
+     "tam": 765440,
+     "sha256": "fdd7e71b30cb6e1f08a29055bb0078548f7bf0da6f1e376d5670504384534b7f",
+     "origen": [
+      [
+       "cd",
+       "DBASEWIN.EXE"
+      ],
+      [
+       "instalacion",
+       "DBASEWIN.EXE"
+      ]
+     ]
+    },
+    {
+     "nombre": "infosurf.exe",
+     "tam": 540160,
+     "sha256": "7223e54444de191caf5dbb5dd35700001b4b34177947a2e8a767b5af7e08eff7",
+     "origen": [
+      [
+       "cd",
+       "Infosurf.exe"
+      ],
+      [
+       "instalacion",
+       "INFOSURF.EXE"
+      ]
+     ]
+    },
+    {
+     "nombre": "MFC42.DLL",
+     "tam": 940304,
+     "sha256": "924742218abfe2e9cad746ab738709b5cb50413631e93342acc941524ba6c7f6",
+     "origen": [
+      [
+       "cd",
+       "MFC42.DLL"
+      ],
+      [
+       "sistema",
+       "MFC42.DLL"
+      ]
+     ]
+    },
+    {
+     "nombre": "MSVCRT.DLL",
+     "tam": 280576,
+     "sha256": "df9f2aab7f7119f214c5d743d961fde4bf324f19011fbbb7e9cf666856fba0ba",
+     "origen": [
+      [
+       "cd",
+       "MSVCRT.DLL"
+      ],
+      [
+       "sistema",
+       "MSVCRT.DLL"
+      ]
+     ]
+    },
+    {
+     "nombre": "MSVCIRT.DLL",
+     "tam": 70656,
+     "sha256": "9717c95654d34a8e78d712f9c5a3aa82351ec04c6318e7b4aca9e6a4ad701a34",
+     "origen": [
+      [
+       "cd",
+       "MSVCIRT.DLL"
+      ],
+      [
+       "sistema",
+       "MSVCIRT.DLL"
+      ]
+     ]
+    }
+   ],
+   "instalada": {
+    "firmas": [
+     [
+      "MANAGER.EXE",
+      "5b6f8fcc813234aef1268b1cb6ac1ee0e7fb10f4f83cd6e2653d214d192d003c",
+      2461184
+     ],
+     [
+      "DBASEWIN.EXE",
+      "fdd7e71b30cb6e1f08a29055bb0078548f7bf0da6f1e376d5670504384534b7f",
+      765440
+     ]
+    ]
+   }
+  },
+  {
+   "id": "pcf6",
+   "nombre": "PC Fútbol 6.0",
+   "detalle": "diciembre de 1997",
+   "anio": 1997,
+   "corto": "6.0",
+   "portada": "1997.jpg",
+   "etiqueta": "",
+   "carpeta": "FUTBOL6",
+   "programas": [
+    "pcf6",
+    "pcf6-actwin",
+    "pcf6-dbasewin",
+    "pcf6-infosurf",
+    "pcf6-playvid"
+   ],
+   "dos": false,
+   "necesita_cd": true,
+   "solo_instalada": false,
+   "discos": [
+    {
+     "rol": "cd",
+     "nombre": "CD de PC Fútbol 6.0",
+     "firmas": [
+      [
+       "disk.id",
+       "dfa1a53b758e11df3562641a5fadb68bc40da34aff5ffd224dbc08dfb80fd54a",
+       7
+      ],
+      [
+       "manager.exe",
+       "d76cba428a67c28ae3eb5cca33d76c0ad1174277c5778c3607a073e7be188aa4",
+       2617344
+      ],
+      [
+       "AUTORUN.INF",
+       "e49da2de580d326daf2218fad53facb6372358565d62c9282fc34f426c0866b5",
+       49
+      ]
+     ],
+     "instalar": [
+      [
+       "nfo",
+       "Inst_100.nfo"
+      ],
+      [
+       "nfo",
+       "INST_101.NFO"
+      ],
+      [
+       "nfo",
+       "INST_102.NFO"
+      ],
+      [
+       "nfo",
+       "INST_103.NFO"
+      ],
+      [
+       "nfo",
+       "INST_104.NFO"
+      ],
+      [
+       "nfo",
+       "INST_105.NFO"
+      ]
+     ],
+     "copiar": "*",
+     "sistema": [
+      [
+       "MFC42.DLL",
+       "MFC42.DLL"
+      ],
+      [
+       "MSVCRT.DLL",
+       "MSVCRT.DLL"
+      ]
+     ]
+    }
+   ],
+   "binarios": [
+    {
+     "nombre": "manager.exe",
+     "tam": 2617344,
+     "sha256": "d76cba428a67c28ae3eb5cca33d76c0ad1174277c5778c3607a073e7be188aa4",
+     "origen": [
+      [
+       "cd",
+       "manager.exe"
+      ],
+      [
+       "instalacion",
+       "MANAGER.EXE"
+      ]
+     ]
+    },
+    {
+     "nombre": "actwin.exe",
+     "tam": 274944,
+     "sha256": "e4a23f6219c0df1e65446e56de8e99fd8ae068fe8c66312c54941ba031c8cc94",
+     "origen": [
+      [
+       "cd",
+       "Actwin.exe"
+      ],
+      [
+       "instalacion",
+       "ACTWIN.EXE"
+      ]
+     ]
+    },
+    {
+     "nombre": "dbasewin.exe",
+     "tam": 866304,
+     "sha256": "d3d50e66eddf941201c1219336cd9a3486e7cdddc9622ede3d3a410db6ff0b63",
+     "origen": [
+      [
+       "cd",
+       "DBASEWIN.EXE"
+      ],
+      [
+       "instalacion",
+       "DBASEWIN.EXE"
+      ]
+     ]
+    },
+    {
+     "nombre": "infosurf.exe",
+     "tam": 540160,
+     "sha256": "2edcad7c41a156f61d427c62062893dcc72eaa0830b6a7ba6ed0f6b8872b9f9c",
+     "origen": [
+      [
+       "cd",
+       "InfoSurf.exe"
+      ],
+      [
+       "instalacion",
+       "INFOSURF.EXE"
+      ]
+     ]
+    },
+    {
+     "nombre": "playvid.exe",
+     "tam": 4096,
+     "sha256": "578977629b165cfa97fe03bba17f669a6eb69ec39a1e67e44c42cb96f9794074",
+     "origen": [
+      [
+       "cd",
+       "playvid.exe"
+      ],
+      [
+       "instalacion",
+       "PLAYVID.EXE"
+      ]
+     ]
+    },
+    {
+     "nombre": "MFC42.DLL",
+     "tam": 954640,
+     "sha256": "85ce7d2d0444f4b37a4d056c55c9e734bfa077ba48e72a5683d35968e6bf4772",
+     "origen": [
+      [
+       "cd",
+       "MFC42.DLL"
+      ],
+      [
+       "sistema",
+       "MFC42.DLL"
+      ]
+     ]
+    },
+    {
+     "nombre": "MSVCRT.DLL",
+     "tam": 277776,
+     "sha256": "e390b0529fb9ee1214bb68302a4658b578134d92ab76bc5eb48f3badd843d210",
+     "origen": [
+      [
+       "cd",
+       "MSVCRT.DLL"
+      ],
+      [
+       "sistema",
+       "MSVCRT.DLL"
+      ]
+     ]
+    }
+   ],
+   "instalada": {
+    "firmas": [
+     [
+      "MANAGER.EXE",
+      "d76cba428a67c28ae3eb5cca33d76c0ad1174277c5778c3607a073e7be188aa4",
+      2617344
+     ],
+     [
+      "ACTWIN.EXE",
+      "e4a23f6219c0df1e65446e56de8e99fd8ae068fe8c66312c54941ba031c8cc94",
+      274944
+     ]
+    ]
+   }
+  },
+  {
+   "id": "pcf6oro",
+   "nombre": "PC Fútbol 6.0 Edición de Oro",
+   "detalle": "Edición de Oro (recopilatorio), noviembre de 1999",
+   "anio": 1999,
+   "corto": "6.0 ORO",
+   "portada": "1997.jpg",
+   "etiqueta": "Edición de Oro",
+   "carpeta": "FUTBOL6",
+   "programas": [
+    "pcf6oro",
+    "pcf6oro-actwin",
+    "pcf6oro-dbasewin",
+    "pcf6oro-infosurf",
+    "pcf6oro-manager2",
+    "pcf6oro-playvid"
+   ],
+   "dos": false,
+   "necesita_cd": true,
+   "solo_instalada": false,
+   "discos": [
+    {
+     "rol": "cd",
+     "nombre": "CD de PC Fútbol 6.0 Edición de Oro",
+     "firmas": [
+      [
+       "disk.id",
+       "dfa1a53b758e11df3562641a5fadb68bc40da34aff5ffd224dbc08dfb80fd54a",
+       7
+      ],
+      [
+       "Futbol6/manager.exe",
+       "b1a9a88a5bf6413d42198ed91bc2d7216c2a26839cbd5b46f48c040dbe866003",
+       2662400
+      ],
+      [
+       "AUTORUN.INF",
+       "3d08f3d6b3f9f051cc9b89aa5e5fc0477db69278a2a4b5a096bdc720813a2717",
+       50
+      ]
+     ],
+     "instalar": [
+      [
+       "nfo",
+       "In6c_101.nfo"
+      ],
+      [
+       "nfo",
+       "In6c_102.nfo"
+      ],
+      [
+       "nfo",
+       "In6c_103.nfo"
+      ],
+      [
+       "nfo",
+       "In6c_105.nfo"
+      ],
+      [
+       "nfo",
+       "In6p_102.nfo"
+      ],
+      [
+       "nfo",
+       "In6p_103.nfo"
+      ],
+      [
+       "nfo",
+       "In6p_105.nfo"
+      ],
+      [
+       "nfo",
+       "Ins6_100.nfo"
+      ],
+      [
+       "nfo",
+       "Ins6_101.nfo"
+      ],
+      [
+       "nfo",
+       "Ins6_102.nfo"
+      ],
+      [
+       "nfo",
+       "Ins6_103.nfo"
+      ],
+      [
+       "nfo",
+       "Ins6_104.nfo"
+      ],
+      [
+       "nfo",
+       "Ins6_105.nfo"
+      ]
+     ],
+     "copiar": [
+      "Futbol6",
+      "videos",
+      "DBDAT",
+      "disk.id",
+      "dis2.id"
+     ],
+     "sistema": [
+      [
+       "system/MFC42.DLL",
+       "MFC42.DLL"
+      ],
+      [
+       "system/MSVCRT.DLL",
+       "MSVCRT.DLL"
+      ]
+     ]
+    }
+   ],
+   "binarios": [
+    {
+     "nombre": "manager.exe",
+     "tam": 2662400,
+     "sha256": "b1a9a88a5bf6413d42198ed91bc2d7216c2a26839cbd5b46f48c040dbe866003",
+     "origen": [
+      [
+       "cd",
+       "Futbol6/manager.exe"
+      ],
+      [
+       "instalacion",
+       "MANAGER.EXE"
+      ]
+     ]
+    },
+    {
+     "nombre": "actwin.exe",
+     "tam": 274944,
+     "sha256": "e4a23f6219c0df1e65446e56de8e99fd8ae068fe8c66312c54941ba031c8cc94",
+     "origen": [
+      [
+       "cd",
+       "Futbol6/Actwin.exe"
+      ],
+      [
+       "instalacion",
+       "ACTWIN.EXE"
+      ]
+     ]
+    },
+    {
+     "nombre": "dbasewin.exe",
+     "tam": 885248,
+     "sha256": "bcd976c8e60484e4e9af1aecef77ed6ad6fc39eb0399e18dea5f2ca70b925300",
+     "origen": [
+      [
+       "cd",
+       "Futbol6/DBASEWIN.EXE"
+      ],
+      [
+       "instalacion",
+       "DBASEWIN.EXE"
+      ]
+     ]
+    },
+    {
+     "nombre": "infosurf.exe",
+     "tam": 540160,
+     "sha256": "2edcad7c41a156f61d427c62062893dcc72eaa0830b6a7ba6ed0f6b8872b9f9c",
+     "origen": [
+      [
+       "cd",
+       "Calcio6/InfoSurf.exe"
+      ],
+      [
+       "instalacion",
+       "INFOSURF.EXE"
+      ]
+     ]
+    },
+    {
+     "nombre": "manager2.exe",
+     "tam": 2545152,
+     "sha256": "42e5d1d22d1dc8c8ba8bea39bffb91ef7ee752c521d0e1aa999b289fa54ebb16",
+     "origen": [
+      [
+       "cd",
+       "Futbol6/manager2.exe"
+      ],
+      [
+       "instalacion",
+       "MANAGER2.EXE"
+      ]
+     ]
+    },
+    {
+     "nombre": "playvid.exe",
+     "tam": 4096,
+     "sha256": "578977629b165cfa97fe03bba17f669a6eb69ec39a1e67e44c42cb96f9794074",
+     "origen": [
+      [
+       "cd",
+       "Futbol6/playvid.exe"
+      ],
+      [
+       "instalacion",
+       "PLAYVID.EXE"
+      ]
+     ]
+    },
+    {
+     "nombre": "MFC42.DLL",
+     "tam": 995383,
+     "sha256": "aa8c615c8bbcd8ad4a9b624addb512e0702223eb5f266ce8f6a9a005f718a483",
+     "origen": [
+      [
+       "cd",
+       "system/MFC42.DLL"
+      ],
+      [
+       "sistema",
+       "MFC42.DLL"
+      ]
+     ]
+    },
+    {
+     "nombre": "MSVCRT.DLL",
+     "tam": 266293,
+     "sha256": "2d5670881a6d13a100e37da297f6eeb876f68b63073a28eb5d650625c60f9bf7",
+     "origen": [
+      [
+       "cd",
+       "system/MSVCRT.DLL"
+      ],
+      [
+       "sistema",
+       "MSVCRT.DLL"
+      ]
+     ]
+    }
+   ],
+   "instalada": {
+    "firmas": [
+     [
+      "MANAGER.EXE",
+      "b1a9a88a5bf6413d42198ed91bc2d7216c2a26839cbd5b46f48c040dbe866003",
+      2662400
+     ],
+     [
+      "ACTWIN.EXE",
+      "e4a23f6219c0df1e65446e56de8e99fd8ae068fe8c66312c54941ba031c8cc94",
+      274944
+     ]
+    ]
+   }
+  },
+  {
+   "id": "pcf7",
+   "nombre": "PC Fútbol 7",
+   "detalle": "CD del 28 de diciembre de 1998",
+   "anio": 1998,
+   "corto": "7",
+   "portada": "1998.jpg",
+   "etiqueta": "",
+   "carpeta": "FUTBOL7",
+   "programas": [
+    "pcf7",
+    "pcf7-actwin",
+    "pcf7-dbasewin",
+    "pcf7-infosurf",
+    "pcf7-playvid"
+   ],
+   "dos": false,
+   "necesita_cd": true,
+   "solo_instalada": false,
+   "discos": [
+    {
+     "rol": "cd",
+     "nombre": "CD de PC Fútbol 7",
+     "firmas": [
+      [
+       "DISK.ID",
+       "61cd490bde7769eeb04b01bd086b37bdbd14cd29c0de86f549d846c72a4b0bc7",
+       7
+      ],
+      [
+       "MANAGER.EXE",
+       "1e1a5d3283f17bf64bb6badd6d07b9c877e04e60f6dfe2908412cce04fbaa9ff",
+       4636672
+      ],
+      [
+       "AUTORUN.INF",
+       "ef2c87733cb592743fedd2df8801ab6f1174ea75da2ab1db8adcb8c88391b147",
+       49
+      ]
+     ],
+     "instalar": [
+      [
+       "nfc",
+       "INST_100.NFC"
+      ],
+      [
+       "nfc",
+       "INST_102.NFC"
+      ],
+      [
+       "nfc",
+       "INST_103.NFC"
+      ]
+     ],
+     "copiar": "*",
+     "sistema": [
+      [
+       "SYSTEM/MFC42.DLL",
+       "MFC42.DLL"
+      ],
+      [
+       "RCDBASE/PCF70ST.DB0",
+       "MSVCRT.DLL"
+      ]
+     ]
+    }
+   ],
+   "binarios": [
+    {
+     "nombre": "manager.exe",
+     "tam": 4636672,
+     "sha256": "1e1a5d3283f17bf64bb6badd6d07b9c877e04e60f6dfe2908412cce04fbaa9ff",
+     "origen": [
+      [
+       "cd",
+       "MANAGER.EXE"
+      ],
+      [
+       "instalacion",
+       "MANAGER.EXE"
+      ]
+     ]
+    },
+    {
+     "nombre": "actwin.exe",
+     "tam": 394752,
+     "sha256": "216337fccff1990691a37ec9ce60d295d1fb06d6419e33ecb03c95602b305085",
+     "origen": [
+      [
+       "cd",
+       "ACTWIN.EXE"
+      ],
+      [
+       "instalacion",
+       "ACTWIN.EXE"
+      ]
+     ]
+    },
+    {
+     "nombre": "dbasewin.exe",
+     "tam": 968192,
+     "sha256": "89f9bbfa1e4ad9b156bd602ef54d578cfb45787ca608cd742f107bbdb4326f53",
+     "origen": [
+      [
+       "cd",
+       "DBASEWIN.EXE"
+      ],
+      [
+       "instalacion",
+       "DBASEWIN.EXE"
+      ]
+     ]
+    },
+    {
+     "nombre": "infosurf.exe",
+     "tam": 424960,
+     "sha256": "9efc9538cf0ee95190125a7a164f1bfb8ae682e033b18a88788b396772db24be",
+     "origen": [
+      [
+       "cd",
+       "INFOSURF.EXE"
+      ],
+      [
+       "instalacion",
+       "INFOSURF.EXE"
+      ]
+     ]
+    },
+    {
+     "nombre": "playvid.exe",
+     "tam": 33792,
+     "sha256": "d3fa990468519af176c7736c7b47ccd10a5151c9024d88f910143b3dc92229ba",
+     "origen": [
+      [
+       "cd",
+       "PLAYVID.EXE"
+      ],
+      [
+       "instalacion",
+       "PLAYVID.EXE"
+      ]
+     ]
+    },
+    {
+     "nombre": "MFC42.DLL",
+     "tam": 954640,
+     "sha256": "85ce7d2d0444f4b37a4d056c55c9e734bfa077ba48e72a5683d35968e6bf4772",
+     "origen": [
+      [
+       "cd",
+       "SYSTEM/MFC42.DLL"
+      ]
+     ]
+    },
+    {
+     "nombre": "MSVCRT.DLL",
+     "tam": 277776,
+     "sha256": "e390b0529fb9ee1214bb68302a4658b578134d92ab76bc5eb48f3badd843d210",
+     "origen": [
+      [
+       "cd",
+       "RCDBASE/PCF70ST.DB0"
+      ],
+      [
+       "sistema",
+       "MSVCRT.DLL"
+      ]
+     ]
+    }
+   ],
+   "instalada": {
+    "firmas": [
+     [
+      "MANAGER.EXE",
+      "1e1a5d3283f17bf64bb6badd6d07b9c877e04e60f6dfe2908412cce04fbaa9ff",
+      4636672
+     ],
+     [
+      "ACTWIN.EXE",
+      "216337fccff1990691a37ec9ce60d295d1fb06d6419e33ecb03c95602b305085",
+      394752
+     ]
+    ]
+   }
+  },
+  {
+   "id": "pcf7plus",
+   "nombre": "PC Fútbol 7 Plus",
+   "detalle": "PC Fútbol 7 con el CD del Plus (septiembre de 1999)",
+   "anio": 1999,
+   "corto": "7 PLUS",
+   "portada": "1998.jpg",
+   "etiqueta": "Plus",
+   "carpeta": "FUTBOL7",
+   "programas": [
+    "pcf7plus",
+    "pcf7plus-actwin",
+    "pcf7plus-dbasewin",
+    "pcf7plus-infosurf",
+    "pcf7plus-playvid"
+   ],
+   "dos": false,
+   "necesita_cd": true,
+   "solo_instalada": false,
+   "extra": "pcf7plus",
+   "extra_copias": [
+    [
+     "SIMULDAT/TEXTURAS/OTROS/vallas.bmp",
+     "SIMULDAT/TEXTURAS/OTROS/vallasesp.bmp"
+    ],
+    [
+     "SIMULDAT/TEXTURAS/OTROS/vallas.bmp",
+     "SIMULDAT/TEXTURAS/OTROS/vallasmun.bmp"
+    ],
+    [
+     "SIMULDAT/TEXTURAS/OTROS/vallas.bmp",
+     "SIMULDAT/TEXTURAS/OTROS/vallasbar.bmp"
+    ],
+    [
+     "SIMULDAT/TEXTURAS/OTROS/vallas.bmp",
+     "SIMULDAT/TEXTURAS/OTROS/vallasarg.bmp"
+    ],
+    [
+     "SIMULDAT/TEXTURAS/OTROS/vallas.bmp",
+     "SIMULDAT/TEXTURAS/OTROS/vallasfra.bmp"
+    ],
+    [
+     "SIMULDAT/TEXTURAS/OTROS/vallas.bmp",
+     "SIMULDAT/TEXTURAS/OTROS/vallasita.bmp"
+    ],
+    [
+     "SIMULDAT/TEXTURAS/OTROS/vallas.bmp",
+     "SIMULDAT/TEXTURAS/OTROS/vallasing.bmp"
+    ]
+   ],
+   "discos": [
+    {
+     "rol": "cd",
+     "nombre": "CD de PC Fútbol 7",
+     "firmas": [
+      [
+       "DISK.ID",
+       "61cd490bde7769eeb04b01bd086b37bdbd14cd29c0de86f549d846c72a4b0bc7",
+       7
+      ],
+      [
+       "AUTORUN.INF",
+       "ef2c87733cb592743fedd2df8801ab6f1174ea75da2ab1db8adcb8c88391b147",
+       49
+      ],
+      [
+       "INST_100.NFC",
+       "e6aa49e9dcb7830aace8283854abc0e9d552334cc24203edd89e38f685d7ac84",
+       473
+      ]
+     ],
+     "instalar": [
+      [
+       "nfc",
+       "INST_100.NFC"
+      ],
+      [
+       "nfc",
+       "INST_102.NFC"
+      ],
+      [
+       "nfc",
+       "INST_103.NFC"
+      ]
+     ],
+     "copiar": "*",
+     "sistema": [
+      [
+       "SYSTEM/MFC42.DLL",
+       "MFC42.DLL"
+      ],
+      [
+       "RCDBASE/PCF70ST.DB0",
+       "MSVCRT.DLL"
+      ]
+     ]
+    },
+    {
+     "rol": "cd2",
+     "nombre": "CD de PC Fútbol 7 Plus",
+     "firmas": [
+      [
+       "MANAGER.EXE",
+       "766ac3530f2d5a5649581dd38cc4c3df7d20ae0937233bf1403f96b82ade7177",
+       4939776
+      ],
+      [
+       "AUTORUN.INF",
+       "caff39644a87fde0a8fa5044f2cddd014ab25f50d1420e2ed604416f6c6d3654",
+       49
+      ],
+      [
+       "INST_100.NFO",
+       "5786e8e657b07bfe33d0c0c4653c6976fa21566052eb06532b0cde64ad934344",
+       94
+      ]
+     ],
+     "instalar": [
+      [
+       "nfo",
+       "INST_100.NFO"
+      ]
+     ],
+     "copiar": "*",
+     "sistema": []
+    }
+   ],
+   "binarios": [
+    {
+     "nombre": "manager.exe",
+     "tam": 4939776,
+     "sha256": "766ac3530f2d5a5649581dd38cc4c3df7d20ae0937233bf1403f96b82ade7177",
+     "origen": [
+      [
+       "cd2",
+       "MANAGER.EXE"
+      ],
+      [
+       "instalacion",
+       "MANAGER.EXE"
+      ]
+     ]
+    },
+    {
+     "nombre": "actwin.exe",
+     "tam": 394752,
+     "sha256": "216337fccff1990691a37ec9ce60d295d1fb06d6419e33ecb03c95602b305085",
+     "origen": [
+      [
+       "cd",
+       "ACTWIN.EXE"
+      ],
+      [
+       "instalacion",
+       "ACTWIN.EXE"
+      ]
+     ]
+    },
+    {
+     "nombre": "dbasewin.exe",
+     "tam": 968192,
+     "sha256": "89f9bbfa1e4ad9b156bd602ef54d578cfb45787ca608cd742f107bbdb4326f53",
+     "origen": [
+      [
+       "cd",
+       "DBASEWIN.EXE"
+      ],
+      [
+       "instalacion",
+       "DBASEWIN.EXE"
+      ]
+     ]
+    },
+    {
+     "nombre": "infosurf.exe",
+     "tam": 424960,
+     "sha256": "9efc9538cf0ee95190125a7a164f1bfb8ae682e033b18a88788b396772db24be",
+     "origen": [
+      [
+       "cd",
+       "INFOSURF.EXE"
+      ],
+      [
+       "instalacion",
+       "INFOSURF.EXE"
+      ]
+     ]
+    },
+    {
+     "nombre": "playvid.exe",
+     "tam": 33792,
+     "sha256": "d3fa990468519af176c7736c7b47ccd10a5151c9024d88f910143b3dc92229ba",
+     "origen": [
+      [
+       "cd",
+       "PLAYVID.EXE"
+      ],
+      [
+       "instalacion",
+       "PLAYVID.EXE"
+      ]
+     ]
+    },
+    {
+     "nombre": "MFC42.DLL",
+     "tam": 954640,
+     "sha256": "85ce7d2d0444f4b37a4d056c55c9e734bfa077ba48e72a5683d35968e6bf4772",
+     "origen": [
+      [
+       "cd",
+       "SYSTEM/MFC42.DLL"
+      ]
+     ]
+    },
+    {
+     "nombre": "MSVCRT.DLL",
+     "tam": 277776,
+     "sha256": "e390b0529fb9ee1214bb68302a4658b578134d92ab76bc5eb48f3badd843d210",
+     "origen": [
+      [
+       "cd",
+       "RCDBASE/PCF70ST.DB0"
+      ],
+      [
+       "sistema",
+       "MSVCRT.DLL"
+      ]
+     ]
+    }
+   ],
+   "instalada": {
+    "firmas": [
+     [
+      "MANAGER.EXE",
+      "766ac3530f2d5a5649581dd38cc4c3df7d20ae0937233bf1403f96b82ade7177",
+      4939776
+     ],
+     [
+      "ACTWIN.EXE",
+      "216337fccff1990691a37ec9ce60d295d1fb06d6419e33ecb03c95602b305085",
+      394752
+     ]
+    ]
+   }
+  },
+  {
+   "id": "pcf2000",
+   "nombre": "PC Fútbol 2000",
+   "detalle": "con la Extensión (InstallShield)",
+   "anio": 1999,
+   "corto": "2000",
+   "portada": "2000.jpg",
+   "etiqueta": "",
+   "carpeta": "PCF2000",
+   "programas": [
+    "pcf2000",
+    "pcf2000-dbasewin"
+   ],
+   "dos": false,
+   "necesita_cd": true,
+   "solo_instalada": true,
+   "nota": "La instalación (base y Extensión, InstallShield) aún no se reproduce desde los CD: hace falta la carpeta C:\\PCF2000 de una instalación completa (con la Extensión) y el CD base.",
+   "discos": [
+    {
+     "rol": "cd",
+     "nombre": "CD de PC Fútbol 2000",
+     "firmas": [
+      [
+       "DISK.ID",
+       "fc54b2ac3237ea9beb030ce695b4379c62c002e1c9365d0af29fcb0ae570bc57",
+       7
+      ],
+      [
+       "AUTORUN.INF",
+       "8702589c6900dff0a0da5acdfa17e4743a1a637f5a95a881132538f3c08a7f93",
+       49
+      ],
+      [
+       "LAYOUT.BIN",
+       "cb8ce2979b8d8e4ef7c08e6ab967dc5e932655b501b34482a844ebf5a8c46290",
+       981
+      ]
+     ],
+     "instalar": [],
+     "copiar": [
+      "DISK.ID",
+      "GRAFICOS.PAK",
+      "NGI.PAK",
+      "IMG.PAK",
+      "RC_DBASE.PAK",
+      "DBDAT",
+      "SIMULDAT",
+      "SFX",
+      "CAMP",
+      "BETIQIUI.FOY",
+      "CIZOEAAI.LIV",
+      "DEKOWITO.FII",
+      "EIMAIOII.PEH",
+      "IADOXATO.VOY",
+      "PCFUTFX.DDT",
+      "HSTADIUM.IPX",
+      "UQPRIME.IPX",
+      "OMANAGER.ODL",
+      "OPUBLIC.001",
+      "2KSCORE.SC0",
+      "SPLAND.SC0",
+      "BDRVISA.DRV",
+      "GPRINTER.DLL"
+     ],
+     "sistema": []
+    }
+   ],
+   "binarios": [
+    {
+     "nombre": "manager.exe",
+     "tam": 5591040,
+     "sha256": "e1efd5e99008f5da2dc6500a5d9cc7c2bc3ee84887b9d351ab6055ab42f2fa9b",
+     "origen": [
+      [
+       "instalacion",
+       "Extension/MANAGER.EXE"
+      ]
+     ]
+    },
+    {
+     "nombre": "dbasewin.exe",
+     "tam": 864256,
+     "sha256": "49ffebbcf0d46f1e3822fb45e0fb53c66200d8aff30d0f3fe440246f7cc05673",
+     "origen": [
+      [
+       "instalacion",
+       "Extension/DBASEWIN.EXE"
+      ]
+     ]
+    },
+    {
+     "nombre": "utils.dll",
+     "tam": 262144,
+     "sha256": "060c923784fe39bbec72b641ead2d06278f95b7640580677b71f2d2856acf616",
+     "origen": [
+      [
+       "instalacion",
+       "Extension/Utils.dll"
+      ]
+     ]
+    },
+    {
+     "nombre": "gfxwin.dll",
+     "tam": 1085496,
+     "sha256": "2ed0420cb94761ed134689a1048a05fefb21a10b9ca4f0f8c1a575e4077862ab",
+     "origen": [
+      [
+       "instalacion",
+       "Extension/gfxwin.dll"
+      ]
+     ]
+    },
+    {
+     "nombre": "d2s2.dll",
+     "tam": 335872,
+     "sha256": "3e34486809e4e37f83dfc6cdde16be91b6860e54ce02a644fc049fac0b2b6e81",
+     "origen": [
+      [
+       "instalacion",
+       "Extension/d2s2.dll"
+      ]
+     ]
+    },
+    {
+     "nombre": "dcsf.dll",
+     "tam": 86016,
+     "sha256": "d1af7e50411f81f344ff9b2ecb8fa36daa6da576f6212c0abe44bf55214b716e",
+     "origen": [
+      [
+       "instalacion",
+       "Extension/DCSF.dll"
+      ]
+     ]
+    },
+    {
+     "nombre": "dcsfx.dll",
+     "tam": 69632,
+     "sha256": "2954af45e2592dba5230d270ffd0a29640a1276bb6546c105c824ded5648b27f",
+     "origen": [
+      [
+       "instalacion",
+       "Extension/DCSFX.dll"
+      ]
+     ]
+    },
+    {
+     "nombre": "dcd3d.dll",
+     "tam": 65536,
+     "sha256": "121c5f59bedc2bae33d7e70896d28c3ac260b17c67ca2da35a902daa197717ff",
+     "origen": [
+      [
+       "instalacion",
+       "Extension/dcd3d.dll"
+      ]
+     ]
+    },
+    {
+     "nombre": "MFC42.DLL",
+     "tam": 995383,
+     "sha256": "aa8c615c8bbcd8ad4a9b624addb512e0702223eb5f266ce8f6a9a005f718a483",
+     "origen": [
+      [
+       "sistema",
+       "MFC42.DLL"
+      ]
+     ]
+    },
+    {
+     "nombre": "MSVCRT.DLL",
+     "tam": 266293,
+     "sha256": "2d5670881a6d13a100e37da297f6eeb876f68b63073a28eb5d650625c60f9bf7",
+     "origen": [
+      [
+       "sistema",
+       "MSVCRT.DLL"
+      ]
+     ]
+    }
+   ],
+   "instalada": {
+    "firmas": [
+     [
+      "Extension/MANAGER.EXE",
+      "e1efd5e99008f5da2dc6500a5d9cc7c2bc3ee84887b9d351ab6055ab42f2fa9b",
+      5591040
+     ],
+     [
+      "Extension/DBASEWIN.EXE",
+      "49ffebbcf0d46f1e3822fb45e0fb53c66200d8aff30d0f3fe440246f7cc05673",
+      864256
+     ]
+    ]
+   }
+  },
+  {
+   "id": "pcf2001",
+   "nombre": "PC Fútbol 2001",
+   "detalle": "con las 13 actualizaciones oficiales (versión 3.6)",
+   "anio": 2000,
+   "corto": "2001",
+   "portada": "2001.jpg",
+   "etiqueta": "",
+   "carpeta": "PCF2001",
+   "programas": [
+    "pcf2001",
+    "pcf2001-dbasewin"
+   ],
+   "dos": false,
+   "necesita_cd": true,
+   "solo_instalada": false,
+   "nota": "Hacen falta el CD y la carpeta ACTUALIZ con las 13 actualizaciones oficiales (PCFACT01 a PCFACT12 y PCFPATCH; vale su ISO). La app reproduce la instalación de InstallShield y aplica las actualizaciones con el parcheador original (RTPatch) traducido.",
+   "discos": [
+    {
+     "rol": "cd",
+     "nombre": "CD de PC Fútbol 2001",
+     "firmas": [
+      [
+       "DISK.ID",
+       "012d60358dba2f63ad2d6ddc56f92b8e6dc0142ef7b59966a187551b49fad9bb",
+       7
+      ],
+      [
+       "AUTORUN.INF",
+       "ae340127b8c5581709c255e176b694761e0c7ab9dfb59b1e13328eb12fe55c3f",
+       51
+      ],
+      [
+       "LAYOUT.BIN",
+       "99e81c8266f214d0549d9fe7965b1f31ac22c5bbcd3452809e16c10bb7308526",
+       441
+      ]
+     ],
+     "instalar": [
+      [
+       "is6",
+       "Exe & Dll",
+       ""
+      ],
+      [
+       "is6",
+       "Root",
+       ""
+      ],
+      [
+       "arbol",
+       "DBDAT",
+       "DBDAT"
+      ],
+      [
+       "arbol",
+       "SIMULDAT",
+       "Simuldat"
+      ],
+      [
+       "arbol",
+       "SFX",
+       "SFX"
+      ],
+      [
+       "copia",
+       "GRAFICOS.PAK",
+       "GRAFICOS.PAK"
+      ],
+      [
+       "copia",
+       "RC_DBASE.PAK",
+       "rc_dbase.pak"
+      ],
+      [
+       "carpeta",
+       "Goles"
+      ],
+      [
+       "carpeta",
+       "Notas"
+      ],
+      [
+       "carpeta",
+       "Save/actual"
+      ],
+      [
+       "carpeta",
+       "Save/Manager"
+      ]
+     ],
+     "copiar": [
+      "DISK.ID",
+      "3DDXF",
+      "CAMPO",
+      "CONTROL",
+      "PLAY3D",
+      "GOLES.ODE",
+      "JUGADOR.PIE",
+      "PARTIDA.EYF"
+     ],
+     "sistema": [
+      [
+       "is6:Shared DLLs",
+       ""
+      ]
+     ]
+    }
+   ],
+   "parches": {
+    "nombre": "la carpeta ACTUALIZ con las 13 actualizaciones oficiales (o su ISO)",
+    "ficheros": [
+     {
+      "nombre": "PCFACT01.exe",
+      "sha256": "43bca94dd794ac420f954efe4ce6412919324c25e8a5cc8b8f0a9ed00832e1f8",
+      "tam": 597504,
+      "rtp": "PCFACT01.RTP",
+      "copias": []
+     },
+     {
+      "nombre": "PCFACT02.exe",
+      "sha256": "593093aa20da3dcad9a190f32955fac28f4d9238813ea2b1af59f5b9bbccf040",
+      "tam": 635392,
+      "rtp": "PCFACT02.RTP",
+      "copias": []
+     },
+     {
+      "nombre": "PCFACT03.exe",
+      "sha256": "14bcc0a58fc2068f77ad5877a094b280c0de3a103e77deea8ae476a280d5e2a5",
+      "tam": 572416,
+      "rtp": "PCFACT03.RTP",
+      "copias": []
+     },
+     {
+      "nombre": "PCFACT04.exe",
+      "sha256": "289e0ced690f7660027279c79dd6a142c2f6be1ffc3c65d35cf62fdacc3a76a7",
+      "tam": 612352,
+      "rtp": "PCFACT04.RTP",
+      "copias": []
+     },
+     {
+      "nombre": "PCFPATCH.EXE",
+      "sha256": "413a5290d561ea054b0e3f6e5011a8314c2bee35c4279c6795a7f3033bed42a1",
+      "tam": 1434112,
+      "rtp": "PCFPATCH36.RTP",
+      "copias": [
+       [
+        "UtilsMMX.dll",
+        "Utils.dll"
+       ]
+      ]
+     },
+     {
+      "nombre": "PCFACT05.exe",
+      "sha256": "2e6124a84964be12b9d0b103d073ec7226fe0ec9fbd4bd2a59c06f0a4a55a30b",
+      "tam": 541184,
+      "rtp": "PCFACT05.RTP",
+      "copias": []
+     },
+     {
+      "nombre": "PCFACT06.exe",
+      "sha256": "3a2c13054117546da09345f8a63fdc43a5fcdc71ff0bea8f93c9b5093068c5db",
+      "tam": 462336,
+      "rtp": "PCFACT06.RTP",
+      "copias": []
+     },
+     {
+      "nombre": "PCFACT07.exe",
+      "sha256": "0489d8520cf7679db5ba5d9dfd710a816ccc6c5a102fa28081fe5a08c87e46fb",
+      "tam": 446464,
+      "rtp": "PCFACT07.RTP",
+      "copias": []
+     },
+     {
+      "nombre": "PCFACT08.exe",
+      "sha256": "349b8c1e209e8aa6d855d673ac3f1de2d05ab0763901457ab5151e2ca5e66414",
+      "tam": 468480,
+      "rtp": "PCFACT08.RTP",
+      "copias": []
+     },
+     {
+      "nombre": "PCFACT09.exe",
+      "sha256": "aa28a8801355f48c6fb376d908eb8c1d7035eb7391ce2a38f3b227cd285fc875",
+      "tam": 519680,
+      "rtp": "PCFACT09.RTP",
+      "copias": []
+     },
+     {
+      "nombre": "PCFACT10.exe",
+      "sha256": "a84ca6cf00aab54b73b703371e1c81d81e9ab2c56d1c90e5f60f8f98a6929cd3",
+      "tam": 536576,
+      "rtp": "PCFACT10.RTP",
+      "copias": []
+     },
+     {
+      "nombre": "PCFACT11.exe",
+      "sha256": "98372c60e6f5b461c49e66e5ae012b3c729fb925d1d80146876776d49e8a6faa",
+      "tam": 519168,
+      "rtp": "PCFACT11.RTP",
+      "copias": []
+     },
+     {
+      "nombre": "PCFACT12.exe",
+      "sha256": "870ed1486f3b15bcb6d7d10bf06d8decde531c1760fb43140c8c94fad35e8852",
+      "tam": 707584,
+      "rtp": "PCFACT12.RTP",
+      "copias": []
+     }
+    ],
+    "escribe": [
+     [
+      "update.ini",
+      "V3.6\r\n"
+     ]
+    ]
+   },
+   "binarios": [
+    {
+     "nombre": "manager.exe",
+     "tam": 7991296,
+     "sha256": "bcbb057e80e370dfd1647c7124cac80cd8ac4bdcdc51abb36caa43a828dd63bc",
+     "origen": [
+      [
+       "instalacion",
+       "manager.exe"
+      ]
+     ]
+    },
+    {
+     "nombre": "dbasewin.exe",
+     "tam": 839680,
+     "sha256": "ca310df2230ebf858fde8eefc1a0002afdc6712a22ecf5e6415a88b9d4c2d72c",
+     "origen": [
+      [
+       "instalacion",
+       "DBaseWin.exe"
+      ]
+     ]
+    },
+    {
+     "nombre": "utils.dll",
+     "tam": 262144,
+     "sha256": "11b9eb2fd977ae672cd80b2cf41fd7df64596dd54e6d05fad257ffc4c378d2c7",
+     "origen": [
+      [
+       "instalacion",
+       "Utils.dll"
+      ]
+     ]
+    },
+    {
+     "nombre": "gfxwin.dll",
+     "tam": 1097797,
+     "sha256": "d11c89b34f3d5aef1db32ef38b2259d6b0633ec2aa49fed66e582a00fa12a4c9",
+     "origen": [
+      [
+       "instalacion",
+       "gfxwin.dll"
+      ]
+     ]
+    },
+    {
+     "nombre": "d2s2.dll",
+     "tam": 417792,
+     "sha256": "deb4d32ba35a1d21c76096141bda6b5bbc1cfcceadf2dc5975f4bb21cb8c0856",
+     "origen": [
+      [
+       "instalacion",
+       "d2s2.dll"
+      ]
+     ]
+    },
+    {
+     "nombre": "dcsf.dll",
+     "tam": 86016,
+     "sha256": "ec581d48fda3221d2544d154434862613d7c860b64c0ed3eb3209fde1d9a1fff",
+     "origen": [
+      [
+       "instalacion",
+       "DCSF.dll"
+      ]
+     ]
+    },
+    {
+     "nombre": "dcsfx.dll",
+     "tam": 69632,
+     "sha256": "583aa62bda79ceda553e748de59cf0f79c6d29583cb37a413a2d497943126bc6",
+     "origen": [
+      [
+       "instalacion",
+       "dcsfx.dll"
+      ]
+     ]
+    },
+    {
+     "nombre": "dcd3d.dll",
+     "tam": 65536,
+     "sha256": "0844ccb1df64b02c2efd702adebf044f1661eab4fa3b113824b28cfdb405a441",
+     "origen": [
+      [
+       "instalacion",
+       "dcd3d.dll"
+      ]
+     ]
+    },
+    {
+     "nombre": "MFC42.DLL",
+     "tam": 995383,
+     "sha256": "aa8c615c8bbcd8ad4a9b624addb512e0702223eb5f266ce8f6a9a005f718a483",
+     "origen": [
+      [
+       "sistema",
+       "MFC42.DLL"
+      ]
+     ]
+    },
+    {
+     "nombre": "MSVCRT.DLL",
+     "tam": 266293,
+     "sha256": "2d5670881a6d13a100e37da297f6eeb876f68b63073a28eb5d650625c60f9bf7",
+     "origen": [
+      [
+       "sistema",
+       "MSVCRT.DLL"
+      ]
+     ]
+    },
+    {
+     "nombre": "MSVCP60.DLL",
+     "tam": 401462,
+     "sha256": "2b6b93c2d66969eb00258e2b5ad6172decebada096e3b1b077a3380c80e4a072",
+     "origen": [
+      [
+       "sistema",
+       "MSVCP60.DLL"
+      ]
+     ]
+    },
+    {
+     "nombre": "MSVCIRT.DLL",
+     "tam": 77878,
+     "sha256": "647f7534aaaedffa93534e4cb9b24bfcf91524828ff0364d88973be58139e255",
+     "origen": [
+      [
+       "sistema",
+       "MSVCIRT.DLL"
+      ]
+     ]
+    }
+   ],
+   "instalada": {
+    "firmas": [
+     [
+      "manager.exe",
+      "bcbb057e80e370dfd1647c7124cac80cd8ac4bdcdc51abb36caa43a828dd63bc",
+      7991296
+     ],
+     [
+      "DBaseWin.exe",
+      "ca310df2230ebf858fde8eefc1a0002afdc6712a22ecf5e6415a88b9d4c2d72c",
+      839680
+     ]
+    ]
+   }
+  }
+ ]
+}

@@ -1,0 +1,37 @@
+[Unit]
+Description=Partidas y estado de source.pcfsite.com en la cuenta de pcfsite (servicio/partidas.py)
+After=network.target foro.service
+
+[Service]
+User=source-partidas
+Group=source-partidas
+ExecStart=/usr/bin/python3 /opt/source-partidas/partidas.py
+Environment=PARTIDAS_DATOS=/var/lib/source-partidas
+# la API interna del Admin (admin.pcfsite.com): clave pública con la que firma sus tokens (la misma que en foro.service)
+# y carpeta de los jti usados (en /run, que es de este servicio y se vacía al reiniciar)
+Environment=PCF_ADMIN_FIRMA_PUB=k20261008:MCowBQYDK2VwAyEAvW5NDY8Mw2bcoHg0sXzU2tM2r/yeHxUHsIUSxzuWcf8=
+Environment=PCF_INTERNO_JTI_DIR=/run/source-partidas/jti
+RuntimeDirectory=source-partidas
+RuntimeDirectoryMode=0700
+Restart=on-failure
+RestartSec=3
+# endurecimiento: solo escribe en sus datos
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ReadWritePaths=/var/lib/source-partidas
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictAddressFamilies=AF_INET AF_INET6
+RestrictNamespaces=yes
+LockPersonality=yes
+CapabilityBoundingSet=
+SystemCallArchitectures=native
+MemoryMax=256M
+TasksMax=64
+
+[Install]
+WantedBy=multi-user.target

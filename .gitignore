@@ -1,0 +1,9 @@
+dist/
+deploy.env
+__pycache__/
+.DS_Store
+# entorno de Python del núcleo (en los worktrees es un enlace)
+.venv
+core/.venv
+# enlace al build del worktree principal
+core/build

@@ -1,0 +1,8 @@
+# Ficheros del CD que el juego lee (liga y partido) y la web debe precargar (ver juegos/pcf5)
+cd/DISK.ID
+cd/SIMULDAT/MODELOS.PKF
+cd/SIMULDAT/TEXTURAS/OTROS.PKF
+cd/SIMULDAT/TEXTURAS/CARAS.PKF
+cd/DBDAT/MINIESC.pkf
+cd/DBDAT/RIDIESC.pkf
+cd/SFX/AMBIENTE.PKF

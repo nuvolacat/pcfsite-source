@@ -1,0 +1,19 @@
+PCFSite - Source para Linux
+===========================
+
+Descomprime esta carpeta donde quieras y ejecuta ./pcfsite-source (o ./instalar.sh para tener la app en el menú de
+aplicaciones; ./instalar.sh --quitar lo deshace). No hace falta instalar nada más: SDL3 va dentro, y el resto (X11 o
+Wayland, PulseAudio o PipeWire) lo coge del sistema si está.
+
+- Hay una versión para x86_64 y otra para ARM de 64 bits (arm64). Hacen falta una glibc igual o más nueva que la de la
+  máquina donde se compiló (viene en VERSION) y un escritorio con X11 o Wayland.
+- La app no lleva ningún fichero de los juegos: pide la imagen ISO del CD original (o la carpeta con su contenido) y, en
+  el 2001, la carpeta ACTUALIZ con las 13 actualizaciones. Los juegos se preparan en la carpeta Documentos del usuario
+  (la de XDG; si no, ~/Documentos o ~/Documents), en «PCFSite - Source»; los ajustes, en ~/.local/share/pcfsite-source.
+- Para montar las ISO sin pedir contraseña la app usa fuseiso (paquete «fuseiso»; recomendado) o, si no está, udisks2
+  (udisksctl, lo trae cualquier escritorio: monta en /run/media/<usuario>/). Si no tienes ninguno de los dos, instala
+  uno, o elige la carpeta con el contenido del CD en vez de la ISO. La ISO se desmonta al cerrar el juego.
+- Los mods en .rar y .7z se descomprimen con bsdtar (paquete «libarchive-tools»), 7z o unrar, el que haya; los .zip y las
+  carpetas no necesitan nada.
+
+Comunidad: www.pcfsite.com — creada por @jordirubo.

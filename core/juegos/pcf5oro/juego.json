@@ -1,0 +1,65 @@
+{
+  "id": "pcf5oro",
+  "nombre": "PC Fútbol 5.0 Edición de Oro",
+  "carpeta": "FUTBOL5",
+  "trabajo": "~/pcf5oro-work",
+  "principal": "manager.exe",
+  "salida_menu": "0x6734ec",
+  "dlls": [
+    [
+      "MFC42.DLL",
+      "0x02000000"
+    ],
+    [
+      "MSVCRT.DLL",
+      "0x02200000"
+    ],
+    [
+      "MSVCIRT.DLL",
+      "0x02280000"
+    ]
+  ],
+  "lanzador": {
+    "2": [
+      "infosurf",
+      "2"
+    ],
+    "3": [
+      "dbasewin",
+      "0"
+    ],
+    "4": [
+      "dbasewin",
+      "1"
+    ],
+    "5": [
+      "dbasewin",
+      "2"
+    ],
+    "6": [
+      "dbasewin",
+      "3"
+    ],
+    "7": [
+      "infosurf",
+      "1"
+    ],
+    "8": [
+      "infosurf",
+      "0"
+    ]
+  },
+  "web": {
+    "excluir": []
+  },
+  "lanzador_notas": "2 Instrucciones (infosurf 2), 3 Historia, 4 Base de datos, 5/6 Seguimiento, 7 Actualización on line, 8 InfoFútbol (comprobado pulsando el menú)",
+  "estado_notas": "2026-10-19: igual que pcf5: menú, liga, grabar/cargar, partido 3D y sonido.",
+  "sha256": {
+    "dbasewin.exe": "fdd7e71b30cb6e1f08a29055bb0078548f7bf0da6f1e376d5670504384534b7f",
+    "infosurf.exe": "7223e54444de191caf5dbb5dd35700001b4b34177947a2e8a767b5af7e08eff7",
+    "manager.exe": "5b6f8fcc813234aef1268b1cb6ac1ee0e7fb10f4f83cd6e2653d214d192d003c",
+    "MFC42.DLL": "924742218abfe2e9cad746ab738709b5cb50413631e93342acc941524ba6c7f6",
+    "MSVCIRT.DLL": "9717c95654d34a8e78d712f9c5a3aa82351ec04c6318e7b4aca9e6a4ad701a34",
+    "MSVCRT.DLL": "df9f2aab7f7119f214c5d743d961fde4bf324f19011fbbb7e9cf666856fba0ba"
+  }
+}

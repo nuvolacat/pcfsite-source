@@ -1,0 +1,82 @@
+{
+  "id": "pcf7plus",
+  "nombre": "PC Fútbol 7 Plus",
+  "carpeta": "FUTBOL7",
+  "trabajo": "~/pcf7plus-work",
+  "principal": "manager.exe",
+  "salida_menu": "0x8bdbe8",
+  "pila": "0x01300000",
+  "dlls": [
+    [
+      "MFC42.DLL",
+      "0x02000000"
+    ],
+    [
+      "MSVCRT.DLL",
+      "0x02200000"
+    ]
+  ],
+  "lanzador": {
+    "2": [
+      "infosurf",
+      "2"
+    ],
+    "3": [
+      "dbasewin",
+      "0"
+    ],
+    "4": [
+      "dbasewin",
+      "1"
+    ],
+    "5": [
+      "dbasewin",
+      "2"
+    ],
+    "6": [
+      "dbasewin",
+      "3"
+    ],
+    "7": [
+      "infosurf",
+      "1"
+    ],
+    "8": [
+      "infosurf",
+      "0"
+    ],
+    "10": [
+      "actwin",
+      null
+    ],
+    "11": [
+      "infosurf",
+      "4"
+    ],
+    "12": [
+      "infosurf",
+      "5"
+    ],
+    "13": [
+      "dbasewin",
+      "4"
+    ]
+  },
+  "web": {
+    "excluir": [],
+    "cd_notas": "D: = CD de PCF7 + CD del Plus mezclados"
+  },
+  "lanzador_notas": "misma tabla que PCF7.EXE (el lanzador del CD tiene las mismas entradas en el mismo orden)",
+  "dlls_notas": "MFC42 4.21 y MSVCRT del CD de PCF7 (como el juego base). El Plus está hecho con VC6 y usa dos funciones de la MFC 6.0 que la 4.21 no tiene (CWnd::ClientToScreen/ScreenToClient con RECT, ordinales 6605 y 6880): están en platform/src/user32.cpp. Con las DLL de VC6 (del CD de PCF6 Oro) el arranque fallaba.",
+  "estado_notas": "2026-10-20: jugable: menú, liga, torneos de verano, grabar/cargar y partido 3D con sonido. D: = CD de PCF7 + CD del Plus mezclados. Huecos de datos: SIMULDAT\\TEXTURAS\\OTROS\\vallas{esp,mun,bar,arg,fra,ita,ing}.bmp no están en ningún CD y el partido las exige: relleno provisional en datos_extra/ (copiar a la instalación).",
+  "datos_extra": "juegos/pcf7plus/datos_extra: ficheros que faltan en los CD; SIMULDAT/TEXTURAS/OTROS/vallas.bmp se copia como vallas{esp,mun,bar,arg,fra,ita,ing}.bmp",
+  "sha256": {
+    "actwin.exe": "216337fccff1990691a37ec9ce60d295d1fb06d6419e33ecb03c95602b305085",
+    "dbasewin.exe": "89f9bbfa1e4ad9b156bd602ef54d578cfb45787ca608cd742f107bbdb4326f53",
+    "infosurf.exe": "9efc9538cf0ee95190125a7a164f1bfb8ae682e033b18a88788b396772db24be",
+    "manager.exe": "766ac3530f2d5a5649581dd38cc4c3df7d20ae0937233bf1403f96b82ade7177",
+    "MFC42.DLL": "85ce7d2d0444f4b37a4d056c55c9e734bfa077ba48e72a5683d35968e6bf4772",
+    "MSVCRT.DLL": "e390b0529fb9ee1214bb68302a4658b578134d92ab76bc5eb48f3badd843d210",
+    "playvid.exe": "d3fa990468519af176c7736c7b47ccd10a5151c9024d88f910143b3dc92229ba"
+  }
+}

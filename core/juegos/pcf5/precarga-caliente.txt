@@ -1,0 +1,3 @@
+# Ficheros que la web precarga primero (tools/web_datos.py). PCF5DAT.PKF va en el CD y se lee al salir avisos
+# (lesiones, noticias): sin precargar, el juego esperaba a la red y la música hacía bucle.
+cd/PCF5DAT.PKF

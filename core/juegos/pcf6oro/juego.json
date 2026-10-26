@@ -1,0 +1,100 @@
+{
+  "id": "pcf6oro",
+  "nombre": "PC Fútbol 6.0 Edición de Oro",
+  "carpeta": "FUTBOL6",
+  "trabajo": "~/pcf6oro-work",
+  "principal": "manager.exe",
+  "dlls": [
+    [
+      "MFC42.DLL",
+      "0x02000000"
+    ],
+    [
+      "MSVCRT.DLL",
+      "0x02200000"
+    ]
+  ],
+  "salida_menu": "0x689e94",
+  "lanzador": {
+    "2": [
+      "infosurf",
+      "2"
+    ],
+    "3": [
+      "dbasewin",
+      "0"
+    ],
+    "4": [
+      "dbasewin",
+      "1"
+    ],
+    "5": [
+      "dbasewin",
+      "2"
+    ],
+    "6": [
+      "dbasewin",
+      "3"
+    ],
+    "7": [
+      "infosurf",
+      "1"
+    ],
+    "8": [
+      "infosurf",
+      "0"
+    ],
+    "10": [
+      "actwin",
+      null
+    ],
+    "11": [
+      "infosurf",
+      "4"
+    ],
+    "12": [
+      "infosurf",
+      "5"
+    ],
+    "13": [
+      "dbasewin",
+      "4"
+    ],
+    "14": [
+      "manager2",
+      "0"
+    ],
+    "15": [
+      "manager2",
+      "1"
+    ]
+  },
+  "lanzador_notas": "misma tabla que PCF7.EXE (el lanzador del CD tiene las mismas entradas en el mismo orden); 14/15 = MANAGER2.EXE 0/1",
+  "web": {
+    "cd": [
+      "Futbol6",
+      "videos",
+      "DBDAT",
+      "disk.id",
+      "dis2.id"
+    ],
+    "cd_notas": "del CD (2,6 GB, recopilatorio) solo se publica lo de PC Fútbol 6: su carpeta, los vídeos y la base de datos",
+    "excluir": [
+      "game/FUTBOL6/TACTICS/manager.000",
+      "game/FUTBOL6/manager.ini",
+      "game/FUTBOL6/sip.ini",
+      "game/FUTBOL6/TACTICS/partido.dat"
+    ]
+  },
+  "sha256": {
+    "actwin.exe": "e4a23f6219c0df1e65446e56de8e99fd8ae068fe8c66312c54941ba031c8cc94",
+    "dbasewin.exe": "bcd976c8e60484e4e9af1aecef77ed6ad6fc39eb0399e18dea5f2ca70b925300",
+    "infosurf.exe": "2edcad7c41a156f61d427c62062893dcc72eaa0830b6a7ba6ed0f6b8872b9f9c",
+    "manager.exe": "b1a9a88a5bf6413d42198ed91bc2d7216c2a26839cbd5b46f48c040dbe866003",
+    "manager2.exe": "42e5d1d22d1dc8c8ba8bea39bffb91ef7ee752c521d0e1aa999b289fa54ebb16",
+    "MFC42.DLL": "aa8c615c8bbcd8ad4a9b624addb512e0702223eb5f266ce8f6a9a005f718a483",
+    "MSVCRT.DLL": "2d5670881a6d13a100e37da297f6eeb876f68b63073a28eb5d650625c60f9bf7",
+    "pcf6.exe": "a8abfa6c675ec8e20dc16418b2088605809dafc4b6eab88f08f4bbfa0020fc91",
+    "playvid.exe": "578977629b165cfa97fe03bba17f669a6eb69ec39a1e67e44c42cb96f9794074"
+  }
+}

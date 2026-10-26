@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>CFBundleName</key><string>PCFSite - Source</string>
+  <key>CFBundleDisplayName</key><string>PCFSite - Source</string>
+  <key>CFBundleIdentifier</key><string>com.pcfsite.source</string>
+  <key>CFBundleVersion</key><string>@VERSION@</string>
+  <key>CFBundleShortVersionString</key><string>@VERSION@</string>
+  <key>CFBundlePackageType</key><string>APPL</string>
+  <key>CFBundleExecutable</key><string>lanzador</string>
+  <key>CFBundleIconFile</key><string>pcfsite</string>
+  <key>CFBundleInfoDictionaryVersion</key><string>6.0</string>
+  <key>LSMinimumSystemVersion</key><string>@MINIMO@</string>
+  <key>NSHighResolutionCapable</key><true/>
+  <key>NSHumanReadableCopyright</key><string>Creada por @jordirubo (x.com/jordirubo). Comunidad: www.pcfsite.com. Software libre (GPL-3.0), hecho por aficionados, sin afiliación con Dinamic Multimedia. No incluye ningún fichero de los juegos.</string>
+  <key>LSApplicationCategoryType</key><string>public.app-category.sports-games</string>
+</dict>
+</plist>

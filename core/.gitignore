@@ -1,0 +1,15 @@
+__pycache__/
+.DS_Store
+.venv/
+*.CPR
+*.dll
+*.DLL
+*.exe
+*.EXE
+*.pkf
+*.PKF
+*.pyc
+# datos y binarios del juego: no se distribuyen (viven en ~/pcf7-work)
+# generados
+build/
+platform/fonts/*.sf2
