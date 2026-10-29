@@ -99,8 +99,8 @@ color y desplaza los pasos siguientes), `ifpx x y RRGGBB` (el paso siguiente sol
 | id | Juego | Particularidades |
 |---|---|---|
 | `pcf4` | PC Fútbol 4.0 (4.1 del CD, MS-DOS) | DOS/4GW: los LE de Watcom se convierten en PE (`tools/le2pe.py`); VGA 640x480x16 planar, Sound Blaster, int 21h (`dos.cpp`, `vga.cpp`, `sb.cpp`) |
-| `pcf5`, `pcf5oro` | PC Fútbol 5.0 y Edición de Oro | Windows de 16 colores/256; menú y programas del CD encadenados por el lanzador |
-| `pcf6`, `pcf6oro` | PC Fútbol 6.0 y Edición de Oro | DirectDraw, simulador 3D por software (Direct3D 5/6), música S3M |
+| `pcf5`, `pcf5oro`, `pcf5arg` | PC Fútbol 5.0, Edición de Oro y Apertura 97 (Argentina) | Windows de 16 colores/256; menú y programas del CD encadenados por el lanzador |
+| `pcf6`, `pcf6oro`, `pcf6arg` | PC Fútbol 6.0, Edición de Oro y Apertura 98 (Argentina) | DirectDraw, simulador 3D por software (Direct3D 5/6), música S3M |
 | `pcf7`, `pcf7plus` | PC Fútbol 7 y 7 Plus | la línea base; el Plus usa DirectInput en el partido |
 | `pcf2000` | PC Fútbol 2000 + Extensión | motor nuevo (gfxwin/d2s2): todo por Direct3D 7, música MIDI por DirectMusic, panel de ayuda (WebBrowser) |
 | `pcf2001` | PC Fútbol 2001 + 13 actualizaciones | el mismo motor; música MP3 por DirectShow (`dshow.cpp`), MSVCP60/MSVCIRT traducidas, online fuera |

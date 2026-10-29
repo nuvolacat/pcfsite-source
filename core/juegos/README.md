@@ -20,8 +20,10 @@ El C traducido va a `build/gen*` para `pcf7` y a `build/<id>/gen*` para los dem�
 | `pcf4` | PC Fútbol 4.0 (versión 4.1 del CD, MS-DOS con DOS/4GW) | completado: Manager, Promanager, Historia, Base de datos; VGA 640x480x16, Sound Blaster; también en el navegador |
 | `pcf5` | PC Fútbol 5.0 (dic-1996) | completado, también en el navegador |
 | `pcf5oro` | PC Fútbol 5.0 Edición de Oro (oct-1997) | completado, también en el navegador |
+| `pcf5arg` | PC Fútbol 5.0 Apertura 97, edición argentina (nov-1997) | completado: menú, Torneo Manager, oficina, partido 3D, Base de datos, grabar y cargar; también en el navegador |
 | `pcf6` | PC Fútbol 6.0 (dic-1997) | completado, también en el navegador |
 | `pcf6oro` | PC Fútbol 6.0 Edición de Oro (nov-1999) | completado, también en el navegador |
+| `pcf6arg` | PC Fútbol 6.0 Apertura 98, edición argentina (1998) | completado: menú, Torneo Manager, oficina, Base de datos y Seguimiento, partido 3D, grabar y cargar; también en el navegador |
 | `pcf7` | PC Fútbol 7 (CD del 28-dic-1998) | completado, también en el navegador |
 | `pcf7plus` | PC Fútbol 7 Plus (sept-1999) | completado, también en el navegador |
 | `pcf2000` | PC Fútbol 2000 + Extensión (dic-1999/sept-2000) | completado: menú, Euromanager, oficina y partido 3D (motor nuevo: DirectX 7); Historia, Base de datos, Seguimiento y FutbolQuiz (DBASEWIN, encadenado con `salida_menu`); música MIDI (DirectMusic, con reverberación) y panel de ayuda; en el navegador, datos en R2 (datos.pcfsite.com/pcf2000) |

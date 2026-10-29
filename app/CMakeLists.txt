@@ -12,7 +12,7 @@ find_package(SDL3 REQUIRED CONFIG)
 
 add_executable(lanzador
   lanzador/main.cpp lanzador/ui.cpp lanzador/util.cpp lanzador/json.cpp lanzador/versiones.cpp lanzador/instalar.cpp
-  lanzador/inflar.cpp lanzador/is6.cpp lanzador/mscab.cpp lanzador/zip.cpp)
+  lanzador/inflar.cpp lanzador/is6.cpp lanzador/mscab.cpp lanzador/zip.cpp lanzador/actualizar.cpp)
 target_compile_options(lanzador PRIVATE -Wall -Wno-unused-function)
 # en desarrollo (sin .app) las fuentes y versiones.json se leen del repo
 target_compile_definitions(lanzador PRIVATE PCF_APP_SRC="${CMAKE_CURRENT_SOURCE_DIR}")

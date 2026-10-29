@@ -528,9 +528,49 @@ int copia_mod(const std::string &src, const std::string &dst, int &binarios) {
     }
     return n;
 }
+// los EXE y DLL de un mod (nombre en minúsculas, tamaño), hasta 4 niveles de carpetas
+void binarios_de(const std::string &dir, int nivel, std::vector<std::pair<std::string, uint64_t>> &v) {
+    for (const std::string &e : util::listar(dir)) {
+        if (e[0] == '.' || e == "__MACOSX") continue;
+        std::string p = dir + "/" + e;
+        if (util::es_dir(p)) { if (nivel < 4) binarios_de(p, nivel + 1, v); }
+        else if (es_binario(util::minusculas(e))) v.push_back({util::minusculas(e), util::tam(p)});
+    }
+}
 }  // namespace
 
-bool importar_mod(const Instalado &i, const std::string &ruta, std::string &nombre, std::string &error) {
+const Version *edicion_del_mod(const std::string &dir, const Version &v, const Versiones &vs, std::string &aviso) {
+    aviso.clear();
+    Json j;
+    if (Json::parsea(util::leer(dir + "/pcfsite-mod.json"), j)) {
+        const Version *o = vs.por_id(j["juego"].str());
+        if (o) return o == &v || o->id == v.id ? nullptr : o;
+    }
+    std::vector<std::pair<std::string, uint64_t>> bins;
+    binarios_de(dir, 0, bins);
+    auto es_de = [](const Version &x, const std::pair<std::string, uint64_t> &b) {
+        for (const Binario &y : x.binarios) if (util::minusculas(y.nombre) == b.first && y.tam == b.second) return true;
+        return false;
+    };
+    std::map<const Version *, int> votos;   // ediciones a las que pertenecen los que no son de esta
+    std::string sueltos;
+    for (const auto &b : bins) {
+        if (es_de(v, b)) continue;
+        bool alguna = false;
+        for (const Version &x : vs.lista) if (&x != &v && x.id != v.id && es_de(x, b)) { votos[&x]++; alguna = true; }
+        if (alguna) continue;
+        bool suyo = false;   // solo se avisa de los que esta edición reconstruye (un instalador o una herramienta del mod da igual)
+        for (const Binario &y : v.binarios) if (util::minusculas(y.nombre) == b.first) suyo = true;
+        if (suyo) sueltos += (sueltos.empty() ? "" : ", ") + b.first;
+    }
+    if (!sueltos.empty()) aviso = sueltos + " no " + (sueltos.find(',') == std::string::npos ? "es el" : "son los") + " de " + v.nombre +
+                                  " ni de otra edición: no se " + (sueltos.find(',') == std::string::npos ? "aplicará" : "aplicarán");
+    const Version *mejor = nullptr;
+    for (const auto &x : votos) if (!mejor || x.second > votos[mejor]) mejor = x.first;
+    return mejor;
+}
+
+bool importar_mod(const Instalado &i, const Versiones &vs, const std::string &ruta, std::string &nombre, std::string &error) {
     Json j;
     std::string carpeta_juego;
     if (Json::parsea(util::leer(i.carpeta + "/instalado.json"), j)) carpeta_juego = j["carpeta"].str();
@@ -560,14 +600,25 @@ bool importar_mod(const Instalado &i, const std::string &ruta, std::string &nomb
         }
         origen = tmp;
     }
-    std::string raiz = raiz_del_mod(origen, i, carpeta_juego);
+    std::string raiz = raiz_del_mod(origen, i, carpeta_juego), dst = dir_mods(i) + "/" + nombre;
     int binarios = 0;
-    int n = copia_mod(raiz, dir_mods(i) + "/" + nombre, binarios);
+    int n = copia_mod(raiz, dst, binarios);
+    // pcfsite-mod.json puede ir en la raíz del zip, por encima de la carpeta del juego: se guarda con el mod
+    if (n > 0 && !util::existe(dst + "/pcfsite-mod.json") && util::existe(origen + "/pcfsite-mod.json"))
+        util::copiar_fichero(origen + "/pcfsite-mod.json", dst + "/pcfsite-mod.json");
     util::borrar_arbol(tmp);
-    if (n == 0) { util::borrar_arbol(dir_mods(i) + "/" + nombre); error = "no hay ningún fichero en " + util::nombre_base(ruta); return false; }
+    if (n == 0) { util::borrar_arbol(dst); error = "no hay ningún fichero en " + util::nombre_base(ruta); return false; }
+    std::string aviso;
+    if (const Version *v = vs.por_id(i.id))
+        if (const Version *otra = edicion_del_mod(dst, *v, vs, aviso)) {
+            util::borrar_arbol(dst);
+            error = "este mod es para " + otra->nombre + ": impórtalo en ese juego";
+            return false;
+        }
     // (los EXE y DLL del mod se copian: la plataforma aplica sobre la imagen reconstruida sus diferencias de datos, los
     // textos, e ignora las de código; ver platform/src/imagen.cpp)
     if (binarios) error = "trae " + std::to_string(binarios) + " ejecutable(s): de ellos se aplican los textos, no el código";   // aviso, no fallo
+    if (!aviso.empty()) error += (error.empty() ? "" : "; ") + aviso;
     return true;
 }
 

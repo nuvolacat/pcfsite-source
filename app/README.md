@@ -24,6 +24,18 @@ ya preparados no se mueven y se siguen listando). «Acerca de» lleva la comunid
 lleva su entrada en `CHANGELOG.md` (si se vuelve a empaquetar sin publicar, la entrada va con la versión que de verdad
 se distribuyó).
 
+**Actualizaciones** (`lanzador/actualizar.cpp`): al abrir, en un hilo, `curl` (el de macOS y el de Windows 10 1803 o
+posterior) pide `api.github.com/repos/nuvolacat/pcfsite-source/releases/latest`; si su `tag_name` es más nuevo que la
+versión de la app, el diálogo ACTUALIZAR lo propone. Al aceptar se baja el paquete de la plataforma (por el final del
+nombre: `-macos-apple-silicon.dmg`, `-macos-intel.dmg`, `-windows-x64.zip`, `-windows-arm64.zip`) a
+`<base>/actualizacion`, se comprueba su `digest` (SHA-256) y la firma: en macOS `codesign --verify --deep --strict`,
+Team ID V9Q7Y5J9R9 y `spctl` (notarizada); en Windows `Get-AuthenticodeSignature` válida y a nombre de Jordi Ruiz Bover.
+Un ayudante (`aplicar.sh`; `aplicar.ps1` con su `aplicar.log`) espera a que la app se cierre, pone la nueva en su sitio
+(macOS: la `.app` entera, y si falla vuelve la vieja; Windows: `robocopy` encima de la carpeta) y la abre. Si la app
+está en una carpeta sin permiso de escritura, avisa y no toca nada. `PCF_ACT_API` cambia la dirección de la consulta
+(pruebas con un `file://`); en terminal, `--buscar-actualizacion` y `--actualizar`. Se apaga con el ajuste
+`actualizaciones: "no"` (casilla de «Acerca de»).
+
 ## PC Fútbol 2001: InstallShield y las 13 actualizaciones
 
 El CD del 2001 no lleva guiones de Dinamic sino InstallShield 6 (`DATA1.HDR`, `DATA1.CAB`, `DATA2.CAB`). `lanzador/is6.cpp`
@@ -117,7 +129,7 @@ win/empaquetar.sh     construye la carpeta y el zip de Windows (x64 y ARM64) des
 # 2) compilar todo y empaquetar:
 app/mac/preparar.sh                   # una vez: SDL3 para arm64 y x86_64 (macOS 12+) en ~/pcfsite-mac
 app/mac/empaquetar.sh                 # core/build/mac-<arm64|x86_64>/PCFSite - Source.app (firma ad hoc)
-app/mac/empaquetar.sh --dmg --firma "Developer ID Application: …"   # para distribuir (y notarizar después)
+app/mac/empaquetar.sh --dmg --firma "Developer ID Application: …" --notarizar   # para distribuir
 app/mac/empaquetar.sh --sin-compilar --juegos "pcf7 pcf6"           # solo empaquetar lo ya compilado
 ```
 
@@ -127,7 +139,9 @@ Necesita CMake y Ninja (`brew install cmake ninja`). Hay una app por arquitectur
 ella la app pedía macOS 27 y no abría en macOS 26). El script comprueba al final que cada binario es de su arquitectura
 y pide macOS 12. Los juegos se compilan en `core/build/mac-<arch>/app-<id>` (uno por juego, `-DPCF_JUEGO=<id>`); la app
 lleva `libSDL3.0.dylib` dentro (`Frameworks/`) y las fuentes Liberation en `Resources/fonts/`. La firma ad hoc hace
-que Gatekeeper avise la primera vez; para que no avise hace falta firmar con Developer ID y notarizar.
+que Gatekeeper avise la primera vez. Para distribuir se firma con Developer ID (con sello de tiempo y hardened runtime)
+y `--notarizar` manda cada `.dmg` a Apple con la clave de la API de App Store Connect de `~/.appstoreconnect/config`
+(fuera del repo) y le grapa el tíquet: así se abre sin aviso.
 
 ## Construir (Windows, desde el Mac)
 
@@ -156,8 +170,9 @@ Windows 10 1903 o posterior). Los ejecutables van sin consola (`-mwindows`); el 
 la consola del padre o escribe en el fichero de `PCF_SALIDA`. Los hilos de pila grande (1 GB el del juego, 256 MB cada
 `CreateThread` del invitado) se crean con `STACK_SIZE_PARAM_IS_A_RESERVATION`: con winpthreads se comprometería toda
 la pila. Los `_setjmp`/`_longjmp` del código traducido van a los de mingw sin desenrollar la pila
-(`__USE_MINGW_SETJMP_NON_SEH`, `rt.h`). En Windows la ISO del CD se desmonta al cerrar el juego. Sin firma de código:
-SmartScreen avisa la primera vez.
+(`__USE_MINGW_SETJMP_NON_SEH`, `rt.h`). En Windows la ISO del CD se desmonta al cerrar el juego. Para distribuir, `app/win/firmar.sh`
+firma con Authenticode el `.exe`, `SDL3.dll` y las DLL de `programas/` en una máquina Windows con el certificado de
+firma de código (por SSH: `FIRMA_SSH`, `FIRMA_HUELLA`; el certificado en la nube no sale de allí) y rehace el zip.
 
 Desde la terminal, sin ventana (pruebas): `lanzador --listar`, `lanzador --instalar FUENTE… [--version id]`,
 `lanzador --jugar id`. En desarrollo, `PCF_EJECUTABLES` dice dónde están los juegos compilados y `PCF_DATOS` cambia la

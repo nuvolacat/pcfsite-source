@@ -410,12 +410,23 @@ struct Host {
 // Un fotograma del hilo principal: guion de pruebas, capturas, eventos de SDL y presentación. false = parar.
 bool host_frame() {
     if (g_game_done) return false;
+    // latido (diagnóstico; en la web siempre, en nativo con PCF7_LATIDO): cada 5 s, fotogramas presentados, fotograma
+    // del juego y funciones traducidas ejecutadas en ese tramo (para comparar el rendimiento de dos traducciones)
+    {
 #ifdef __EMSCRIPTEN__
-    {   // latido (diagnóstico): fotogramas presentados y fotograma del juego cada 5 s
-        static u32 n = 0, next = 5000;
+        static const bool latido = true;
+#else
+        static const bool latido = env("PCF7_LATIDO") != nullptr;
+#endif
+        static u32 n = 0, next = 5000, frame0 = 0, fn0 = 0;
         n++;
-        if (ticks_ms() >= next) { next += 5000; plog("web: latido %u fotogramas, juego en el %u", n, display().screen.frame); }
+        if (latido && ticks_ms() >= next) {
+            u32 fr = display().screen.frame, fn = fnring_i;
+            plog("latido: %u fotogramas, juego en el %u (+%u), %u funciones", n, fr, fr - frame0, fn - fn0);
+            next += 5000; frame0 = fr; fn0 = fn;
+        }
     }
+#ifdef __EMSCRIPTEN__
     web_persistir();   // partidas: lo que el juego ha escrito, a la página (web.cpp)
 #endif
     u32 now = ticks_ms();

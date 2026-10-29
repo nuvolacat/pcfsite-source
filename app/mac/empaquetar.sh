@@ -3,6 +3,7 @@
 # las fuentes, versiones.json y los ficheros extra. NO mete ningún fichero de los juegos.
 #
 #   app/mac/empaquetar.sh [--arch arm64|x86_64|todas] [--sin-compilar] [--juegos "pcf7 pcf6"] [--dmg] [--firma "…"]
+#                         [--notarizar]
 #
 # Una app por arquitectura: arm64 (Apple Silicon) y x86_64 (Intel), las dos para macOS 12 o posterior (MINIMO), con la
 # SDL3 de app/mac/preparar.sh (~/pcfsite-mac/sdl3-<arch>; la de Homebrew pide el macOS con que se construyó).
@@ -11,11 +12,13 @@
 # también imagen.c) y deja la app en core/build/mac-<arch>/PCFSite - Source.app (y, con --dmg,
 # core/build/mac-<arch>/PCFSite-Source-<versión>-macos-<apple-silicon|intel>.dmg). Firma con la identidad de --firma
 # (o $APP_FIRMA), si no ad hoc («-»: Gatekeeper avisa la primera vez; para no avisar, Developer ID y notarizar).
+# --notarizar (con --dmg y un Developer ID): manda cada .dmg a Apple con la clave de la API de App Store Connect de
+# ~/.appstoreconnect/config (ASC_KEY_PATH, ASC_KEY_ID, ASC_ISSUER_ID; fuera del repo) y le grapa el tíquet.
 set -euo pipefail
 cd "$(dirname "$0")/../.."
 REPO=$(pwd)
-JUEGOS="pcf4 pcf5 pcf5oro pcf6 pcf6oro pcf7 pcf7plus pcf2000 pcf2001 pcfpatch"   # pcfpatch: el parcheador de las actualizaciones del 2001
-COMPILAR=1; DMG=0; FIRMA="${APP_FIRMA:--}"; ARCHS="arm64 x86_64"; MINIMO=12.0
+JUEGOS="pcf4 pcf5 pcf5oro pcf5arg pcf6 pcf6oro pcf6arg pcf7 pcf7plus pcf2000 pcf2001 pcfpatch"   # pcfpatch: el parcheador de las actualizaciones del 2001
+COMPILAR=1; DMG=0; FIRMA="${APP_FIRMA:--}"; NOTARIZAR=0; ARCHS="arm64 x86_64"; MINIMO=12.0
 while [ $# -gt 0 ]; do
   case "$1" in
     --arch) [ "$2" = todas ] || ARCHS="$2"; shift ;;
@@ -23,6 +26,7 @@ while [ $# -gt 0 ]; do
     --juegos) JUEGOS="$2"; shift ;;
     --dmg) DMG=1 ;;
     --firma) FIRMA="$2"; shift ;;
+    --notarizar) NOTARIZAR=1 ;;
     *) echo "opción desconocida: $1"; exit 1 ;;
   esac
   shift
@@ -86,12 +90,13 @@ for exe in "$C/MacOS"/*; do
 done
 
 # firma (ad hoc por defecto)
-codesign --force --sign "$FIRMA" "$C/Frameworks/libSDL3.0.dylib"
+SELLO=(); [ "$FIRMA" = - ] || SELLO=(--timestamp)   # (con Developer ID, sello de tiempo: la notarización lo exige)
+codesign --force --sign "$FIRMA" "${SELLO[@]}" "$C/Frameworks/libSDL3.0.dylib"
 # primero los juegos y luego el lanzador (el ejecutable principal: al firmarlo, codesign mira los demás; en x86_64 el
 # enlazador no los firma solo como en arm64)
-for exe in "$C/MacOS"/*; do [ "$(basename "$exe")" = lanzador ] || codesign --force --sign "$FIRMA" --options runtime --entitlements app/mac/entitlements.plist "$exe"; done
-codesign --force --sign "$FIRMA" --options runtime --entitlements app/mac/entitlements.plist "$C/MacOS/lanzador"
-codesign --force --sign "$FIRMA" --options runtime --entitlements app/mac/entitlements.plist "$APP"
+for exe in "$C/MacOS"/*; do [ "$(basename "$exe")" = lanzador ] || codesign --force --sign "$FIRMA" "${SELLO[@]}" --options runtime --entitlements app/mac/entitlements.plist "$exe"; done
+codesign --force --sign "$FIRMA" "${SELLO[@]}" --options runtime --entitlements app/mac/entitlements.plist "$C/MacOS/lanzador"
+codesign --force --sign "$FIRMA" "${SELLO[@]}" --options runtime --entitlements app/mac/entitlements.plist "$APP"
 codesign --verify --deep --strict "$APP" && echo "firmada ($FIRMA)"
 # todo de la arquitectura pedida y para el macOS mínimo (si no, en otros Mac no abre: «no es compatible»)
 for exe in "$C/MacOS"/* "$C/Frameworks/libSDL3.0.dylib"; do
@@ -109,6 +114,13 @@ if [ "$DMG" = 1 ]; then
   T=$(mktemp -d); cp -R "$APP" "$T/"; ln -s /Applications "$T/Applications"
   hdiutil create -volname "PCFSite - Source" -srcfolder "$T" -ov -format UDZO "$DMGF" >/dev/null 2>&1   # UDZO (zlib): ULZO ya no lo crea hdiutil en macOS 27 y UDZO lo abre cualquier Mac
   rm -rf "$T"
+  if [ "$FIRMA" != - ]; then codesign --force --sign "$FIRMA" --timestamp "$DMGF"; fi
+  if [ "$NOTARIZAR" = 1 ]; then
+    ( source ~/.appstoreconnect/config
+      xcrun notarytool submit "$DMGF" --key "$ASC_KEY_PATH" --key-id "$ASC_KEY_ID" --issuer "$ASC_ISSUER_ID" --wait )
+    xcrun stapler staple "$DMGF"
+    spctl -a -t open --context context:primary-signature -v "$DMGF"
+  fi
   echo "$DMGF: $(du -sh "$DMGF" | cut -f1)"
 fi
 done

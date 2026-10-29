@@ -61,8 +61,8 @@ guardadas) en nativo y en el navegador. Cada arreglo se anota en el Diario de la
 | id | Juego | Año | Programa principal | Qué tiene de particular |
 |---|---|---|---|---|
 | `pcf4` | PCF 4.0 (versión 4.1 del CD) | 1995 | `PCFUTBOL.EXE` (MS-DOS, DOS/4GW) | ejecutables LE de Watcom convertidos a PE (`core/tools/le2pe.py`); VGA 640×480×16 planar, Sound Blaster con DMA e IRQ, int 21h; Manager, Promanager, Historia y Base de datos encadenados por `COMFILE.DAT` |
-| `pcf5`, `pcf5oro` | PCF 5.0 y Edición de Oro | 1996, 1997 | `MANAGER.EXE` + 3 DLL | Windows de 16 y 256 colores por GDI; menú y programas del CD encadenados por el lanzador original |
-| `pcf6`, `pcf6oro` | PCF 6.0 y Edición de Oro | 1997, 1999 | `MANAGER.EXE` + 2 DLL | DirectDraw, simulador 3D por software (Direct3D 5/6), música S3M |
+| `pcf5`, `pcf5oro`, `pcf5arg` | PCF 5.0, Edición de Oro y Apertura 97 (Argentina) | 1996, 1997 | `MANAGER.EXE` (`MANAGARG.EXE` en el argentino) + 3 DLL | Windows de 16 y 256 colores por GDI; menú y programas del CD encadenados por el lanzador original |
+| `pcf6`, `pcf6oro`, `pcf6arg` | PCF 6.0, Edición de Oro y Apertura 98 (Argentina) | 1997, 1998, 1999 | `MANAGER.EXE` (`MANAGARG.EXE` en el argentino) + 2 DLL | DirectDraw, simulador 3D por software (Direct3D 5/6), música S3M |
 | `pcf7`, `pcf7plus` | PCF 7 y 7 Plus | 1998, 1999 | `MANAGER.EXE` + 2 DLL, ProQuinielas (Visual Basic) | la línea base del proyecto; el Plus usa DirectInput en el partido |
 | `pcf2000` | PCF 2000 con la Extensión | 1999/2000 | `MANAGER.EXE` + 8 DLL, `DBASEWIN` | motor nuevo (gfxwin/d2s2): todo por Direct3D 7, menús incluidos; música MIDI por DirectMusic (sintetizador SoundFont con reverberación); panel de ayuda sobre un WebBrowser falso |
 | `pcf2001` | PCF 2001 con las 13 actualizaciones (3.6) | 2000/2001 | `MANAGER.EXE` + 10 DLL, `DBASEWIN` | el mismo motor; música MP3 por DirectShow; MSVCP60 y MSVCIRT traducidas; las actualizaciones se aplican con la propia `patchw32.dll` (RTPatch) traducida (`pcfpatch`) |

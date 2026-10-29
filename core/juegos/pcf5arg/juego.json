@@ -1,0 +1,68 @@
+{
+  "id": "pcf5arg",
+  "nombre": "PC Fútbol 5.0 Apertura 97 (Argentina)",
+  "carpeta": "APERTURA97",
+  "trabajo": "~/pcf5arg-work",
+  "principal": "managarg.exe",
+  "salida_menu": "0x6341f8",
+  "dlls": [
+    [
+      "MFC42.DLL",
+      "0x02000000"
+    ],
+    [
+      "MSVCRT.DLL",
+      "0x02200000"
+    ],
+    [
+      "MSVCIRT.DLL",
+      "0x02280000"
+    ]
+  ],
+  "lanzador": {
+    "2": [
+      "infosurf",
+      "2"
+    ],
+    "3": [
+      "dbasearg",
+      "0"
+    ],
+    "4": [
+      "dbasearg",
+      "1"
+    ],
+    "5": [
+      "dbasearg",
+      "2"
+    ],
+    "6": [
+      "dbasearg",
+      "3"
+    ],
+    "7": [
+      "infosurf",
+      "1"
+    ],
+    "8": [
+      "infosurf",
+      "0"
+    ]
+  },
+  "web": {
+    "excluir": []
+  },
+  "instalacion_notas": "CD de noviembre de 1997 (Fut5Win.exe del 31-oct-1997, ManagArg.exe del 13-nov-1997). El instalador (Instalar.exe) propone C:\\Apertura97 y copia según INST_100…108.NFO (tools/instalar_nfo.py). Las DLL de Microsoft (MFC42, MSVCRT, MSVCIRT) e InfoSurf.exe son idénticas a las de la Edición de Oro; Pcf5dat.pkf, al del 5.0 de 1996. Lo propio: ManagArg.exe, DbaseArg.exe, la base de datos del fútbol argentino (DBDAT/EQ003003.PKF, NOMBRES.3…) y los comentarios (SFX/COMARG.PKF).",
+  "lanzador_notas": "La tabla de Fut5Win.exe es la misma que la de la Oro con dbasearg en lugar de dbasewin (leída de su tabla de saltos en 0x4011d0): 2 Instrucciones (infosurf 2), 3-6 dbasearg 0-3, 7 infosurf 1, 8 InfoFútbol (infosurf 0); A actwin, B/C infosurf 4/5 no se usan. salida_menu: la variable que el manager pasa a FUT5WIN.EXE PCF5%X (0x6341f8; en la Oro 0x6734ec).",
+  "dlls_notas": "Las mismas DLL que la Oro, en las mismas bases.",
+  "origen_notas": "unresolved.txt: las 120 entradas del pintado en ensamblador, sacadas de las secuencias «lea eax, [entrada]; stosd» que rellenan sus tablas al arrancar (el mismo escaneo da exactamente las listas de pcf5 y pcf5oro).",
+  "estado_notas": "2026-10-25: funciona a la primera con el núcleo del 5.0: menú, Torneo Manager (nivel, nombre y equipo de Primera A, competiciones, comienzo del Apertura), oficina, estadio, opciones de partido, partido 3D por software (800x600x8), Base de datos (dbasearg encadenado por el lanzador), grabar y cargar (TACTICS\\MANAGER.000).",
+  "sha256": {
+    "dbasearg.exe": "458b0ee59dd6e551239fa1d9ddef2e685ea56c3217700be1683cb39aa93a81b1",
+    "infosurf.exe": "7223e54444de191caf5dbb5dd35700001b4b34177947a2e8a767b5af7e08eff7",
+    "managarg.exe": "1b617c64893491c1541d9985f57ee2817e02fc371dd30348a44845fe6587861a",
+    "MFC42.DLL": "924742218abfe2e9cad746ab738709b5cb50413631e93342acc941524ba6c7f6",
+    "MSVCIRT.DLL": "9717c95654d34a8e78d712f9c5a3aa82351ec04c6318e7b4aca9e6a4ad701a34",
+    "MSVCRT.DLL": "df9f2aab7f7119f214c5d743d961fde4bf324f19011fbbb7e9cf666856fba0ba"
+  }
+}

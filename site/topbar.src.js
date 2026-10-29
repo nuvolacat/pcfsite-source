@@ -11,7 +11,7 @@
 
     var bar = '<nav class="nav" id="topbar">'
       + '<a class="nav-brand lnk brand" href="/"><img class="brand-mark" src="/pcf/img/favicon.svg" alt="" width="24" height="24"><span><span class="gold">source</span>.pcfsite<span class="dot">.com</span></span></a>'
-      + '<span class="tb-links"><a href="https://pcfsite.com/">Inicio</a><a href="https://foro.pcfsite.com/">Foro</a><a href="https://juegos.pcfsite.com/">Jugar</a><a href="https://descargas.pcfsite.com/">Descargas</a><a href="/" aria-current="page">Source</a></span>'
+      + '<span class="tb-links"><a href="https://pcfsite.com/">Inicio</a><a href="https://foro.pcfsite.com/">Foro</a><a href="https://juegos.pcfsite.com/">Jugar</a><a href="/" aria-current="page">Source</a><a href="https://editor.pcfsite.com/">Editor</a><a href="https://descargas.pcfsite.com/">Descargas</a></span>'
       + '<span class="nav-tools"><span id="tbCuenta"></span></span></nav>';
 
     // secciones del sitio, bajo la barra (como en el foro)

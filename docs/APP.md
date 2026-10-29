@@ -41,8 +41,18 @@ lo que en 1998 hacía el instalador, y después arranca el juego nativo. Paso a 
    instalación) y escribe siempre en el perfil, copiando antes lo que abre para modificar. Las partidas con y sin mods
    van aparte y la instalación no se toca. El EXE del mod se aplica sobre la imagen reconstruida: sus diferencias en los
    datos (textos) y en los inmediatos del código (fechas, tamaños, identificadores: los «inmediatos vivos»).
-6. **Terminal**, sin ventana, para pruebas y guiones: `--listar`, `--instalar FUENTE… [--version id]`, `--jugar id`,
-   `--mod id <zip|carpeta>`, `--mods id [a,b]`.
+   Solo si es el de esa edición (mismo nombre y tamaño), así que un mod se importa únicamente en la edición para la que
+   es: la app lo sabe por su `pcfsite-mod.json` (`{"juego": "pcf7plus"}`, en la raíz del zip o junto a los ficheros del
+   juego) o, si no lo trae, por sus EXE y DLL comparados con los `binarios` de `versiones.json` (el `MANAGER.EXE` mide
+   distinto en cada edición). Si es de otra, no lo importa, ni deja activarlo o jugar con él si ya estaba importado.
+6. **Actualizarse.** Al abrirse (se puede apagar en «Acerca de», que tiene también el botón «Buscar actualizaciones»),
+   la app mira la última release de GitHub. Si es más nueva, propone actualizar: baja el paquete de su sistema,
+   comprueba el SHA-256 que publica GitHub y la firma (Developer ID notarizado en macOS, Authenticode en Windows, las
+   dos de Jordi Ruiz Bover), pone la app nueva en el sitio de la vieja cuando esta se cierra y la vuelve a abrir. Los
+   juegos, las partidas y los mods no se tocan: están en Documentos. En Linux, que no tiene paquete, solo avisa
+   (`app/lanzador/actualizar.cpp`).
+7. **Terminal**, sin ventana, para pruebas y guiones: `--listar`, `--instalar FUENTE… [--version id]`, `--jugar id`,
+   `--mod id <zip|carpeta>`, `--mods id [a,b]`, `--buscar-actualizacion`, `--actualizar`.
 
 El código es el mismo para los tres sistemas. Lo que a Windows le falta de POSIX está en `core/platform/src/compat.h` y
 `compat_win.cpp`, y Windows se compila desde el Mac con llvm-mingw (`core/cmake/mingw.cmake`). Lo que cambia por sistema:

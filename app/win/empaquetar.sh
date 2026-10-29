@@ -11,7 +11,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/../.."
 REPO=$(pwd)
-JUEGOS="pcf4 pcf5 pcf5oro pcf6 pcf6oro pcf7 pcf7plus pcf2000 pcf2001 pcfpatch"
+JUEGOS="pcf4 pcf5 pcf5oro pcf5arg pcf6 pcf6oro pcf6arg pcf7 pcf7plus pcf2000 pcf2001 pcfpatch"
 ARCHS="x86_64 aarch64"; COMPILAR=1
 while [ $# -gt 0 ]; do
   case "$1" in

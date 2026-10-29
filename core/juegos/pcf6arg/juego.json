@@ -1,0 +1,51 @@
+{
+  "id": "pcf6arg",
+  "nombre": "PC Fútbol 6.0 Apertura 98 (Argentina)",
+  "carpeta": "APERTURA98",
+  "trabajo": "~/pcf6arg-work",
+  "principal": "managarg.exe",
+  "salida_menu": "0x657a58",
+  "dlls": [
+    [
+      "MFC42.DLL",
+      "0x02000000"
+    ],
+    [
+      "MSVCRT.DLL",
+      "0x02200000"
+    ]
+  ],
+  "lanzador": {
+    "4": [
+      "dbasearg",
+      "1"
+    ],
+    "5": [
+      "dbasearg",
+      "2"
+    ],
+    "6": [
+      "dbasearg",
+      "3"
+    ],
+    "10": [
+      "actwin",
+      null
+    ]
+  },
+  "web": {
+    "excluir": []
+  },
+  "instalacion_notas": "CD argentino (ficheros del 11-mar-1998). El instalador (Instalar.exe) propone C:\\PCFutbol 6 - Apertura 98-99; aquí APERTURA98, sin espacios (el juego no depende del nombre). Se copia según INST_100…102.NFO (tools/instalar_nfo.py). Las DLL de Microsoft y ActWin.exe son idénticas a las del 6.0. Lo propio: ManagArg.exe, DbaseArg.exe, la base de datos del fútbol argentino (DBDAT/EQ003003.PKF, PRIMERAA.DBC, NOMBRES.3…) y los comentarios (SFX/COMARG.PKF). No trae InfoSurf.exe (solo sus datos, INFOSURF/INFOSURF.ARG), ni vídeos.",
+  "lanzador_notas": "Tabla de saltos de Fut6Win.exe (casos en 0x4011f0, destinos en 0x4011c8): 2/7/8/B/C infosurf 2/1/0/4/5 (el CD no trae infosurf.exe: se dejan fuera), 3 y 9 vuelven al manager, 4-6 dbasearg 1-3, A actwin. salida_menu: la variable que el manager pasa a FUT6WIN.EXE PCF6%X (0x657a58; en el 6.0, 0x67ff5c).",
+  "origen_notas": "unresolved.txt: las 192 del 6.0 desplazadas +100000 (decimal): el pintado en ensamblador está en managarg igual, byte a byte, 0x186a0 más arriba.",
+  "estado_notas": "2026-10-26: funciona a la primera con el núcleo del 6.0: menú, Torneo Manager (opciones, nombre y equipo de Primera A, competiciones, comienzo del Apertura), oficina, formación, Base de datos y Seguimiento (en esta edición van dentro de ManagArg, sin el lanzador), opciones de juego, presentación y partido 3D (Direct3D 5 por software, 640x480x16), grabar y cargar (TACTICS\\manag003.000). Pendiente: con Boca, un clic fuera del cuadro de opciones de juego dio «La formación no es correcta. No puede haber titulares lesionados o sancionados» (comprobación de 0x46dd10, que no existe en el 6.0 español). El partido se juega bien desde el botón Seguir del cuadro; sin confirmar si algún titular tiene de verdad una sanción en la base de datos.",
+  "sha256": {
+    "actwin.exe": "e4a23f6219c0df1e65446e56de8e99fd8ae068fe8c66312c54941ba031c8cc94",
+    "dbasearg.exe": "eaefe05182371b88326c65f422a678535ac6f504144f38630b6c340be14e4bd9",
+    "managarg.exe": "3ceee762e846b4ec984d8abae151812ddb18a7940b60fa6fa5ec491b9748808f",
+    "MFC42.DLL": "85ce7d2d0444f4b37a4d056c55c9e734bfa077ba48e72a5683d35968e6bf4772",
+    "MSVCIRT.DLL": "9717c95654d34a8e78d712f9c5a3aa82351ec04c6318e7b4aca9e6a4ad701a34",
+    "MSVCRT.DLL": "e390b0529fb9ee1214bb68302a4658b578134d92ab76bc5eb48f3badd843d210"
+  }
+}

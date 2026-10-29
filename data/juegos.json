@@ -188,6 +188,113 @@
    ]
   },
   {
+   "id": "pcf5arg",
+   "grupo": "internacional",
+   "nombre": "PC Fútbol 5.0 Apertura 97",
+   "temporada": "97/98",
+   "anio": 1997,
+   "estado": "completado",
+   "estado_texto": "Completado",
+   "resumen": "La edición argentina de PC Fútbol 5.0, con el Torneo Apertura 97 y los equipos y jugadores del fútbol argentino, traducida desde el programa original: Torneo Manager, partidos en 3D y base de datos. Se juega en el navegador, sin instalar nada, con las partidas guardadas en tu cuenta.",
+   "portada": "menu",
+   "versiones": [
+    {
+     "id": "pcf5arg",
+     "nombre": "PC Fútbol 5.0 Apertura 97 (Argentina)",
+     "jugar": "/jugar/pcf5arg/"
+    }
+   ],
+   "capturas": [
+    {
+     "id": "menu",
+     "texto": "Menú del Apertura 97 (Argentina)"
+    },
+    {
+     "id": "oficina",
+     "texto": "Menú manager del Apertura 97, con Boca"
+    },
+    {
+     "id": "partido-3d",
+     "texto": "Boca - Argentinos Jrs. en el simulador 3D"
+    }
+   ],
+   "funciona": [
+    "Menú principal y Torneo Manager, con los clubes de Primera A",
+    "Base de datos e InfoSurf (programas del CD, también en el navegador)",
+    "Simulador 3D (pintado por software, como el original)",
+    "Música y sonido",
+    "Guarda partidas: en el navegador, en tu cuenta de pcfsite y en una copia que puedes descargar",
+    "En el navegador (WebAssembly), sin instalar nada"
+   ],
+   "hitos": [
+    {
+     "fecha": "2026-10-25",
+     "texto": "PC Fútbol 5.0 Apertura 97, la edición argentina, traducido y en el navegador: la primera edición internacional del proyecto."
+    }
+   ],
+   "notas": [
+    "Comparte casi todo el programa con PC Fútbol 5.0: lo que se arregla en uno llega al otro."
+   ]
+  },
+  {
+   "id": "pcf6arg",
+   "grupo": "internacional",
+   "nombre": "PC Fútbol 6.0 Apertura 98",
+   "temporada": "98/99",
+   "anio": 1998,
+   "estado": "completado",
+   "estado_texto": "Completado",
+   "resumen": "La edición argentina de PC Fútbol 6.0, con el Torneo Apertura 98 y los equipos y jugadores del fútbol argentino, traducida desde el programa original: Torneo Manager, partidos en 3D, base de datos y seguimiento. Se juega en el navegador, sin instalar nada, con las partidas guardadas en tu cuenta.",
+   "portada": "menu",
+   "versiones": [
+    {
+     "id": "pcf6arg",
+     "nombre": "PC Fútbol 6.0 Apertura 98 (Argentina)",
+     "jugar": "/jugar/pcf6arg/"
+    }
+   ],
+   "capturas": [
+    {
+     "id": "menu",
+     "texto": "Menú del Apertura 98 (Argentina)"
+    },
+    {
+     "id": "oficina",
+     "texto": "La oficina del Torneo Manager, con Boca"
+    },
+    {
+     "id": "base-datos",
+     "texto": "Base de datos de los clubes argentinos"
+    },
+    {
+     "id": "previa",
+     "texto": "Presentación de Boca - Ferro"
+    },
+    {
+     "id": "partido-3d",
+     "texto": "Boca - Ferro en el simulador 3D"
+    }
+   ],
+   "funciona": [
+    "Menú principal y Torneo Manager, con los clubes de Primera A",
+    "Base de datos y Seguimiento",
+    "Simulador 3D (Direct3D 5 reimplementado por software)",
+    "Música y sonido",
+    "Guarda partidas: en el navegador, en tu cuenta de pcfsite y en una copia que puedes descargar",
+    "En el navegador (WebAssembly), sin instalar nada"
+   ],
+   "hitos": [
+    {
+     "fecha": "2026-10-26",
+     "texto": "PC Fútbol 6.0 Apertura 98, la edición argentina, traducido y en el navegador."
+    }
+   ],
+   "notas": [
+    "Comparte casi todo el programa con PC Fútbol 6.0: lo que se arregla en uno llega al otro.",
+    "El CD argentino no trae InfoSurf ni los vídeos de la edición española."
+   ]
+  },
+  {
    "id": "pcf6",
    "nombre": "PC Fútbol 6.0",
    "temporada": "97/98",

@@ -109,6 +109,17 @@ def tarjeta(j):
             f'<p class="meta resumen">{e(j["resumen"])}</p></div></a>')
 
 
+# los apartados de la portada («grupo» en data/juegos.json; sin él, España)
+GRUPOS = [("espana", "España"), ("internacional", "Internacional")]
+
+
+def grupo(titulo, juegos):
+    if not juegos:
+        return ""
+    return (f'<section class="cat cat-juegos">\n  <div class="cat-head"><h2>{titulo}</h2><span class="cnt">{len(juegos)} en el proyecto</span></div>\n'
+            f'  <div class="grid">{"".join(tarjeta(j) for j in juegos)}</div>\n</section>\n')
+
+
 def collage(juegos):
     """La placa de la portada: todas las capturas de todos los juegos, entrelazadas (una de cada juego por turno) y
     enlazadas a su ficha; cada séptima a doble tamaño para dar ritmo. El pie dice cuántas son."""
@@ -144,11 +155,7 @@ def portada(datos, v):
 
 <div class="cifras">{cifras}</div>
 
-<section class="cat">
-  <div class="cat-head"><h2>Juegos</h2><span class="cnt">{len(juegos)} en el proyecto</span></div>
-  <div class="grid">{"".join(tarjeta(j) for j in juegos)}</div>
-</section>
-
+{"".join(grupo(t, [j for j in juegos if j.get("grupo", "espana") == g]) for g, t in GRUPOS)}
 <section class="cat">
   <div class="cat-head"><h2>Cómo se hace</h2><a class="cnt lnk" href="/como-funciona">Leer más →</a></div>
   <div class="pasos">

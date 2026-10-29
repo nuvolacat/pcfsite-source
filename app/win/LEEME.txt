@@ -13,7 +13,7 @@ por programa) y los carga ese mismo ejecutable.
 - Las ISO se montan como una unidad mientras se juega (lo hace Windows, sin programas externos). Una ISO
   que esté en una carpeta de red se copia antes a AppData\Local\PCFSite - Source\isos, porque Windows no
   monta imágenes desde la red.
-- Si Windows SmartScreen avisa de que es una app desconocida: «Más información» → «Ejecutar de todas
-  formas» (la app no está firmada con certificado).
+- La app está firmada (Jordi Ruiz Bover). Si SmartScreen avisa igualmente, porque el certificado aún
+  es nuevo para Microsoft: «Más información» → «Ejecutar de todas formas».
 
 Comunidad: www.pcfsite.com — creada por @jordirubo.

@@ -1,5 +1,5 @@
 {
- "generado": "2026-10-24",
+ "generado": "2026-10-26",
  "versiones": [
   {
    "id": "pcf4",
@@ -550,6 +550,202 @@
    }
   },
   {
+   "id": "pcf5arg",
+   "nombre": "PC Fútbol 5.0 Apertura 97 (Argentina)",
+   "detalle": "Apertura 97, edición argentina (noviembre de 1997)",
+   "anio": 1997,
+   "corto": "5.0 ARG",
+   "portada": "1996.jpg",
+   "etiqueta": "Argentina",
+   "carpeta": "APERTURA97",
+   "programas": [
+    "pcf5arg",
+    "pcf5arg-dbasearg",
+    "pcf5arg-infosurf"
+   ],
+   "dos": false,
+   "necesita_cd": true,
+   "solo_instalada": false,
+   "discos": [
+    {
+     "rol": "cd",
+     "nombre": "CD de PC Fútbol 5.0 Apertura 97",
+     "firmas": [
+      [
+       "ManagArg.exe",
+       "1b617c64893491c1541d9985f57ee2817e02fc371dd30348a44845fe6587861a",
+       2414592
+      ],
+      [
+       "AUTORUN.INF",
+       "ee31a55ad8a8207baeef12800f9daa3e1adcfb066febd982d76c155157043b3c",
+       52
+      ],
+      [
+       "INST_100.NFO",
+       "363fcd5cf6ff64d159f050e58fd3efd848fbada55bae522d44d51f0c84864fd9",
+       266
+      ]
+     ],
+     "instalar": [
+      [
+       "nfo",
+       "INST_100.NFO"
+      ],
+      [
+       "nfo",
+       "INST_101.NFO"
+      ],
+      [
+       "nfo",
+       "INST_102.NFO"
+      ],
+      [
+       "nfo",
+       "INST_103.NFO"
+      ],
+      [
+       "nfo",
+       "INST_104.NFO"
+      ],
+      [
+       "nfo",
+       "INST_105.NFO"
+      ],
+      [
+       "nfo",
+       "INST_106.NFO"
+      ],
+      [
+       "nfo",
+       "INST_107.NFO"
+      ],
+      [
+       "nfo",
+       "INST_108.NFO"
+      ]
+     ],
+     "copiar": "*",
+     "sistema": [
+      [
+       "MFC42.DLL",
+       "MFC42.DLL"
+      ],
+      [
+       "MSVCRT.DLL",
+       "MSVCRT.DLL"
+      ],
+      [
+       "MSVCIRT.DLL",
+       "MSVCIRT.DLL"
+      ]
+     ]
+    }
+   ],
+   "binarios": [
+    {
+     "nombre": "managarg.exe",
+     "tam": 2414592,
+     "sha256": "1b617c64893491c1541d9985f57ee2817e02fc371dd30348a44845fe6587861a",
+     "origen": [
+      [
+       "cd",
+       "ManagArg.exe"
+      ],
+      [
+       "instalacion",
+       "MANAGARG.EXE"
+      ]
+     ]
+    },
+    {
+     "nombre": "dbasearg.exe",
+     "tam": 580608,
+     "sha256": "458b0ee59dd6e551239fa1d9ddef2e685ea56c3217700be1683cb39aa93a81b1",
+     "origen": [
+      [
+       "cd",
+       "DbaseArg.exe"
+      ],
+      [
+       "instalacion",
+       "DBASEARG.EXE"
+      ]
+     ]
+    },
+    {
+     "nombre": "infosurf.exe",
+     "tam": 540160,
+     "sha256": "7223e54444de191caf5dbb5dd35700001b4b34177947a2e8a767b5af7e08eff7",
+     "origen": [
+      [
+       "cd",
+       "InfoSurf.exe"
+      ]
+     ]
+    },
+    {
+     "nombre": "MFC42.DLL",
+     "tam": 940304,
+     "sha256": "924742218abfe2e9cad746ab738709b5cb50413631e93342acc941524ba6c7f6",
+     "origen": [
+      [
+       "cd",
+       "MFC42.DLL"
+      ],
+      [
+       "sistema",
+       "MFC42.DLL"
+      ]
+     ]
+    },
+    {
+     "nombre": "MSVCRT.DLL",
+     "tam": 280576,
+     "sha256": "df9f2aab7f7119f214c5d743d961fde4bf324f19011fbbb7e9cf666856fba0ba",
+     "origen": [
+      [
+       "cd",
+       "MSVCRT.DLL"
+      ],
+      [
+       "sistema",
+       "MSVCRT.DLL"
+      ]
+     ]
+    },
+    {
+     "nombre": "MSVCIRT.DLL",
+     "tam": 70656,
+     "sha256": "9717c95654d34a8e78d712f9c5a3aa82351ec04c6318e7b4aca9e6a4ad701a34",
+     "origen": [
+      [
+       "cd",
+       "MSVCIRT.DLL"
+      ],
+      [
+       "sistema",
+       "MSVCIRT.DLL"
+      ]
+     ]
+    }
+   ],
+   "instalada": {
+    "firmas": [
+     [
+      "MANAGARG.EXE",
+      "1b617c64893491c1541d9985f57ee2817e02fc371dd30348a44845fe6587861a",
+      2414592
+     ],
+     [
+      "DBASEARG.EXE",
+      "458b0ee59dd6e551239fa1d9ddef2e685ea56c3217700be1683cb39aa93a81b1",
+      580608
+     ]
+    ]
+   }
+  },
+  {
    "id": "pcf6",
    "nombre": "PC Fútbol 6.0",
    "detalle": "diciembre de 1997",
@@ -997,6 +1193,159 @@
       "ACTWIN.EXE",
       "e4a23f6219c0df1e65446e56de8e99fd8ae068fe8c66312c54941ba031c8cc94",
       274944
+     ]
+    ]
+   }
+  },
+  {
+   "id": "pcf6arg",
+   "nombre": "PC Fútbol 6.0 Apertura 98 (Argentina)",
+   "detalle": "Apertura 98, edición argentina (1998)",
+   "anio": 1998,
+   "corto": "6.0 ARG",
+   "portada": "1997.jpg",
+   "etiqueta": "Argentina",
+   "carpeta": "APERTURA98",
+   "programas": [
+    "pcf6arg",
+    "pcf6arg-actwin",
+    "pcf6arg-dbasearg"
+   ],
+   "dos": false,
+   "necesita_cd": true,
+   "solo_instalada": false,
+   "discos": [
+    {
+     "rol": "cd",
+     "nombre": "CD de PC Fútbol 6.0 Apertura 98",
+     "firmas": [
+      [
+       "DISK.ID",
+       "dfa1a53b758e11df3562641a5fadb68bc40da34aff5ffd224dbc08dfb80fd54a",
+       7
+      ],
+      [
+       "MANAGARG.EXE",
+       "3ceee762e846b4ec984d8abae151812ddb18a7940b60fa6fa5ec491b9748808f",
+       2454528
+      ],
+      [
+       "AUTORUN.INF",
+       "f41a9b84331a639bda7d3b31bac16d67feb4abdd95764f36d71940f314c46548",
+       52
+      ]
+     ],
+     "instalar": [
+      [
+       "nfo",
+       "INST_100.NFO"
+      ],
+      [
+       "nfo",
+       "INST_101.NFO"
+      ],
+      [
+       "nfo",
+       "INST_102.NFO"
+      ]
+     ],
+     "copiar": "*",
+     "sistema": [
+      [
+       "MFC42.DLL",
+       "MFC42.DLL"
+      ],
+      [
+       "MSVCRT.DLL",
+       "MSVCRT.DLL"
+      ]
+     ]
+    }
+   ],
+   "binarios": [
+    {
+     "nombre": "managarg.exe",
+     "tam": 2454528,
+     "sha256": "3ceee762e846b4ec984d8abae151812ddb18a7940b60fa6fa5ec491b9748808f",
+     "origen": [
+      [
+       "cd",
+       "MANAGARG.EXE"
+      ],
+      [
+       "instalacion",
+       "MANAGARG.EXE"
+      ]
+     ]
+    },
+    {
+     "nombre": "actwin.exe",
+     "tam": 274944,
+     "sha256": "e4a23f6219c0df1e65446e56de8e99fd8ae068fe8c66312c54941ba031c8cc94",
+     "origen": [
+      [
+       "cd",
+       "ACTWIN.EXE"
+      ]
+     ]
+    },
+    {
+     "nombre": "dbasearg.exe",
+     "tam": 630784,
+     "sha256": "eaefe05182371b88326c65f422a678535ac6f504144f38630b6c340be14e4bd9",
+     "origen": [
+      [
+       "cd",
+       "DBASEARG.EXE"
+      ],
+      [
+       "instalacion",
+       "DBASEARG.EXE"
+      ]
+     ]
+    },
+    {
+     "nombre": "MFC42.DLL",
+     "tam": 954640,
+     "sha256": "85ce7d2d0444f4b37a4d056c55c9e734bfa077ba48e72a5683d35968e6bf4772",
+     "origen": [
+      [
+       "cd",
+       "MFC42.DLL"
+      ],
+      [
+       "sistema",
+       "MFC42.DLL"
+      ]
+     ]
+    },
+    {
+     "nombre": "MSVCRT.DLL",
+     "tam": 277776,
+     "sha256": "e390b0529fb9ee1214bb68302a4658b578134d92ab76bc5eb48f3badd843d210",
+     "origen": [
+      [
+       "cd",
+       "MSVCRT.DLL"
+      ],
+      [
+       "sistema",
+       "MSVCRT.DLL"
+      ]
+     ]
+    }
+   ],
+   "instalada": {
+    "firmas": [
+     [
+      "MANAGARG.EXE",
+      "3ceee762e846b4ec984d8abae151812ddb18a7940b60fa6fa5ec491b9748808f",
+      2454528
+     ],
+     [
+      "DBASEARG.EXE",
+      "eaefe05182371b88326c65f422a678535ac6f504144f38630b6c340be14e4bd9",
+      630784
      ]
     ]
    }

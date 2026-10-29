@@ -8,7 +8,9 @@
 //
 // Interfaz (diseño «Industry», ver ui.h): la BIBLIOTECA (rejilla de tarjetas, una por juego preparado, y la de
 // «Añadir juego») y, encima, diálogos: FICHA de un juego (de dónde salió, jugar, quitar), ANADIR (elegir ISO o carpeta),
-// VERSION (si un CD vale para varias), FUENTES (qué discos faltan), INSTALANDO, CONFIG (carpeta de instalación) y ACERCA.
+// VERSION (si un CD vale para varias), FUENTES (qué discos faltan), INSTALANDO, CONFIG (carpeta de instalación), ACERCA
+// y ACTUALIZAR (hay una versión nueva en GitHub: al abrir la app se mira sola, y en «Acerca de» con un botón).
+#include "actualizar.h"
 #include "instalar.h"
 #include "is6.h"
 #include "mscab.h"
@@ -49,7 +51,7 @@ int ANCHO = 1000, ALTO = 780;   // el tamaño de la ventana (cabe la biblioteca 
 const int ANCHO_MIN = 760, ALTO_MIN = 560;
 const float MARGEN = 28;
 
-enum Pantalla { BIBLIOTECA, FICHA, ANADIR, VERSION, FUENTES, INSTALANDO, CONFIG, ACERCA };
+enum Pantalla { BIBLIOTECA, FICHA, ANADIR, VERSION, FUENTES, INSTALANDO, CONFIG, ACERCA, ACTUALIZAR };
 
 struct App {
     SDL_Window *win = nullptr;
@@ -92,6 +94,11 @@ struct App {
     Uint64 reclamar_foco = 0;   // cuándo volver a pedir el primer plano (tras mostrar la ventana)
     bool terminal = false;   // modo terminal: el juego sustituye al lanzador
     bool lista = false;   // vista de lista en vez de rejilla (ajustes.json «vista»)
+    // actualizaciones (actualizar.h): la consulta y la bajada van en hilos sueltos sobre este estado
+    actualizar::Estado act;
+    bool act_propuesta = false;   // ya se ha enseñado el diálogo de la versión nueva (al abrir, una vez)
+    bool act_manual = false;      // la consulta la ha pedido el botón de «Acerca de»
+    bool salir = false;           // la app nueva está lista: cerrar para que el ayudante la ponga en su sitio
 };
 App A;
 
@@ -340,13 +347,22 @@ void recargar_instalados() { A.instalados = instalados(util::carpetas_datos()); 
 const Instalado *instalado(const std::string &id) { for (auto &i : A.instalados) if (i.id == id) return &i; return nullptr; }
 Instalado *instalado_mut(const std::string &id) { for (auto &i : A.instalados) if (i.id == id) return &i; return nullptr; }
 
+// "" si el mod vale para el juego; si es de otra edición, el aviso (issue del foro t/528: un mod del 7 Plus en el 7 cogía
+// los datos del mod con el EXE de fábrica)
+std::string mod_de_otra_edicion(const Instalado &i, const Mod &m) {
+    const Version *v = A.versiones.por_id(i.id);
+    std::string aviso;
+    const Version *otra = v ? edicion_del_mod(dir_mod(i, m), *v, A.versiones, aviso) : nullptr;
+    return otra ? "El mod «" + m.nombre + "» es para " + otra->nombre + ": impórtalo en ese juego." : "";
+}
+
 // importa un mod (zip o carpeta) al juego de la ficha
 void importar_mod_a_ficha(const std::string &ruta) {
     Instalado *i = instalado_mut(A.ficha_id);
     if (!i) return;
     std::string nombre, error;
     A.aviso.clear(); A.aviso_error.clear();
-    if (!importar_mod(*i, ruta, nombre, error)) { A.aviso_error = "No se ha podido importar el mod: " + error; return; }
+    if (!importar_mod(*i, A.versiones, ruta, nombre, error)) { A.aviso_error = "No se ha podido importar el mod: " + error; return; }
     i->mods.push_back({nombre, true});
     guardar_mods(*i);
     A.aviso = "Mod «" + nombre + "» importado y activado." + (error.empty() ? "" : " " + error + ".");
@@ -440,6 +456,11 @@ bool preparar_cd(const Instalado &i) {
 // arranca el juego: en la app, como proceso hijo (la ventana se oculta y vuelve a la biblioteca cuando el juego se
 // cierra); desde la terminal, sustituyendo al lanzador
 void jugar(const Instalado &i) {
+    for (const Mod &m : i.mods)   // (los importados antes de comprobarlo)
+        if (m.activo) {
+            std::string otra = mod_de_otra_edicion(i, m);
+            if (!otra.empty()) { A.aviso_error = otra + " Desactívalo para jugar."; return; }
+        }
     if (!preparar_cd(i)) return;
     // la ISO del CD se queda montada mientras el juego corre (y hasta que se expulse o se reinicie)
     A.montajes.clear();
@@ -769,7 +790,11 @@ void pantalla_ficha() {
         std::string quitar;
         for (Mod &m : im->mods) {
             bool v = m.activo;
-            if (ui::casilla(c.x, y, w2 - wq - 8, m.nombre, v)) { m.activo = v; guardar_mods(*im); A.aviso.clear(); A.aviso_error.clear(); }
+            if (ui::casilla(c.x, y, w2 - wq - 8, m.nombre, v)) {
+                std::string otra = v ? mod_de_otra_edicion(*im, m) : "";
+                A.aviso.clear(); A.aviso_error = otra;
+                if (otra.empty()) { m.activo = v; guardar_mods(*im); }
+            }
             if (ui::boton({c.x + w2 - wq, y - 3, wq, 30}, "Quitar", ui::FANTASMA)) quitar = m.nombre;
             y += 26;
         }
@@ -963,6 +988,71 @@ void pantalla_config() {
     if (b == 1) cerrar_dialogo();
 }
 
+// ---------------------------------------------------------------- actualizaciones
+bool act_ocupada() { int f = A.act.fase; return f == actualizar::BUSCANDO || f == actualizar::BAJANDO || f == actualizar::COMPROBANDO || f == actualizar::LISTA; }
+void buscar_actualizacion(bool manual) {
+    if (act_ocupada()) return;
+    A.act_manual = manual;
+    A.act.fase = actualizar::BUSCANDO;
+    std::thread([] { actualizar::buscar(A.act, PCF_VERSION); }).detach();
+}
+// cada fotograma: si al abrir ha salido una versión nueva, se propone en cuanto se está en la biblioteca
+void vigilar_actualizacion() {
+    if (A.act.fase == actualizar::HAY && (A.act_manual ? A.pantalla == ACERCA : !A.act_propuesta && A.pantalla == BIBLIOTECA) && !A.jugando.activo()) {
+        A.act_propuesta = true; A.act_manual = false;
+        A.pantalla = ACTUALIZAR;
+    }
+}
+
+void pantalla_actualizar() {
+    const float W = 560, w = W - 2 * MARGEN;
+    int f = A.act.fase;
+    std::string version, pagina, url, error;
+    { std::lock_guard<std::mutex> lk(A.act.mx); version = A.act.version; pagina = A.act.pagina; url = A.act.url; error = A.act.error; }
+    std::string t1, t2;
+    if (f == actualizar::FALLO) {
+        t1 = "No se ha podido actualizar: " + error + ".";
+        t2 = "Puedes bajar la versión nueva a mano desde GitHub.";
+    } else if (url.empty()) {
+        t1 = "Hay una versión nueva: " + version + " (tienes la " + PCF_VERSION + ").";
+        t2 = "En este sistema no hay paquete: se compila desde el código (README del repositorio).";
+    } else {
+        t1 = "Hay una versión nueva: " + version + " (tienes la " + PCF_VERSION + ").";
+        t2 = "Se baja (" + util::humano(A.act.total) + "), se comprueba que es la oficial y firmada, y la app se vuelve a abrir con la "
+             "versión nueva. Tus juegos, partidas y mods no se tocan.";
+    }
+    bool en_marcha = f == actualizar::BAJANDO || f == actualizar::COMPROBANDO || f == actualizar::LISTA;
+    float h = ui::parrafo(0, 0, w, t1, ui::CUERPO, ui::TEXTO, false) + 10 + ui::parrafo(0, 0, w, t2, ui::CUERPO_13, ui::NEUTRO_700, false) + 20;
+    if (en_marcha) h += 22 + 10 + ui::alto(ui::CUERPO_13) + 20;
+    SDL_FRect c = dialogo("Actualización", W, h + 36 + 2 * MARGEN);
+    float y = c.y;
+    y += ui::parrafo(c.x, y, w, t1, ui::CUERPO, f == actualizar::FALLO ? ui::ALERTA : ui::TEXTO) + 10;
+    y += ui::parrafo(c.x, y, w, t2, ui::CUERPO_13, ui::NEUTRO_700) + 20;
+    if (en_marcha) {
+        uint64_t b = A.act.bajado(), t = A.act.total;
+        ui::barra({c.x, y, w, 22}, f == actualizar::BAJANDO ? (t ? (float)b / (float)t : 0) : 1);
+        y += 32;
+        std::string estado = f == actualizar::BAJANDO ? "Bajando: " + util::humano(b) + " de " + util::humano(t)
+                           : f == actualizar::COMPROBANDO ? "Comprobando la firma…" : "Reiniciando con la versión nueva…";
+        ui::texto(c.x, y, estado, ui::CUERPO_13, ui::NEUTRO_700);
+        y += ui::alto(ui::CUERPO_13) + 20;
+        if (f == actualizar::LISTA && !A.salir) {
+            if (actualizar::aplicar(A.act)) A.salir = true;   // (si falla, pasa a FALLO y se enseña)
+        }
+        return;
+    }
+    if (f == actualizar::FALLO || url.empty()) {
+        int b = fila_botones(c.x + w, y, {{"Abrir en GitHub", ui::PRIMARIO}, {"Cerrar", ui::SECUNDARIO}});
+        if (b == 0) SDL_OpenURL(pagina.empty() ? "https://github.com/nuvolacat/pcfsite-source/releases/latest" : pagina.c_str());
+        if (b >= 0) { if (f == actualizar::FALLO) A.act.fase = actualizar::HAY; cerrar_dialogo(); }
+        return;
+    }
+    int b = fila_botones(c.x + w, y, {{"Actualizar ahora", ui::PRIMARIO}, {"Ver novedades", ui::SECUNDARIO}, {"Más tarde", ui::FANTASMA}});
+    if (b == 0) { A.act.fase = actualizar::BAJANDO; std::thread([] { actualizar::preparar(A.act); }).detach(); }
+    if (b == 1) SDL_OpenURL(pagina.c_str());
+    if (b == 2) cerrar_dialogo();
+}
+
 void pantalla_acerca() {
     const float W = 560, w = W - 2 * MARGEN;
     std::string t1 = "Los PC Fútbol del 4.0 al 2001 traducidos desde su código original a C y compilados como programas nativos. "
@@ -973,7 +1063,13 @@ void pantalla_acerca() {
     std::string t4 = "Software libre (GPL-3.0), hecho por aficionados. Sin afiliación con Dinamic Multimedia ni con los titulares de los derechos de los "
                      "juegos. PC Fútbol es una marca de sus propietarios.";
     std::string version = std::string("Versión ") + PCF_VERSION + "  ·  versiones de los juegos del " + A.versiones.generado;
-    float h = ui::alto(ui::ETIQUETA) + 10;
+    std::string estado_act;   // lo que ha dicho la consulta pedida con el botón
+    if (A.act_manual || A.act.fase == actualizar::AL_DIA) switch ((int)A.act.fase) {
+        case actualizar::BUSCANDO: estado_act = "Buscando…"; break;
+        case actualizar::AL_DIA: estado_act = "Tienes la última versión."; break;
+        case actualizar::FALLO: estado_act = "No se ha podido mirar: " + A.act.lee_error() + "."; break;
+    }
+    float h = 36 + 4 + 24 + 10 + (estado_act.empty() ? 0 : ui::alto(ui::CUERPO_13) + 6);
     h += ui::parrafo(0, 0, w, t1, ui::CUERPO, ui::TEXTO, false) + 10;
     h += ui::parrafo(0, 0, w, t2, ui::CUERPO_13, ui::NEUTRO_700, false) + 10;
     h += ui::parrafo(0, 0, w, t3, ui::CUERPO_13, ui::NEUTRO_700, false) + 16;
@@ -981,8 +1077,22 @@ void pantalla_acerca() {
     h += ui::parrafo(0, 0, w, t4, ui::PEQUENO, ui::NEUTRO_600, false) + 16 + 36;
     SDL_FRect c = dialogo("Acerca de", W, h + 2 * MARGEN);
     float y = c.y;
-    ui::texto(c.x, y, version, ui::ETIQUETA, ui::NEUTRO_600);
-    y += ui::alto(ui::ETIQUETA) + 10;
+    {   // la versión, con el botón de buscar actualizaciones, y si se mira sola al abrir
+        float wb = ui::ancho_boton("Buscar actualizaciones");
+        ui::texto(c.x, y + (36 - ui::alto(ui::ETIQUETA)) / 2, ui::recorta(version, w - wb - 12, ui::ETIQUETA), ui::ETIQUETA, ui::NEUTRO_600);
+        if (ui::boton({c.x + w - wb, y, wb, 36}, "Buscar actualizaciones", ui::SECUNDARIO, !act_ocupada())) {
+            if (A.act.fase == actualizar::HAY) { A.act_manual = true; }   // (ya se sabe: se enseña otra vez)
+            else buscar_actualizacion(true);
+        }
+        y += 36 + 4;
+        bool auto_ = util::ajuste("actualizaciones") != "no";
+        if (ui::casilla(c.x, y, w, "Buscar actualizaciones al abrir la app", auto_)) util::pon_ajuste("actualizaciones", auto_ ? "si" : "no");
+        y += 24 + 10;
+        if (!estado_act.empty()) {
+            ui::texto(c.x, y, ui::recorta(estado_act, w, ui::CUERPO_13), ui::CUERPO_13, A.act.fase == actualizar::FALLO ? ui::ALERTA : ui::ACENTO_700);
+            y += ui::alto(ui::CUERPO_13) + 6;
+        }
+    }
     y += ui::parrafo(c.x, y, w, t1, ui::CUERPO, ui::TEXTO) + 10;
     y += ui::parrafo(c.x, y, w, t2, ui::CUERPO_13, ui::NEUTRO_700) + 10;
     y += ui::parrafo(c.x, y, w, t3, ui::CUERPO_13, ui::NEUTRO_700) + 16;
@@ -1018,6 +1128,19 @@ int modo_terminal(int argc, char **argv) {
     if (!util::existe(vpath)) vpath = std::string(PCF_APP_SRC) + "/versiones.json";
     if (!A.versiones.cargar(vpath, error)) { fprintf(stderr, "%s\n", error.c_str()); return 2; }
     std::string modo = argv[1];
+    if (modo == "--actualizar" || modo == "--buscar-actualizacion") {   // la última release de GitHub; --actualizar además la instala
+        actualizar::buscar(A.act, PCF_VERSION);
+        std::string v, u;
+        { std::lock_guard<std::mutex> lk(A.act.mx); v = A.act.version; u = A.act.url; }
+        if (A.act.fase == actualizar::FALLO) { fprintf(stderr, "%s\n", A.act.lee_error().c_str()); return 1; }
+        printf("esta: %s, la última: %s%s\n", PCF_VERSION, v.c_str(), A.act.fase == actualizar::HAY ? " (más nueva)" : "");
+        if (modo == "--buscar-actualizacion" || A.act.fase != actualizar::HAY) return 0;
+        printf("bajando %s\n", u.c_str());
+        actualizar::preparar(A.act);
+        if (A.act.fase != actualizar::LISTA || !actualizar::aplicar(A.act)) { fprintf(stderr, "%s\n", A.act.lee_error().c_str()); return 1; }
+        printf("lista: se pone en su sitio al terminar este proceso\n");
+        return 0;
+    }
     if (modo == "--listar") {
         for (const Version &v : A.versiones.lista) {
             printf("%-8s %s\n", v.id.c_str(), v.titulo().c_str());
@@ -1029,7 +1152,7 @@ int modo_terminal(int argc, char **argv) {
         for (Instalado &i : A.instalados = instalados(util::carpetas_datos()), A.instalados)
             if (i.id == argv[2]) {
                 std::string nombre, error;
-                if (!importar_mod(i, util::normaliza(argv[3]), nombre, error)) { fprintf(stderr, "%s\n", error.c_str()); return 1; }
+                if (!importar_mod(i, A.versiones, util::normaliza(argv[3]), nombre, error)) { fprintf(stderr, "%s\n", error.c_str()); return 1; }
                 i.mods.push_back({nombre, true});
                 guardar_mods(i);
                 printf("mod «%s» importado en %s%s%s\n", nombre.c_str(), dir_mods(i).c_str(), error.empty() ? "" : "; ", error.c_str());
@@ -1042,7 +1165,11 @@ int modo_terminal(int argc, char **argv) {
         for (Instalado &i : A.instalados = instalados(util::carpetas_datos()), A.instalados)
             if (i.id == argv[2]) {
                 std::string lista = argc > 3 ? argv[3] : "";
-                for (Mod &m : i.mods) m.activo = ("," + lista + ",").find("," + m.nombre + ",") != std::string::npos;
+                for (Mod &m : i.mods) {
+                    m.activo = ("," + lista + ",").find("," + m.nombre + ",") != std::string::npos;
+                    std::string otra = m.activo ? mod_de_otra_edicion(i, m) : "";
+                    if (!otra.empty()) { fprintf(stderr, "%s\n", otra.c_str()); m.activo = false; }
+                }
                 guardar_mods(i);
                 for (const Mod &m : i.mods) printf("%s %s\n", m.activo ? "[x]" : "[ ]", m.nombre.c_str());
                 return 0;
@@ -1188,6 +1315,7 @@ int main(int argc, char **argv) {
     if (const char *pp = getenv("PCF_PANTALLA")) {   // pruebas: abrir en un diálogo
         std::string p = pp;
         if (p == "acerca") A.pantalla = ACERCA;
+        else if (p == "actualizar") { actualizar::buscar(A.act, PCF_VERSION); A.act_propuesta = true; A.pantalla = ACTUALIZAR; }
         else if (p == "anadir") A.pantalla = ANADIR;
         else if (p == "config") { A.config_carpeta = util::dir_datos(); A.pantalla = CONFIG; }
         else if (p.rfind("ficha:", 0) == 0) { A.ficha_id = p.substr(6); A.pantalla = FICHA; }
@@ -1199,13 +1327,15 @@ int main(int argc, char **argv) {
         }
     }
     if (const char *pj = getenv("PCF_JUGAR")) if (const Instalado *i = instalado(pj)) { Instalado copia = *i; jugar(copia); }   // pruebas
+    // ¿hay una versión nueva? (no en desarrollo, salvo con PCF_ACT_API; se puede apagar en «Acerca de»)
+    if (util::ajuste("actualizaciones") != "no" && (std::string(PCF_VERSION) != "desarrollo" || getenv("PCF_ACT_API"))) buscar_actualizacion(false);
 
     bool pulsado = false;
     while (true) {
         bool clic = false;
         SDL_Event ev;
         while (SDL_PollEvent(&ev)) {
-            if (ev.type == SDL_EVENT_QUIT) {
+            if (ev.type == SDL_EVENT_QUIT || A.salir) {
                 if (A.pantalla == INSTALANDO) { A.progreso.cancelar = true; if (A.hilo.joinable()) A.hilo.join(); }
                 desmontar_todo();
                 SDL_Quit();
@@ -1214,9 +1344,11 @@ int main(int argc, char **argv) {
             if (ev.type == SDL_EVENT_MOUSE_WHEEL && A.pantalla == BIBLIOTECA) A.scroll -= ev.wheel.y * 36;
             if (ev.type == SDL_EVENT_MOUSE_BUTTON_DOWN && ev.button.button == SDL_BUTTON_LEFT) pulsado = true;
             if (ev.type == SDL_EVENT_MOUSE_BUTTON_UP && ev.button.button == SDL_BUTTON_LEFT) { pulsado = false; clic = true; }
-            if (ev.type == SDL_EVENT_KEY_DOWN && ev.key.key == SDLK_ESCAPE && A.pantalla != INSTALANDO && A.pantalla != BIBLIOTECA) cerrar_dialogo();
+            if (ev.type == SDL_EVENT_KEY_DOWN && ev.key.key == SDLK_ESCAPE && A.pantalla != INSTALANDO && A.pantalla != BIBLIOTECA && !(A.pantalla == ACTUALIZAR && act_ocupada())) cerrar_dialogo();
         }
         vigilar_juego();
+        vigilar_actualizacion();
+        if (A.salir) { desmontar_todo(); SDL_Quit(); return 0; }   // (el ayudante espera a que este proceso termine)
         if (A.reclamar_foco && SDL_GetTicks() > A.reclamar_foco) { A.reclamar_foco = 0; SDL_RaiseWindow(A.win); }
         {   // respuesta de un diálogo de ficheros
             std::string r;
@@ -1245,6 +1377,7 @@ int main(int argc, char **argv) {
         case INSTALANDO: pantalla_instalando(); break;
         case CONFIG: pantalla_config(); break;
         case ACERCA: pantalla_acerca(); break;
+        case ACTUALIZAR: pantalla_actualizar(); break;
         }
         if (const char *cap = getenv("PCF_CAPTURA")) {   // pruebas: guardar la pantalla y salir (antes de presentar: después el búfer ya no vale)
             static int n = 0;

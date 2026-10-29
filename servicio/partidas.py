@@ -55,11 +55,12 @@ PUERTO = int(os.environ.get("PARTIDAS_PUERTO", "8870"))
 FORO = ("127.0.0.1", int(os.environ.get("PARTIDAS_FORO_PUERTO", "8850")))
 ORIGEN = "https://source.pcfsite.com"
 AUD = "source"   # audiencia de los tokens del Admin
-JUEGOS = {"pcf7", "pcf7plus", "pcf6", "pcf6oro", "pcf5", "pcf5oro", "pcf4", "pcf2000", "pcf2001"}   # los ids de juegos/<id> de core/ que están en el navegador (JUEGOS_WEB de deploy.sh)
-NOMBRES = {"pcf4": "PC Fútbol 4.0", "pcf5": "PC Fútbol 5.0", "pcf5oro": "PC Fútbol 5.0 Edición de Oro", "pcf6": "PC Fútbol 6.0",
+JUEGOS = {"pcf7", "pcf7plus", "pcf6", "pcf6oro", "pcf5", "pcf5oro", "pcf5arg", "pcf6arg", "pcf4", "pcf2000", "pcf2001"}   # los ids de juegos/<id> de core/ que están en el navegador (JUEGOS_WEB de deploy.sh)
+NOMBRES = {"pcf4": "PC Fútbol 4.0", "pcf5": "PC Fútbol 5.0", "pcf5oro": "PC Fútbol 5.0 Edición de Oro",
+           "pcf5arg": "PC Fútbol 5.0 Apertura 97", "pcf6arg": "PC Fútbol 6.0 Apertura 98", "pcf6": "PC Fútbol 6.0",
            "pcf6oro": "PC Fútbol 6.0 Edición de Oro", "pcf7": "PC Fútbol 7", "pcf7plus": "PC Fútbol 7 Plus",
            "pcf2000": "PC Fútbol 2000", "pcf2001": "PC Fútbol 2001"}
-FICHAS = ["pcf4", "pcf5", "pcf6", "pcf7", "pcf2000", "pcf2001"]   # las tarjetas de la portada (data/juegos.json); las ediciones van dentro
+FICHAS = ["pcf4", "pcf5", "pcf6", "pcf7", "pcf2000", "pcf2001", "pcf5arg", "pcf6arg"]   # las tarjetas de la portada (data/juegos.json); las ediciones van dentro
 RUTA_OK = re.compile(r"^[A-Za-z0-9_\-][A-Za-z0-9_.\- /]{0,199}$")
 MAX_FICHERO = 16 << 20         # comprimido; una partida de PC Fútbol 7 son ~1,2 MB
 MAX_TOTAL = 300 << 20          # por usuario y juego

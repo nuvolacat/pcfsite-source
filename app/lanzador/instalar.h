@@ -49,7 +49,12 @@ std::string dir_mods(const Instalado &i);                 // <carpeta>/mods
 std::string dir_mod(const Instalado &i, const Mod &m);    // <carpeta>/mods/<nombre>
 // importa una carpeta o un archivo (.zip con extractor propio; .rar/.7z con el tar del sistema) como mod (copia su contenido a mods/<nombre>, localizando dentro la carpeta que replica
 // la del juego; de los EXE y DLL se aplican luego solo sus textos); deja el nombre en `nombre`
-bool importar_mod(const Instalado &i, const std::string &ruta, std::string &nombre, std::string &error);
+// (no lo importa si es de otra edición: ver edicion_del_mod)
+bool importar_mod(const Instalado &i, const Versiones &vs, const std::string &ruta, std::string &nombre, std::string &error);
+// para qué edición es el mod de la carpeta `dir`: nullptr si vale para `v` o no se sabe, si no la otra. Lo dice su
+// pcfsite-mod.json ({"juego": "<id>"}) o, si no trae, sus EXE y DLL por nombre y tamaño (el manager.exe de cada edición
+// mide distinto). En `aviso`, los que no son de ninguna edición: la plataforma no los aplicará
+const Version *edicion_del_mod(const std::string &dir, const Version &v, const Versiones &vs, std::string &aviso);
 bool quitar_mod(Instalado &i, const std::string &nombre);
 bool guardar_mods(const Instalado &i);                   // escribe la lista (y qué está activo) en instalado.json
 // el perfil de partidas de los mods activos: "" sin mods (se juega en la instalación), si no <carpeta>/perfiles/<mods>

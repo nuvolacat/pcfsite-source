@@ -3,6 +3,29 @@
 Versión = `1.AA.MMDD.HHMM` con la hora real del empaquetado (`app/mac/empaquetar.sh`, el mismo esquema que pcfsite.com).
 Cada entrada lleva la versión que **de verdad se distribuyó**; dos empaquetados en el mismo minuto van en una sola entrada.
 
+## 1.26.1029.2228 — 29-oct-2026
+
+- **Mods con EXE modificado, ahora en todos los juegos.** En la 1.26.1024.2027 solo se retradujeron con «inmediatos
+  vivos» el 2001, el 4.0 y los programas secundarios; el programa principal del 5.0, 5.0 Oro, 6.0, 6.0 Oro, 7, 7 Plus
+  y 2000 seguía con los valores del código fijos, y de un `MANAGER.EXE` modificado solo entraban los datos. Ahora los
+  siete están retraducidos. Caso real (foro, t/528): el mod de Houdini para el 7 Plus cambia las listas de equipos de
+  Inglaterra, Italia, Alemania y Francia del modo Manager; antes salían las de fábrica y ahora las del mod.
+- **Mods de otra edición.** La app sabe para qué edición es un mod (por su `pcfsite-mod.json`, que el editor Houdini
+  ya mete en sus zip, o por el tamaño de sus EXE y DLL) y no deja importarlo, activarlo ni jugar con él en otra: un
+  mod del 7 Plus en el 7 cogía los datos del mod con el EXE de fábrica. Si el EXE no es de ninguna edición, avisa de
+  que no se aplicará.
+- **Ediciones argentinas.** PC Fútbol 5.0 Apertura 97 y PC Fútbol 6.0 Apertura 98.
+- **Linux** (issue #1): el lanzador ya no se cuelga al montar la ISO con `fuseiso`, reutiliza un montaje solo si es de
+  la misma ISO y desmonta los que quedaron de otra vez; el 4.0 deja de relanzarse en bucle si un programa termina sin
+  dejar `COMFILE.DAT`.
+- El registro del juego ya no repite «8253: temporizador» si el valor no cambia.
+- **Se actualiza sola.** Al abrirse mira si hay una versión nueva en GitHub y propone actualizar: la baja, comprueba que
+  es la oficial y está firmada, se cierra y se vuelve a abrir ya actualizada (los juegos, partidas y mods no se tocan).
+  En «Acerca de», el botón «Buscar actualizaciones» y la casilla para no mirarlo al abrir. Esta es la última versión
+  que hay que bajar a mano.
+- **Firmadas.** macOS: con Developer ID y notarizada por Apple (se abre sin «Abrir de todas formas»). Windows: el
+  ejecutable y las DLL con certificado de firma de código (Authenticode).
+
 ## 1.26.1025.1529 — 25-oct-2026
 
 - **macOS Intel.** Además de la de Apple Silicon hay una app para los Mac con procesador Intel (x86_64), con su propio

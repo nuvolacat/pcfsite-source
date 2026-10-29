@@ -3,6 +3,8 @@
 necesitan SharedArrayBuffer), peticiones Range (los datos se piden por trozos) y MIME de .wasm.
 Uso: python3 tools/web_servir.py [puerto]   (por defecto 8793)"""
 import http.server
+import io
+import json
 import os
 import time
 import re
@@ -10,6 +12,9 @@ import sys
 
 _ID = os.environ.get("PCF_JUEGO", "pcf7")   # el juego (juegos/<id>); pcf7 en build/web-site, los demás en build/<id>/
 SITE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "build", *([] if _ID == "pcf7" else [_ID]), "web-site")
+# la página con el juego, el título y el programa principal de juegos/<id>/juego.json, como la deja deploy.sh
+_CFG = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "juegos", _ID, "juego.json")))
+_PRINCIPAL = _CFG.get("principal", "manager.exe").rsplit(".", 1)[0].lower()
 
 
 class H(http.server.SimpleHTTPRequestHandler):
@@ -35,6 +40,15 @@ class H(http.server.SimpleHTTPRequestHandler):
         return super().translate_path(re.sub(r"/{2,}", "/", path))   # WasmFS pide «datos//game/…»
 
     def send_head(self):
+        if self.path.split("?")[0] in ("/", "/index.html"):
+            html = open(os.path.join(SITE, "index.html"), encoding="utf-8").read()
+            html = html.replace('data-juego="pcf7">', f'data-juego="{_ID}" data-principal="{_PRINCIPAL}">', 1)
+            html = html.replace("<title>PC Fútbol 7</title>", f"<title>{_CFG['nombre']}</title>", 1).encode()
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.send_header("Content-Length", str(len(html)))
+            self.end_headers()
+            return io.BytesIO(html)
         # PCF7_WEB_RETARDO=ms: los datos del juego (/datos/) tardan eso en empezar a llegar, como desde R2
         if "/datos/" in self.path and os.environ.get("PCF7_WEB_RETARDO"):
             time.sleep(float(os.environ["PCF7_WEB_RETARDO"]) / 1000)

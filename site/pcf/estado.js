@@ -15,9 +15,14 @@
       + (a.enlace ? '<a href="' + esc(a.enlace) + '">' + esc(a.texto) + "</a>" : esc(a.texto));
     main.insertBefore(box, main.firstChild);
   }
+  // cada apartado de la portada (España, Internacional): sus tarjetas, ordenadas y contadas por separado
   function catalogo(c) {
-    var grid = document.querySelector(".cat .grid");
-    if (!grid || !c) return;
+    if (!c) return;
+    Array.prototype.forEach.call(document.querySelectorAll(".cat-juegos"), function (sec) { apartado(sec, c); });
+  }
+  function apartado(sec, c) {
+    var grid = sec.querySelector(".grid");
+    if (!grid) return;
     var cards = Array.prototype.slice.call(grid.querySelectorAll(".card-g[href]"));
     var visibles = 0;
     cards.forEach(function (card, i) {
@@ -37,8 +42,9 @@
     });
     cards.sort(function (a, b) { return (+a.dataset.orden - +b.dataset.orden) || (+a.dataset.pos - +b.dataset.pos); })
       .forEach(function (card) { grid.appendChild(card); });
-    var cnt = document.querySelector(".cat .cat-head .cnt");
+    var cnt = sec.querySelector(".cat-head .cnt");
     if (cnt && visibles !== cards.length) cnt.textContent = visibles + " en el proyecto";
+    if (!visibles) sec.hidden = true;
   }
   fetch("/estado.json", { credentials: "same-origin" })
     .then(function (r) { return r.ok ? r.json() : null; })
