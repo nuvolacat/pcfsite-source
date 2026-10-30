@@ -2,7 +2,8 @@
 //  1. Navegador: cada fichero que escribe el juego (lo manda platform/src/web.cpp) se guarda en IndexedDB.
 //  2. Cuenta de pcfsite.com: si hay sesión, también en el servidor (/partidas/pcf7/, servicio/partidas.py de
 //     pcfsite-source), comprimido. Al arrancar se juntan las dos copias: gana la más nueva de cada fichero.
-//  3. Copia manual: exportar() / importar() (botones de la ficha del juego en source.pcfsite.com).
+//  3. Copia manual: exportar() / importar() (botones de la ficha del juego en source.pcfsite.com). importar() admite
+//     también la partida de juegos.pcfsite.com (<juego>.pcfsave), que convierte el servidor.
 // Antes de sustituir o borrar una copia local, la anterior va a «respaldo» (las 5 últimas de cada fichero).
 (function () {
   "use strict";
@@ -189,7 +190,7 @@
     return { n: ficheros.length, blob: new Blob([JSON.stringify({ formato: JUEGO + "-partidas", version: 1, fecha: new Date().toISOString(), ficheros })], { type: "application/json" }) };
   };
   P.importar = async function (fichero) {
-    const d = JSON.parse(await fichero.text());
+    const d = (await fichero.slice(0, 1).text()) === "{" ? JSON.parse(await fichero.text()) : await convierte(fichero);
     if (d.formato !== JUEGO + "-partidas" || !Array.isArray(d.ficheros)) throw new Error("no es una copia de partidas de este juego");
     const ahora = Date.now();
     let n = 0;
@@ -200,5 +201,20 @@
     }
     return n;
   };
+  // la partida de juegos.pcfsite.com («Mis partidas» → <juego>.pcfsave: el disco del Windows 98 emulado) la convierte el
+  // servidor (servicio/pcfsave.py), que es quien puede leer el disco original
+  async function convierte(fichero) {
+    let r;
+    try { r = await fetch(API + "convertir", { method: "POST", body: fichero, headers: { "Content-Type": "application/octet-stream" } }); }
+    catch (e) { throw new Error("no se ha podido enviar la partida al servidor para convertirla"); }
+    if (r.status === 401) throw new Error("para cargar una partida de juegos.pcfsite.com tienes que entrar con tu cuenta de pcfsite");
+    if (r.status === 413) throw new Error("el fichero es demasiado grande");
+    if (!r.ok) {
+      let m = "";
+      try { m = (await r.json()).error; } catch (e) {}
+      throw new Error(m || "el servidor no ha podido convertir la partida (" + r.status + ")");
+    }
+    return r.json();
+  }
   P.hay = async () => (await todas()).some((r) => r.datos && ES_PARTIDA.test(r.ruta));
 })();

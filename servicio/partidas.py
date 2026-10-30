@@ -11,6 +11,8 @@ Público (por nginx):
   GET    /partidas/<juego>/f/<ruta>      → el fichero (tal como se subió: el cliente lo manda comprimido con gzip)
   PUT    /partidas/<juego>/f/<ruta>?fecha=ms&sha=…   (cuerpo = fichero)   → 409 si el servidor tiene una más nueva
   DELETE /partidas/<juego>/f/<ruta>?fecha=ms
+  POST   /partidas/<juego>/convertir (cuerpo = <juego>.pcfsave de «Mis partidas» de juegos.pcfsite.com) → la copia
+         de partidas en el formato de «Descargar partidas» (pcfsave.py), que la página importa
   POST   /partidas/hit · /partidas/beat  (cuerpo «<juego> <id de navegador>»): arranque de un juego y latido por minuto
   GET    /estado.json                    → catálogo, aviso y mantenimiento (lo aplica la web, site/pcf/estado.js)
   GET    /acceso/comprobar (auth_request de nginx) → 204 pasa, 401 sin sesión (o /jugar/ sin cuenta: jugar exige
@@ -49,6 +51,7 @@ import urllib.parse
 import zoneinfo
 
 import pcf_interno   # copia exacta de Admin-PCFutbol/contracts/verificador/pcf_interno.py
+import pcfsave       # partidas de juegos.pcfsite.com → Source
 
 DATOS = os.environ.get("PARTIDAS_DATOS", "/var/lib/source-partidas")
 PUERTO = int(os.environ.get("PARTIDAS_PUERTO", "8870"))
@@ -66,6 +69,8 @@ MAX_FICHERO = 16 << 20         # comprimido; una partida de PC Fútbol 7 son ~1,
 MAX_TOTAL = 300 << 20          # por usuario y juego
 MAX_FICHEROS = 2000
 HISTORIAL = 10
+MAX_PCFSAVE = 128 << 20        # .pcfsave de juegos.pcfsite.com (sectores del disco de Windows 98: hasta ~100 MB)
+_conversiones = threading.Semaphore(1)   # de una en una: cada una puede ocupar ~200 MB
 MADRID = zoneinfo.ZoneInfo("Europe/Madrid")
 
 _cerrojos, _cerrojo = {}, threading.Lock()
@@ -672,7 +677,31 @@ class H(http.server.BaseHTTPRequestHandler):
         ruta = urllib.parse.urlsplit(self.path).path
         if ruta in ("/partidas/hit", "/partidas/beat"):
             return self.marca(ruta.rsplit("/", 1)[1])
+        m = re.fullmatch(r"/partidas/([a-z0-9]+)/convertir", ruta)
+        if m and m.group(1) in JUEGOS:
+            return self.convertir(m.group(1))
         self.responde(404, {"error": "no existe"})
+
+    def convertir(self, juego):
+        """Partida de juegos.pcfsite.com (.pcfsave) → copia de partidas de Source, que la página importa (pcfsave.py)."""
+        if self.headers.get("Origin") != ORIGEN:
+            return self.responde(403, {"error": "origen"})
+        if usuario(self.headers.get("Cookie", "")) is None:
+            return self.responde(401, {"error": "sin sesión"})
+        n = int(self.headers.get("Content-Length") or -1)
+        if n < 0 or n > MAX_PCFSAVE:
+            return self.responde(413, {"error": "demasiado grande"})
+        blob = self.rfile.read(n)
+        if not _conversiones.acquire(timeout=60):
+            return self.responde(503, {"error": "ocupado; prueba dentro de un momento"})
+        try:
+            return self.responde(200, pcfsave.a_source(juego, blob))
+        except pcfsave.Error as e:
+            return self.responde(422, {"error": str(e)})
+        except Exception:   # noqa: BLE001 (R2 caído, disco raro…)
+            return self.responde(502, {"error": "no se ha podido leer la partida"})
+        finally:
+            _conversiones.release()
 
     def do_PUT(self):
         if self.path.startswith("/internal/v1/"):

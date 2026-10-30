@@ -207,11 +207,12 @@ def ficha(j, v):
     <span class="juego-botones">
       <button class="btn btn-secondary juego-exportar" type="button">Descargar mis partidas</button>
       <button class="btn btn-secondary juego-importar" type="button">Cargar partidas</button>
-      <input class="juego-fichero" type="file" accept=".json,application/json" hidden>
+      <input class="juego-fichero" type="file" accept=".json,.pcfsave,application/json" hidden>
       <button class="btn btn-secondary juego-completa" type="button" hidden>Pantalla completa</button>
     </span></div>
   <p class="juego-partidas meta">Las partidas se guardan en este navegador y, si entras con tu cuenta de pcfsite, también
-    en el servidor: así las recuperas desde cualquier ordenador. Puedes descargar una copia cuando quieras.</p>
+    en el servidor: así las recuperas desde cualquier ordenador. Puedes descargar una copia cuando quieras.{
+    " ¿Vienes de juegos.pcfsite.com? Descarga allí tu partida en «Mis partidas» (el fichero " + j["id"] + ".pcfsave) y cárgala aquí con «Cargar partidas»." if j["id"] in ("pcf2000", "pcf2001") else ""}</p>
 </section>""")
     if j.get("capturas"):
         figs = "".join(f'<figure><img src="{captura(j["id"], c["id"])}" alt="{e(c["texto"])}" loading="lazy" data-visor>'

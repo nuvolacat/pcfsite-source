@@ -34,6 +34,7 @@
 #include <algorithm>
 #include <cstdio>
 #include <map>
+#include <memory>
 #include <mutex>
 #include <thread>
 #include <functional>

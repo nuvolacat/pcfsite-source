@@ -25,12 +25,14 @@ ReadWritePaths=/var/lib/source-partidas
 ProtectKernelTunables=yes
 ProtectKernelModules=yes
 ProtectControlGroups=yes
-RestrictAddressFamilies=AF_INET AF_INET6
+# AF_UNIX: para resolver nombres (discos.pcfsite.com, ver pcfsave.py) con systemd-resolved
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
 RestrictNamespaces=yes
 LockPersonality=yes
 CapabilityBoundingSet=
 SystemCallArchitectures=native
-MemoryMax=256M
+# 512M: convertir una partida de juegos.pcfsite.com (pcfsave.py) lleva el fichero entero en memoria (hasta 128 MB)
+MemoryMax=512M
 TasksMax=64
 
 [Install]

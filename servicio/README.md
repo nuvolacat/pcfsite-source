@@ -10,6 +10,7 @@ GET    /partidas/<juego>/              → {"ficheros": [{ruta, fecha, tam, sha,
 GET    /partidas/<juego>/f/<ruta>      → el fichero (tal como se subió: el cliente lo manda con gzip)
 PUT    /partidas/<juego>/f/<ruta>?fecha=ms&sha=…   (cuerpo = fichero) → 409 si el servidor tiene una más nueva
 DELETE /partidas/<juego>/f/<ruta>?fecha=ms
+POST   /partidas/<juego>/convertir     (cuerpo = <juego>.pcfsave de juegos.pcfsite.com) → copia de partidas de Source (pcfsave.py)
 POST   /partidas/hit · /partidas/beat  («<juego> <id>», sendBeacon de core/web/inicio.js): arranques y latidos
 GET    /estado.json                    → catálogo, aviso y mantenimiento (site/pcf/estado.js lo aplica en cada página)
 GET    /acceso/comprobar (auth_request de nginx) → 204/401/403; /acceso/pagina (error_page 403) → cerrado (403) o mantenimiento (503)
@@ -32,6 +33,7 @@ va a `historial/<ruta>/<fecha>` (las 10 últimas), para recuperar a mano una par
 | Fichero | Qué es |
 |---|---|
 | `partidas.py` | el servicio (`PARTIDAS_DATOS`, `PARTIDAS_PUERTO`, `PARTIDAS_FORO_PUERTO`, `PCF_ADMIN_FIRMA_PUB`, `PCF_INTERNO_JTI_DIR` por el entorno) |
+| `pcfsave.py` | convierte la partida de juegos.pcfsite.com del 2000 y el 2001 (sectores cambiados del disco de Windows 98 de js-dos) en una copia de partidas de Source: pone los sectores sobre el disco original de R2 (discos.pcfsite.com), lee el FAT y saca lo que el juego escribió en su carpeta `Save` |
 | `pcf_interno.py` | verificador de los tokens del Admin (copia canónica en el repo del Admin; no se edita aquí) |
 | `limpiar.py` | borra las partidas de quien ha borrado su cuenta del foro (lo que promete pcfsite.com/legal) y vacía `_papelera/` a los 30 días; lo lanza el cron |
 | `copia.sh` | copia diaria: un `tar.gz` por día en `/var/backups/source-partidas` (14 días) y otro cifrado con la clave pública de copias en `/var/backups/foro-cifradas`, de donde se lo lleva el servidor de copias cada noche |
