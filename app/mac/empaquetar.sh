@@ -72,7 +72,7 @@ done
 cp core/platform/fonts/*.ttf core/platform/fonts/LICENSE "$C/Resources/fonts/"
 cp app/fonts/*.ttf app/fonts/OFL.txt "$C/Resources/fonts/"   # Barlow (el lanzador)
 mkdir -p "$C/Resources/assets" && cp -R app/assets/. "$C/Resources/assets/"   # logo y carátulas
-[ -f core/platform/fonts/gm.sf2 ] && cp core/platform/fonts/gm.sf2 "$C/Resources/fonts/" || echo "aviso: sin core/platform/fonts/gm.sf2 (música MIDI del 2000)"
+app/tools/soundfont.sh >/dev/null && cp core/platform/fonts/gm.sf2 core/platform/fonts/LICENSE-GeneralUser-GS.txt "$C/Resources/fonts/"   # música MIDI del 2000
 cp app/versiones.json "$C/Resources/"
 for d in core/juegos/*/datos_extra; do [ -d "$d" ] && { id=$(basename "$(dirname "$d")"); mkdir -p "$C/Resources/extra/$id"; cp -R "$d/." "$C/Resources/extra/$id/"; }; done
 [ -f app/mac/pcfsite.icns ] && cp app/mac/pcfsite.icns "$C/Resources/"

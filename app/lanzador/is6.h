@@ -1,5 +1,6 @@
-// lanzador — lector de los cabinets de InstallShield 6 (DATA1.HDR + DATA1.CAB, DATA2.CAB…), el instalador de
-// PC Fútbol 2000 y 2001. Reescrito a partir del formato que documenta unshield (David Eriksson, licencia MIT):
+// lanzador — lector de los cabinets de InstallShield 5 y 6 (DATA1.HDR + DATA1.CAB, DATA2.CAB…), los instaladores de
+// PC Fútbol 2000 (versión 5) y 2001 (versión 6). En la 5 los descriptores de fichero miden 0x3a bytes y van apuntados
+// desde la tabla, y el volumen se deduce del rango de ficheros de cada DATAn.CAB. Reescrito a partir del formato que documenta unshield (David Eriksson, licencia MIT):
 // un descriptor común, el descriptor del CAB con la tabla de ficheros (directorios y descriptores de 0x57 bytes),
 // los grupos de ficheros (nombre, primer y último índice) y los datos en volúmenes, comprimidos a trozos (u16 de
 // longitud + deflate crudo) y con el MD5 de cada fichero para comprobarlo.

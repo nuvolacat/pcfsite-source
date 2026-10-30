@@ -15,6 +15,7 @@ struct Disco {
     bool copiar_todo = true;
     std::vector<std::string> copiar;                 // si no es todo: entradas de la raíz que van a D:
     std::vector<std::pair<std::string, std::string>> sistema;   // (ruta en el CD, NOMBRE.DLL) → C:\WINDOWS\SYSTEM
+    bool solo_instalar = false;   // solo hace falta para instalar (el juego no lo lee como D:): lo sustituye la carpeta instalada
 };
 
 struct Binario { std::string nombre, sha256; uint64_t tam = 0; bool solo_sistema = false; };
@@ -43,8 +44,10 @@ struct Version {
 
     std::string titulo() const { return nombre + (detalle.empty() ? "" : " · " + detalle); }
     const Disco *disco(const std::string &rol) const { for (auto &d : discos) if (d.rol == rol) return &d; return nullptr; }
-    // qué fuentes hacen falta: los discos (por rol), si solo_instalada "instalada", y "parches" si hay actualizaciones
-    std::vector<std::string> roles_necesarios() const;
+    // qué fuentes hacen falta: los discos (por rol), si solo_instalada "instalada", y "parches" si hay actualizaciones.
+    // con_instalada: el usuario ha dado la carpeta instalada, que sustituye a los discos que solo sirven para instalar
+    std::vector<std::string> roles_necesarios(bool con_instalada = false) const;
+    bool admite_instalada() const { if (solo_instalada) return true; for (auto &d : discos) if (d.solo_instalar) return true; return false; }
     std::string nombre_rol(const std::string &rol) const;
 };
 

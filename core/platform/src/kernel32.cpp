@@ -299,7 +299,8 @@ STUB(ext_kernel32_dll_IsBadStringPtrA) { RET(arg(0) == 0, 2); }
 namespace {
 bool tls_used[64 + 1024];
 }
-void tls_reserve_static(u32 n) { for (u32 i = 0; i < n; i++) tls_used[i] = true; }
+u32 g_tls_estaticos = 1;   // huecos del TEB con bloques de TLS estático (threads.cpp los copia a cada hilo nuevo)
+void tls_reserve_static(u32 n) { for (u32 i = 0; i < n; i++) tls_used[i] = true; g_tls_estaticos = n; }
 
 // Los 64 primeros índices viven en el TEB (TlsSlots, fs:[0xE10]) como en Windows: el código del CRT
 // puede leerlos directamente.

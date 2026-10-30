@@ -400,7 +400,7 @@ STUB(ext_kernel32_dll_SearchPathA) { RET(0, 6); }
 
 namespace {
 u32 g_maptop = mm::MAP_LO;
-struct Vista { u32 n = 0, off = 0, raw = 0; bool escribe = false; std::shared_ptr<KMapping> m; };   // raw ≠ 0: bloque del montículo
+struct Vista { u32 n = 0, off = 0, raw = 0, refs = 1; bool escribe = false; std::shared_ptr<KMapping> m; };   // raw ≠ 0: bloque del montículo
 std::map<u32, Vista> g_vistas;   // dirección → vista
 bool hay_vistas_zona() { for (auto &v : g_vistas) if (!v.second.raw) return true; return false; }
 
@@ -448,6 +448,14 @@ STUB(ext_kernel32_dll_MapViewOfFile) {
     Vista v;
     v.n = n; v.off = off; v.m = m;
     v.escribe = m->escribe && (acceso & 0x2) != 0;   // FILE_MAP_WRITE (FILE_MAP_ALL_ACCESS la incluye)
+    // Una vista de solo lectura del mismo trozo del mismo fichero que otra abierta comparte su memoria (el contenido es
+    // el mismo y nadie la puede escribir). El 6.0 Edición de Oro mapea SFX\COMPCF6.PKF (100 MB) otra vez al empezar el
+    // partido sin soltar la primera: en Windows sobra espacio; aquí no cabían las dos y el juego pasaba a leer el
+    // fichero a trozos de 1-4 bytes (decenas de miles de lecturas durante el partido: tirones).
+    if (!v.escribe && m->file)
+        for (auto &kv : g_vistas)
+            if (!kv.second.escribe && kv.second.off == off && kv.second.n == n && kv.second.m && kv.second.m->file &&
+                kv.second.m->file->path == m->file->path) { kv.second.refs++; RET(kv.first, 5); }
     u32 p = (g_maptop + 0xFFFFu) & ~0xFFFFu;
     if ((u64)p + n > mm::MAP_HI) {
         // sin sitio: se reutiliza la zona si ya no hay vistas (el juego mapea y desmapea por partes)
@@ -483,6 +491,7 @@ STUB(ext_kernel32_dll_UnmapViewOfFile) {
     TK("UnmapViewOfFile(%x)", arg(0));
     auto it = g_vistas.find(arg(0));
     if (it == g_vistas.end()) RET(0, 1);
+    if (--it->second.refs) RET(1, 1);   // vista compartida: sigue para las demás
     volcar_vista(it->first, it->second);
     if (it->second.raw) heap_free(it->second.raw);
     g_vistas.erase(it);

@@ -314,6 +314,28 @@ void activate_window(u32 hwnd) {
 
 // ---------------------------------------------------------------- entrada del host → mensajes
 
+// WINMM: joystick. joySetCapture hace que el mando mande MM_JOYxMOVE / MM_JOYxBUTTONDOWN / MM_JOYxBUTTONUP a una
+// ventana; los PC Fútbol lo usan así (la opción JOYSTICK 1 / 2) y no leen el mando de otra forma. Los mandos del host
+// llegan por SDL (main.cpp) como InKind::Joy.
+struct Joy { u32 hwnd = 0; int x = 32767, y = 32767; u32 buttons = 0; bool known = false; };
+Joy g_joy[2];
+constexpr u32 MM_JOY1MOVE = 0x3A0, MM_JOY1BUTTONDOWN = 0x3B5, MM_JOY1BUTTONUP = 0x3B7;
+void joy_event(const InEvent &e) {
+    if (e.button < 0 || e.button > 1) return;
+    Joy &j = g_joy[e.button];
+    bool moved = !j.known || std::abs(e.x - j.x) > 0 || std::abs(e.y - j.y) > 0;
+    u32 old = j.buttons;
+    j.x = e.x; j.y = e.y; j.buttons = e.vk & 0xF; j.known = true;
+    if (!j.hwnd || !wnd(j.hwnd)) return;
+    u32 lp = ((u32)(u16)j.y << 16) | (u16)j.x;
+    if (moved) post(j.hwnd, MM_JOY1MOVE + e.button, j.buttons, lp);
+    for (u32 b = 0; b < 4; b++) {
+        u32 bit = 1u << b;
+        if ((old ^ j.buttons) & bit)
+            post(j.hwnd, ((j.buttons & bit) ? MM_JOY1BUTTONDOWN : MM_JOY1BUTTONUP) + e.button, j.buttons | (bit << 8), lp);
+    }
+}
+
 u32 g_mouse_buttons = 0;   // MK_LBUTTON=1, MK_RBUTTON=2, MK_MBUTTON=0x10
 
 void pump_input(bool wait, u32 timeout_ms) {
@@ -420,6 +442,9 @@ void pump_input(bool wait, u32 timeout_ms) {
                 if (target) post(target, WM_CHAR, e.vk, 1);
                 break;
             }
+            case InKind::Joy:
+                joy_event(e);
+                break;
         }
     }
 }
@@ -488,6 +513,28 @@ void write_msg(u32 p, const Msg &m) {
 }
 
 }  // namespace
+
+// ---------------------------------------------------------------- WINMM: joystick (ver joy_event)
+
+// joySetCapture(hwnd, uJoyID, uPeriod, fChanged)
+STUB(ext_winmm_dll_joySetCapture) {
+    u32 hwnd = arg(0), id = arg(1);
+    int mandos;
+    { Display &d = display(); std::lock_guard<std::mutex> lk(d.mx); mandos = d.mandos; }
+    u32 r = 0;
+    if (id > 1) r = 165;                                  // JOYERR_PARMS
+    else if ((int)id >= mandos) r = 167;                  // JOYERR_UNPLUGGED
+    else if (g_joy[id].hwnd && g_joy[id].hwnd != hwnd && wnd(g_joy[id].hwnd)) r = 166;   // JOYERR_NOCANDO: ya capturado
+    else { g_joy[id].hwnd = hwnd; g_joy[id].known = false; }   // los movimientos se mandan solo al cambiar (fChanged)
+    plog("joySetCapture(ventana 0x%x, mando %u) -> %u (%d mandos)", hwnd, id, r, mandos);
+    RET(r, 4);
+}
+STUB(ext_winmm_dll_joyReleaseCapture) {
+    u32 id = arg(0);
+    if (id > 1) RET(165, 1);
+    g_joy[id].hwnd = 0;
+    RET(0, 1);
+}
 
 // ---------------------------------------------------------------- para ddraw: ventana a pantalla completa
 //

@@ -36,6 +36,7 @@
 #include <map>
 #include <mutex>
 #include <thread>
+#include <functional>
 
 
 namespace {
@@ -99,6 +100,15 @@ struct App {
     bool act_propuesta = false;   // ya se ha enseñado el diálogo de la versión nueva (al abrir, una vez)
     bool act_manual = false;      // la consulta la ha pedido el botón de «Acerca de»
     bool salir = false;           // la app nueva está lista: cerrar para que el ayudante la ponga en su sitio
+    // trabajo largo fuera del hilo de la ventana (montar una ISO, copiarla de la red, importar un mod): mientras dura se
+    // enseña «Un momento…» con lo que se está haciendo, y al acabar se aplica el resultado en el hilo de la ventana
+    std::atomic<bool> ocupado{false}, ocupado_listo{false};
+    std::thread hilo_ocupado;
+    std::function<void()> al_acabar;
+    Uint64 ocupado_desde = 0;
+    std::string ocupado_texto;      // (con mx)
+    std::string ocupado_fichero;    // si no está vacío: el fichero que crece hasta ocupado_total (progreso de una copia)
+    uint64_t ocupado_total = 0;
 };
 App A;
 
@@ -357,15 +367,67 @@ std::string mod_de_otra_edicion(const Instalado &i, const Mod &m) {
 }
 
 // importa un mod (zip o carpeta) al juego de la ficha
+// hace `trabajo` en otro hilo con «Un momento: <texto>» en pantalla; luego `aplicar` en el hilo de la ventana
+void en_segundo_plano(const std::string &texto, std::function<void()> trabajo, std::function<void()> aplicar) {
+    if (A.ocupado) return;
+    { std::lock_guard<std::mutex> lk(A.mx); A.ocupado_texto = texto; A.ocupado_fichero.clear(); A.ocupado_total = 0; }
+    A.ocupado = true; A.ocupado_listo = false; A.ocupado_desde = SDL_GetTicks();
+    A.al_acabar = std::move(aplicar);
+    A.hilo_ocupado = std::thread([trabajo] { trabajo(); A.ocupado_listo = true; });
+}
+void fase_ocupado(const std::string &texto, const std::string &fichero = "", uint64_t total = 0) {
+    std::lock_guard<std::mutex> lk(A.mx);
+    A.ocupado_texto = texto; A.ocupado_fichero = fichero; A.ocupado_total = total;
+}
+void vigilar_ocupado() {
+    if (!A.ocupado || !A.ocupado_listo) return;
+    if (A.hilo_ocupado.joinable()) A.hilo_ocupado.join();
+    A.ocupado = false;
+    if (A.al_acabar) { auto f = std::move(A.al_acabar); A.al_acabar = nullptr; f(); }
+}
+SDL_FRect dialogo(const std::string &titulo, float w, float alto_cuerpo);
+void pantalla_ocupado() {
+    std::string texto, fichero;
+    uint64_t total;
+    { std::lock_guard<std::mutex> lk(A.mx); texto = A.ocupado_texto; fichero = A.ocupado_fichero; total = A.ocupado_total; }
+    const float W = 480, w = W - 2 * MARGEN;
+    unsigned seg = (unsigned)((SDL_GetTicks() - A.ocupado_desde) / 1000);
+    std::string t2 = seg < 5 ? "" : "Lleva " + std::to_string(seg) + " s. Puede tardar unos minutos: no cierres la app.";
+    float h1 = ui::parrafo(0, 0, w, texto, ui::CUERPO, ui::TEXTO, false);
+    SDL_FRect c = dialogo("Un momento", W, h1 + 12 + 22 + 10 + ui::alto(ui::CUERPO_13) + 2 * MARGEN);
+    float y = c.y;
+    y += ui::parrafo(c.x, y, w, texto, ui::CUERPO, ui::TEXTO) + 12;
+    float f;
+    if (!fichero.empty() && total) f = std::min(1.f, (float)util::tam(fichero) / (float)total);
+    else f = -1;
+    if (f >= 0) ui::barra({c.x, y, w, 22}, f);
+    else {   // sin medida: un trozo que va y viene
+        float t = (float)(SDL_GetTicks() % 1600) / 800.f, a = t < 1 ? t : 2 - t;
+        ui::rect({c.x, y, w, 22}, ui::alfa(ui::ACENTO, 25));
+        ui::rect({c.x + a * (w * 0.75f), y, w * 0.25f, 22}, ui::ACENTO);
+    }
+    y += 32;
+    if (!t2.empty()) ui::texto(c.x, y, t2, ui::CUERPO_13, ui::NEUTRO_600);
+}
+
 void importar_mod_a_ficha(const std::string &ruta) {
     Instalado *i = instalado_mut(A.ficha_id);
     if (!i) return;
-    std::string nombre, error;
     A.aviso.clear(); A.aviso_error.clear();
-    if (!importar_mod(*i, A.versiones, ruta, nombre, error)) { A.aviso_error = "No se ha podido importar el mod: " + error; return; }
-    i->mods.push_back({nombre, true});
-    guardar_mods(*i);
-    A.aviso = "Mod «" + nombre + "» importado y activado." + (error.empty() ? "" : " " + error + ".");
+    struct R { std::string nombre, error; bool ok = false; };
+    auto r = std::make_shared<R>();
+    Instalado copia = *i;
+    std::string id = A.ficha_id;
+    en_segundo_plano("Importando el mod " + util::nombre_base(ruta) + (util::es_dir(ruta) ? "…" : ": descomprimiéndolo y copiando sus ficheros…"),
+                     [r, copia, ruta] { r->ok = importar_mod(copia, A.versiones, ruta, r->nombre, r->error); },
+                     [r, id] {
+                         Instalado *i = instalado_mut(id);
+                         if (!r->ok) { A.aviso_error = "No se ha podido importar el mod: " + r->error + "."; return; }
+                         if (!i) return;
+                         i->mods.push_back({r->nombre, true});
+                         guardar_mods(*i);
+                         A.aviso = "Mod «" + r->nombre + "» importado y activado." + (r->error.empty() ? "" : " " + r->error + ".");
+                     });
 }
 
 void nueva_tarea() { A.tarea = Tarea(); A.candidatas.clear(); A.aviso.clear(); A.aviso_error.clear(); }
@@ -379,14 +441,32 @@ std::string lista_versiones() {
 }
 
 // una fuente elegida por el usuario (ISO o carpeta): qué es y a qué versión/rol va
+void fuente_reconocida(const std::string &ruta, const std::string &dir, const std::vector<Coincidencia> &c);
 void procesar_fuente(const std::string &ruta) {
     A.aviso.clear(); A.aviso_error.clear();
-    std::string dir = ruta;
-    if (!util::es_dir(ruta)) {
-        dir = montar_iso(ruta);
-        if (dir.empty()) { A.aviso_error = "No se puede montar la imagen " + util::nombre_base(ruta) + ". ¿Es una ISO de CD?"; return; }
-    }
-    std::vector<Coincidencia> c = A.versiones.identificar(dir);
+    struct R { std::string dir; std::vector<Coincidencia> c; };
+    auto r = std::make_shared<R>();
+    bool es_dir = util::es_dir(ruta);
+    en_segundo_plano(es_dir ? "Comprobando la carpeta " + util::nombre_base(ruta) + "…" : "Abriendo la ISO " + util::nombre_base(ruta) + "…",
+                     [r, ruta, es_dir] {
+                         r->dir = ruta;
+                         if (!es_dir) {
+#ifdef _WIN32
+                             if (ruta_remota(ruta) && iso_local(ruta, false).empty())   // se copia antes a la carpeta de la app
+                                 fase_ocupado("Copiando la ISO " + util::nombre_base(ruta) + " desde la carpeta de red a la de la app (Windows no monta ISO de la red)…",
+                                              util::dir_base() + "/isos/" + util::nombre_base(ruta) + ".tmp", util::tam(ruta));
+#endif
+                             r->dir = montar_iso(ruta);
+                             if (r->dir.empty()) return;
+                         }
+                         fase_ocupado("Comprobando qué es " + util::nombre_base(ruta) + "…");
+                         r->c = A.versiones.identificar(r->dir);
+                     },
+                     [r, ruta] { fuente_reconocida(ruta, r->dir, r->c); });
+}
+
+void fuente_reconocida(const std::string &ruta, const std::string &dir, const std::vector<Coincidencia> &c) {
+    if (dir.empty()) { A.aviso_error = "No se puede montar la imagen " + util::nombre_base(ruta) + ". ¿Es una ISO de CD?"; return; }
     if (c.empty()) {
         A.aviso_error = "No se reconoce " + util::nombre_base(ruta) + ". Solo valen las versiones ya traducidas (" + lista_versiones() +
                         "), en su CD original o en su carpeta de instalación.";
@@ -395,7 +475,7 @@ void procesar_fuente(const std::string &ruta) {
     bool es_iso = dir != ruta;
     if (A.tarea.v) {   // ya hay una versión elegida: tiene que ser un disco suyo
         for (const Coincidencia &x : c)
-            if (x.v == A.tarea.v && (A.pendiente_rol.empty() || x.rol == A.pendiente_rol)) {
+            if (x.v == A.tarea.v && (A.pendiente_rol.empty() || x.rol == A.pendiente_rol || (x.rol == "instalada" && x.v->admite_instalada()))) {
                 A.tarea.fuentes[x.rol] = x.carpeta;
                 if (es_iso) A.tarea.isos[x.rol] = ruta; else A.tarea.isos.erase(x.rol);
                 A.aviso = "Reconocido: " + A.tarea.v->nombre_rol(x.rol) + ".";
@@ -439,6 +519,9 @@ void empezar_instalacion() {
 }
 
 bool preparar_cd(const Instalado &i) {
+    // sin ISO, el CD es la carpeta iso de la instalación: que no se quede el PCF7_CD de otro juego jugado antes en
+    // esta sesión (el 7 Plus después del 2001 pedía «el CDROM original» porque leía el CD del 2001)
+    unsetenv("PCF7_CD");
     if (i.iso.empty()) return true;
     if (!util::existe(i.iso)) {
         A.aviso_error = "No se encuentra la ISO del CD: " + i.iso + ". Si la has movido, vuelve a añadir el juego.";
@@ -468,6 +551,7 @@ void jugar(const Instalado &i) {
     std::string exe = orden[0];
     std::vector<std::string> args(orden.begin() + 1, orden.end());
     setenv("PCF7_WORK", i.carpeta.c_str(), 1);
+    setenv("PCF7_PANTALLA_COMPLETA", util::ajuste("pantalla_completa") == "si" ? "1" : "0", 1);   // (F11 o Alt+Intro la cambian jugando)
     setenv("PCF7_APP", "1", 1);
     // mods: sus carpetas por encima de la instalación, y las partidas en el perfil de esa combinación
     std::string perfil = perfil_de(i), capas;
@@ -874,7 +958,7 @@ void pantalla_version() {
 void pantalla_fuentes() {
     const Version &v = *A.tarea.v;
     const float W = 620, w = W - 2 * MARGEN;
-    std::vector<std::string> roles = v.roles_necesarios();
+    std::vector<std::string> roles = A.tarea.roles();
     bool ya = instalado(v.id) != nullptr;
     std::string q;
     if (A.tarea.completa())
@@ -882,6 +966,11 @@ void pantalla_fuentes() {
             ? "El juego se prepara en " + util::nativa(A.tarea.destino) + " (la instalación, con sus partidas guardadas). "
               "El CD se usará directamente desde la ISO, sin copiarlo: déjala donde está."
             : "El juego se prepara en " + util::nativa(A.tarea.destino) + " (la instalación, con sus partidas guardadas) y ahí se copia también lo que el juego lee del CD.";
+    else {   // «Preparar» está apagado: que se vea por qué
+        std::string falta;
+        for (const std::string &rol : roles) if (!A.tarea.fuentes.count(rol)) falta += (falta.empty() ? "" : " y ") + v.nombre_rol(rol);
+        q = "Para poder preparar falta " + falta + ".";
+    }
     std::string aviso_ya = "Este juego ya está preparado: hacerlo otra vez borra la carpeta anterior, con sus partidas guardadas.";
     float h = 0;
     if (!v.nota.empty()) h += ui::parrafo(0, 0, w, v.nota, ui::CUERPO_13, ui::ACENTO_700, false) + 12;
@@ -964,7 +1053,9 @@ void pantalla_config() {
     std::string nota = "Los juegos nuevos se prepararán aquí. Los ya preparados no se mueven.";
     float hn = ui::parrafo(0, 0, w, nota, ui::ETIQUETA, ui::NEUTRO_600, false);
     float ha = A.aviso_error.empty() ? 0 : ui::parrafo(0, 0, w, A.aviso_error, ui::CUERPO_13, ui::ALERTA, false) + 8;
-    SDL_FRect c = dialogo("Configuración", W, ui::alto(ui::ETIQUETA) + 5 + 36 + 8 + hn + 24 + 1 + 14 + ui::alto(ui::ETIQUETA) + 24 + ha + 36 + 2 * MARGEN);
+    std::string nota_pc = "Durante la partida, F11 o Alt+Intro pasan de ventana a pantalla completa y al revés.";
+    float hpc = ui::parrafo(0, 0, w - 24, nota_pc, ui::ETIQUETA, ui::NEUTRO_600, false);
+    SDL_FRect c = dialogo("Configuración", W, ui::alto(ui::ETIQUETA) + 5 + 36 + 8 + hn + 24 + 1 + 14 + ui::alto(ui::ETIQUETA) + 24 + 1 + 14 + 24 + 4 + hpc + 24 + ha + 36 + 2 * MARGEN);
     float y = c.y;
     ui::texto(c.x, y, "Carpeta de instalación", ui::ETIQUETA, ui::alfa(ui::TEXTO, 180));
     y += ui::alto(ui::ETIQUETA) + 5;
@@ -979,6 +1070,12 @@ void pantalla_config() {
     std::string libre = util::humano(util::espacio_libre(util::es_dir(A.config_carpeta) ? A.config_carpeta : util::carpeta_de(A.config_carpeta)));
     ui::texto(c.x + w - ui::ancho(libre, ui::ETIQUETA), y, libre, ui::ETIQUETA, ui::NEUTRO_700);
     y += ui::alto(ui::ETIQUETA) + 24;
+    ui::linea(c.x, y, c.x + w, y, ui::DIVISOR);
+    y += 14;
+    bool completa = util::ajuste("pantalla_completa") == "si";
+    if (ui::casilla(c.x, y, w, "Jugar a pantalla completa", completa)) util::pon_ajuste("pantalla_completa", completa ? "si" : "no");
+    y += 24 + 4;
+    y += ui::parrafo(c.x + 24, y, w - 24, nota_pc, ui::ETIQUETA, ui::NEUTRO_600) + 24;
     y += avisos(c.x, y, w);
     int b = fila_botones(c.x + w, y, {{"Guardar", ui::PRIMARIO}, {"Cancelar", ui::SECUNDARIO}});
     if (b == 0) {
@@ -1233,7 +1330,7 @@ int modo_terminal(int argc, char **argv) {
     }
     if (!A.tarea.completa()) {
         fprintf(stderr, "faltan fuentes para %s:\n", A.tarea.v->nombre.c_str());
-        for (const std::string &rol : A.tarea.v->roles_necesarios()) if (!A.tarea.fuentes.count(rol)) fprintf(stderr, "  %s\n", A.tarea.v->nombre_rol(rol).c_str());
+        for (const std::string &rol : A.tarea.roles()) if (!A.tarea.fuentes.count(rol)) fprintf(stderr, "  %s\n", A.tarea.v->nombre_rol(rol).c_str());
         desmontar_todo();
         return 1;
     }
@@ -1317,11 +1414,13 @@ int main(int argc, char **argv) {
         if (p == "acerca") A.pantalla = ACERCA;
         else if (p == "actualizar") { actualizar::buscar(A.act, PCF_VERSION); A.act_propuesta = true; A.pantalla = ACTUALIZAR; }
         else if (p == "anadir") A.pantalla = ANADIR;
+        else if (p == "ocupado") { A.pantalla = ANADIR; en_segundo_plano("Abriendo la ISO PCF2000.iso…", [] { SDL_Delay(2000); }, [] {}); A.ocupado_desde -= 42000; }
         else if (p == "config") { A.config_carpeta = util::dir_datos(); A.pantalla = CONFIG; }
         else if (p.rfind("ficha:", 0) == 0) { A.ficha_id = p.substr(6); A.pantalla = FICHA; }
-        else if (p.rfind("fuentes:", 0) == 0) if (const Version *v = A.versiones.por_id(p.substr(8))) {   // con fuentes de mentira
+        else if (p.rfind("fuentes:", 0) == 0) if (const Version *v = A.versiones.por_id(p.substr(8, p.find(':', 8) - 8))) {   // con fuentes de mentira (fuentes:<id>[:<cuántas>])
             A.tarea.v = v; A.tarea.destino = util::dir_datos() + "/" + v->id;
-            for (const std::string &rol : v->roles_necesarios()) { A.tarea.fuentes[rol] = "/tmp/" + rol; A.tarea.isos[rol] = "/Volumes/Dinamic/PC Fútbol/" + rol + ".iso"; }
+            size_t n = p.find(':', 8) == std::string::npos ? 99 : (size_t)atoi(p.c_str() + p.find(':', 8) + 1);
+            for (const std::string &rol : v->roles_necesarios()) { if (!n--) break; A.tarea.fuentes[rol] = "/tmp/" + rol; A.tarea.isos[rol] = "/Volumes/Dinamic/PC Fútbol/" + rol + ".iso"; }
             A.aviso = "Reconocido: " + v->nombre_rol(v->roles_necesarios().back()) + ".";
             A.pantalla = FUENTES;
         }
@@ -1337,6 +1436,7 @@ int main(int argc, char **argv) {
         while (SDL_PollEvent(&ev)) {
             if (ev.type == SDL_EVENT_QUIT || A.salir) {
                 if (A.pantalla == INSTALANDO) { A.progreso.cancelar = true; if (A.hilo.joinable()) A.hilo.join(); }
+                if (A.hilo_ocupado.joinable()) A.hilo_ocupado.join();   // (montar o copiar no se pueden cortar a medias)
                 desmontar_todo();
                 SDL_Quit();
                 return 0;
@@ -1344,8 +1444,9 @@ int main(int argc, char **argv) {
             if (ev.type == SDL_EVENT_MOUSE_WHEEL && A.pantalla == BIBLIOTECA) A.scroll -= ev.wheel.y * 36;
             if (ev.type == SDL_EVENT_MOUSE_BUTTON_DOWN && ev.button.button == SDL_BUTTON_LEFT) pulsado = true;
             if (ev.type == SDL_EVENT_MOUSE_BUTTON_UP && ev.button.button == SDL_BUTTON_LEFT) { pulsado = false; clic = true; }
-            if (ev.type == SDL_EVENT_KEY_DOWN && ev.key.key == SDLK_ESCAPE && A.pantalla != INSTALANDO && A.pantalla != BIBLIOTECA && !(A.pantalla == ACTUALIZAR && act_ocupada())) cerrar_dialogo();
+            if (ev.type == SDL_EVENT_KEY_DOWN && ev.key.key == SDLK_ESCAPE && !A.ocupado && A.pantalla != INSTALANDO && A.pantalla != BIBLIOTECA && !(A.pantalla == ACTUALIZAR && act_ocupada())) cerrar_dialogo();
         }
+        vigilar_ocupado();
         vigilar_juego();
         vigilar_actualizacion();
         if (A.salir) { desmontar_todo(); SDL_Quit(); return 0; }   // (el ayudante espera a que este proceso termine)
@@ -1367,7 +1468,8 @@ int main(int argc, char **argv) {
         // la biblioteca siempre está debajo; los diálogos, encima (y sin ratón para lo de debajo)
         if (A.pantalla != BIBLIOTECA) ui::fotograma(-1, -1, false, false);
         pantalla_biblioteca();
-        ui::fotograma(mx, my, pulsado, clic);
+        if (A.ocupado) ui::fotograma(-1, -1, false, false);   // trabajando: nada responde debajo de «Un momento»
+        else ui::fotograma(mx, my, pulsado, clic);
         switch (A.pantalla) {
         case BIBLIOTECA: break;
         case FICHA: pantalla_ficha(); break;
@@ -1379,10 +1481,12 @@ int main(int argc, char **argv) {
         case ACERCA: pantalla_acerca(); break;
         case ACTUALIZAR: pantalla_actualizar(); break;
         }
+        if (A.ocupado) pantalla_ocupado();
         if (const char *cap = getenv("PCF_CAPTURA")) {   // pruebas: guardar la pantalla y salir (antes de presentar: después el búfer ya no vale)
             static int n = 0;
             if (!A.jugando.activo() && ++n == 3) {   // (con un juego en marcha se espera a que termine)
                 if (SDL_Surface *s = SDL_RenderReadPixels(A.ren, nullptr)) { SDL_SaveBMP(s, cap); SDL_DestroySurface(s); }
+                if (A.hilo_ocupado.joinable()) A.hilo_ocupado.join();
                 SDL_Quit();
                 return 0;
             }

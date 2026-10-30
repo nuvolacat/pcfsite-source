@@ -19,9 +19,14 @@ struct Tarea {
     std::map<std::string, std::string> isos;      // rol → fichero ISO del que viene la carpeta (si lo es)
     std::string destino;                          // <datos>/<id>
     bool completa() const;
-    // el CD se usa directamente desde la ISO (sin copiarlo) cuando hay un solo disco y es una ISO; con carpetas o dos
-    // discos (el 7 Plus mezcla los dos como D:) se copia lo que el juego lee
-    bool cd_desde_iso() const { return v && v->discos.size() == 1 && isos.count(v->discos[0].rol) > 0; }
+    std::vector<std::string> roles() const { return v ? v->roles_necesarios(fuentes.count("instalada") > 0) : std::vector<std::string>(); }
+    // el CD se usa directamente desde la ISO (sin copiarlo) cuando el juego lee un solo disco y es una ISO; con carpetas o
+    // dos discos (el 7 Plus mezcla los dos como D:) se copia lo que el juego lee. Los que solo sirven para instalar no cuentan
+    bool cd_desde_iso() const {
+        if (!v || v->discos.empty() || !isos.count(v->discos[0].rol)) return false;
+        for (size_t i = 1; i < v->discos.size(); i++) if (!v->discos[i].solo_instalar) return false;
+        return true;
+    }
 };
 
 // corre en un hilo aparte; al acabar pone progreso.terminado (y ok, o error)

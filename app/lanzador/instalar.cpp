@@ -28,7 +28,7 @@
 
 bool Tarea::completa() const {
     if (!v) return false;
-    for (const std::string &rol : v->roles_necesarios())
+    for (const std::string &rol : roles())
         if (!fuentes.count(rol)) return false;
     return true;
 }
@@ -57,6 +57,7 @@ struct Ejecutor {
     bool contar;          // primera pasada: solo sumar bytes
     std::string registro;
     std::string game;     // destino/game/<CARPETA>
+    bool con_instalada = false;   // se parte de la carpeta instalada del usuario
 
     Ejecutor(const Tarea &t_, util::Progreso &pr_, bool c) : t(t_), pr(pr_), contar(c) { game = t.destino + "/game/" + t.v->carpeta; }
 
@@ -312,7 +313,8 @@ struct Ejecutor {
         if (it == t.fuentes.end()) return fallo("falta " + d.nombre);
         const std::string &cd = it->second;
         log("== " + d.nombre + ": " + cd);
-        for (const auto &op : d.instalar) {
+        // con la carpeta instalada no se repite la instalación desde el disco: solo las DLL de sistema y lo que se lee como D:
+        for (const auto &op : con_instalada ? std::vector<std::vector<std::string>>() : d.instalar) {
             if (cancelado()) return false;
             if (op.empty()) continue;
             if (op[0] == "nfo" || op[0] == "nfc") { if (!guion(cd, op[1])) return false; }
@@ -337,7 +339,8 @@ struct Ejecutor {
             if (src.empty()) { log("  no está en el CD: " + s.first); continue; }
             if (!copia_fichero(src, t.destino + "/drive_c/WINDOWS/SYSTEM/" + s.second)) return false;
         }
-        // lo que el juego lee del CD (D:): nada si se va a usar la ISO montada directamente
+        // lo que el juego lee del CD (D:): nada si se va a usar la ISO montada directamente o si el disco solo es para instalar
+        if (d.solo_instalar) return true;
         if (t.cd_desde_iso()) { log("  el CD se usará desde la ISO " + t.isos.at(d.rol)); return true; }
         std::string iso = t.destino + "/iso";
         if (d.copiar_todo) { if (!copia_arbol(cd, iso)) return false; }
@@ -351,13 +354,18 @@ struct Ejecutor {
     }
 
     bool todo() {
-        if (t.v->solo_instalada) {
+        std::vector<std::string> roles = t.roles();
+        con_instalada = std::find(roles.begin(), roles.end(), "instalada") != roles.end();
+        if (con_instalada) {
             auto it = t.fuentes.find("instalada");
             if (it == t.fuentes.end()) return fallo("falta la carpeta del juego instalado");
             log("== instalación: " + it->second);
             if (!copia_arbol(it->second, game)) return false;
         }
-        for (const Disco &d : t.v->discos) if (!disco(d)) return false;
+        for (const Disco &d : t.v->discos) {
+            if (con_instalada && d.solo_instalar) continue;   // la carpeta instalada ya trae lo que se instalaba desde él
+            if (!disco(d)) return false;
+        }
         if (!t.v->parches.ficheros.empty() && !parches()) return false;
         if (!t.v->extra.empty()) {
             std::string ex = util::dir_recursos() + "/extra/" + t.v->extra;
@@ -419,7 +427,7 @@ void instalar(const Tarea &t, util::Progreso &pr) {
         Json f = Json::objeto_vacio();
         for (auto &kv : t.fuentes) f.pon(kv.first, Json::de(kv.second));
         Json origenes = Json::lista_vacia();   // lo que eligió el usuario: la ISO si la hubo, si no la carpeta
-        for (const std::string &rol : t.v->roles_necesarios()) {
+        for (const std::string &rol : t.roles()) {
             if (!t.fuentes.count(rol)) continue;
             bool es_iso = t.isos.count(rol) > 0;
             Json o = Json::objeto_vacio();
@@ -517,14 +525,16 @@ std::string raiz_del_mod(const std::string &dir, const Instalado &i, const std::
     return cur;
 }
 
-int copia_mod(const std::string &src, const std::string &dst, int &binarios) {
+// fallos: los que no se han podido copiar (y en primer_fallo, el primero)
+int copia_mod(const std::string &src, const std::string &dst, int &binarios, int &fallos, std::string &primer_fallo) {
     int n = 0;
     util::mkdirs(dst);
     for (const std::string &e : util::listar(src)) {
         if (e[0] == '.' || e == "__MACOSX") continue;
         std::string s = src + "/" + e;
-        if (util::es_dir(s)) n += copia_mod(s, dst + "/" + e, binarios);
+        if (util::es_dir(s)) n += copia_mod(s, dst + "/" + e, binarios, fallos, primer_fallo);
         else if (util::copiar_fichero(s, dst + "/" + e)) { n++; if (es_binario(e)) binarios++; }
+        else if (fallos++ == 0) primer_fallo = dst + "/" + e;
     }
     return n;
 }
@@ -592,17 +602,39 @@ bool importar_mod(const Instalado &i, const Versiones &vs, const std::string &ru
             std::string salida;
             int rc = -1;
             std::vector<std::vector<std::string>> ordenes = {{"tar", "-xf", ruta, "-C", tmp}};
+#ifdef _WIN32   // el de Windows (System32), no otro tar que haya en el PATH (Git, MSYS…), que no abre rar
+            if (const char *sr = getenv("SystemRoot")) ordenes = {{std::string(sr) + "\\System32\\tar.exe", "-xf", ruta, "-C", tmp}};
+#endif
 #ifdef __linux__
             ordenes = {{"bsdtar", "-xf", ruta, "-C", tmp}, {"7z", "x", "-y", "-o" + tmp, ruta}, {"unrar", "x", "-y", ruta, tmp + "/"}, {"tar", "-xf", ruta, "-C", tmp}};
 #endif
             for (const auto &o : ordenes) { salida.clear(); if ((rc = util::ejecutar(o, salida)) == 0) break; }
-            if (rc != 0) { util::borrar_arbol(tmp); error = "no se puede descomprimir " + util::nombre_base(ruta) + (salida.empty() ? "" : ": " + salida.substr(0, 200)); return false; }
+            if (rc != 0) {
+                util::borrar_arbol(tmp);
+                error = "no se puede descomprimir " + util::nombre_base(ruta) + (salida.empty() ? "" : ": " + salida.substr(0, 200));
+#ifdef _WIN32   // el tar de Windows 10 anterior a 2020 no abre RAR5: descomprimido a mano, se importa como carpeta
+                error += ". Prueba a descomprimirlo tú (con 7-Zip o WinRAR) e importa la carpeta con «Importar mod (carpeta)…»";
+#endif
+                return false;
+            }
         }
         origen = tmp;
     }
     std::string raiz = raiz_del_mod(origen, i, carpeta_juego), dst = dir_mods(i) + "/" + nombre;
-    int binarios = 0;
-    int n = copia_mod(raiz, dst, binarios);
+    int binarios = 0, fallos = 0;
+    std::string primer_fallo;
+    int n = copia_mod(raiz, dst, binarios, fallos, primer_fallo);
+    if (fallos) {   // a medias no vale: el juego mezclaría ficheros del mod con los de fábrica
+        util::borrar_arbol(tmp);
+        util::borrar_arbol(dst);
+        error = "no se han podido copiar " + std::to_string(fallos) + " de " + std::to_string(n + fallos) + " ficheros (el primero, " +
+                util::nativa(primer_fallo) + ")";
+#ifdef _WIN32
+        error += ". Puede que Windows no deje escribir en esa carpeta: mira si tienes activado «Acceso controlado a carpetas» "
+                 "(Seguridad de Windows) o si Documentos está en OneDrive; en Configuración puedes llevar los juegos a otra carpeta";
+#endif
+        return false;
+    }
     // pcfsite-mod.json puede ir en la raíz del zip, por encima de la carpeta del juego: se guarda con el mod
     if (n > 0 && !util::existe(dst + "/pcfsite-mod.json") && util::existe(origen + "/pcfsite-mod.json"))
         util::copiar_fichero(origen + "/pcfsite-mod.json", dst + "/pcfsite-mod.json");
@@ -615,9 +647,9 @@ bool importar_mod(const Instalado &i, const Versiones &vs, const std::string &ru
             error = "este mod es para " + otra->nombre + ": impórtalo en ese juego";
             return false;
         }
-    // (los EXE y DLL del mod se copian: la plataforma aplica sobre la imagen reconstruida sus diferencias de datos, los
-    // textos, e ignora las de código; ver platform/src/imagen.cpp)
-    if (binarios) error = "trae " + std::to_string(binarios) + " ejecutable(s): de ellos se aplican los textos, no el código";   // aviso, no fallo
+    // (los EXE y DLL del mod se copian: la plataforma aplica sobre la imagen reconstruida sus diferencias de datos y de
+    // código; las de código solo cuentan si son inmediatos, que el traductor lee de la memoria: ver platform/src/imagen.cpp)
+    if (binarios) error = "trae " + std::to_string(binarios) + " ejecutable(s): se aplican sus textos, equipos y valores, pero no los cambios en la lógica del juego";   // aviso, no fallo
     if (!aviso.empty()) error += (error.empty() ? "" : "; ") + aviso;
     return true;
 }

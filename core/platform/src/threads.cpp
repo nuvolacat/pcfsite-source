@@ -17,6 +17,7 @@
 #include <vector>
 
 u32 ticks_ms();
+extern u32 g_tls_estaticos;   // kernel32.cpp: huecos de TLS estático
 
 namespace {
 
@@ -215,14 +216,15 @@ STUB(ext_kernel32_dll_CreateThread) {
     put(0x00, 0xFFFFFFFFu);
     put(0x04, t->stack_hi);
     put(0x08, t->stack_lo);
-    std::memset(&t->teb[0xE14], 0, 63 * 4);
-    u32 static_tls;
-    std::memcpy(&static_tls, &t->teb[0xE10], 4);
-    if (static_tls) {   // bloque de TLS estático propio (copia del actual)
+    std::memset(&t->teb[0xE10 + 4 * g_tls_estaticos], 0, (64 - g_tls_estaticos) * 4);
+    for (u32 i = 0; i < g_tls_estaticos; i++) {   // bloques de TLS estático propios (copia de los actuales)
+        u32 static_tls;
+        std::memcpy(&static_tls, &t->teb[0xE10 + 4 * i], 4);
+        if (!static_tls) continue;
         u32 n = heap_size(static_tls);
         u32 copy = heap_alloc(n ? n : 16, true);
         std::memcpy(MEM + copy, MEM + static_tls, n);
-        put(0xE10, copy);
+        put(0xE10 + 4 * i, copy);
     }
     auto kt = std::make_shared<KThread>();
     {

@@ -60,7 +60,7 @@ for a in $ARCHS; do
   cp core/platform/fonts/*.ttf core/platform/fonts/LICENSE "$D/fonts/"
   cp app/fonts/*.ttf app/fonts/OFL.txt "$D/fonts/"   # Barlow (el lanzador)
   cp -R app/assets/. "$D/assets/"                     # logo y carátulas
-  [ -f core/platform/fonts/gm.sf2 ] && cp core/platform/fonts/gm.sf2 "$D/fonts/" || echo "aviso: sin core/platform/fonts/gm.sf2 (música MIDI del 2000)"
+  app/tools/soundfont.sh >/dev/null && cp core/platform/fonts/gm.sf2 core/platform/fonts/LICENSE-GeneralUser-GS.txt "$D/fonts/"   # música MIDI del 2000
   cp app/versiones.json "$D/"
   for d in core/juegos/*/datos_extra; do [ -d "$d" ] && { id=$(basename "$(dirname "$d")"); mkdir -p "$D/extra/$id"; cp -R "$d/." "$D/extra/$id/"; }; done
   echo "$VERSION" > "$D/VERSION"

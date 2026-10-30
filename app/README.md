@@ -98,10 +98,12 @@ y `--mods <id> [a,b…]`.
    CD: `tools/le2pe.py` deja `<programa>.le.map.json` con el mapa de páginas para la receta. `PCF7_MEMCHECK=1` compara
    la reconstrucción con `mem.bin` (se ha comprobado idéntica en todos los juegos).
 
-La única versión que aún necesita la carpeta instalada además del CD (`solo_instalada` en `versiones.json`) es el
-**2000** (InstallShield 5: CD base y CD Extensión; pendiente de reproducir sus CAB). Sus DLL de sistema (MFC42, MSVCRT,
-MSVCP60, MSVCIRT) tampoco vienen sueltas en el CD: el lanzador avisa de cuáles faltan y dónde ponerlas. El **2001** se
-prepara desde el CD y la carpeta `ACTUALIZ` (ver más abajo).
+El **2000** se prepara desde sus dos CD (InstallShield 5): el CD base, que el juego lee como D:, y el de la Extensión,
+que solo hace falta para instalar (`solo_instalar` en `versiones.json`). `is6.cpp` lee los CAB de las versiones 5 y 6;
+de cada CD salen sus grupos y la `Utils.dll` con MMX, y las DLL de sistema (MFC42, MSVCRT…) del grupo «Shared DLLs»
+del CD base. Queda idéntico, fichero a fichero, a una instalación real en Windows 98. En lugar del CD de la Extensión
+vale la carpeta `C:\PCF2000` ya instalada (con el CD base). El **2001** se prepara desde el CD y la carpeta `ACTUALIZ`
+(ver más abajo).
 
 ## Qué hay
 

@@ -21,7 +21,7 @@ struct Screen {
     u32 frame = 0;             // se incrementa en cada cambio (el host vuelve a presentar)
 };
 
-enum class InKind { MouseMove, MouseDown, MouseUp, Wheel, KeyDown, KeyUp, Char, Quit };
+enum class InKind { MouseMove, MouseDown, MouseUp, Wheel, KeyDown, KeyUp, Char, Quit, Joy };
 struct InEvent {
     InKind kind;
     int x = 0, y = 0;          // ratón: coordenadas de pantalla emulada
@@ -29,6 +29,7 @@ struct InEvent {
     u32 vk = 0, scan = 0;      // teclado
     bool ext = false, repeat = false;
     int delta = 0;             // rueda
+    // Joy: mando `button` (0 o 1) en la posición x, y (0..65535, centro 32767) con los botones `vk` (bit 0 = botón 1)
 };
 
 // Vídeo (DirectShow): una imagen RGB que el host pinta encima de la pantalla emulada en `dst`, como
@@ -54,6 +55,7 @@ struct Display {
     int mouse_x = 0, mouse_y = 0;
     u32 cursor = 0;            // HCURSOR actual (lo pinta el host)
     bool cursor_visible = true;
+    int mandos = 0;            // mandos conectados en el host (joySetCapture)
 
     void push(const InEvent &e) {
         { std::lock_guard<std::mutex> lk(mx); input.push_back(e); }

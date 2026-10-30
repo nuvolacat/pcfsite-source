@@ -47,6 +47,15 @@ bool mkdirs(const std::string &p) {
     return ::mkdir(p.c_str(), 0755) == 0 || es_dir(p);
 }
 
+// borra un fichero; en Windows quita antes el atributo de solo lectura (lo traen los ficheros copiados de un CD y los
+// que tar saca de algunos rar), que si no hace fallar el borrado
+static int borra_fichero(const std::string &p) {
+#ifdef _WIN32
+    ::chmod(p.c_str(), S_IREAD | S_IWRITE);
+#endif
+    return ::unlink(p.c_str());
+}
+
 bool borrar_arbol(const std::string &p) {
     struct stat st;
     if (::lstat(p.c_str(), &st) != 0) return true;
@@ -54,7 +63,7 @@ bool borrar_arbol(const std::string &p) {
         for (const std::string &n : listar(p)) borrar_arbol(p + "/" + n);
         return ::rmdir(p.c_str()) == 0;
     }
-    return ::unlink(p.c_str()) == 0;
+    return borra_fichero(p) == 0;
 }
 
 std::vector<std::string> listar(const std::string &dir) {
@@ -123,6 +132,9 @@ bool escribir(const std::string &p, const std::string &datos) {
         out.write(datos.data(), (std::streamsize)datos.size());
         if (!out) return false;
     }
+#ifdef _WIN32
+    ::chmod(p.c_str(), S_IREAD | S_IWRITE);   // si el que había era de solo lectura, MoveFileEx no lo sustituye
+#endif
     return pcf_rename(tmp.c_str(), p.c_str()) == 0;
 }
 
@@ -216,7 +228,7 @@ bool copiar_fichero(const std::string &src, const std::string &dst_pedido, Progr
     }
     out.close();
     if (!out) { ::unlink(tmp.c_str()); return false; }
-    ::unlink(dst.c_str());
+    borra_fichero(dst);
     return pcf_rename(tmp.c_str(), dst.c_str()) == 0;
 }
 

@@ -11,6 +11,7 @@
 //   PCF7_SHOT      prefijo de capturas BMP; PCF7_SHOT_MS = intervalo (ms)
 //   PCF7_SCRIPT    entrada automática: "1500:click:320:240;3000:key:13;…" (ms desde el arranque)
 //   PCF7_TIMEOUT   segundos hasta cerrar (pruebas)
+//   PCF7_MANDO_PRUEBA  pruebas sin mando: el juego ve uno conectado (el guion lo mueve con «joy»)
 #include "cursor.h"
 #include "display.h"
 #include "threads.h"
@@ -236,14 +237,16 @@ void run_script_step(const ScriptStep &st) {
     } else if (st.op == "key") {
         key_event(true, (u32)st.a, (u32)st.b, false, false);
         key_event(false, (u32)st.a, (u32)st.b, false, false);
-    } else if (st.op == "keydown" || st.op == "keyup") {   // mantener una tecla pulsada (partido interactivo)
-        key_event(st.op == "keydown", (u32)st.a, (u32)st.b, false, false);
+    } else if (st.op == "keydown" || st.op == "keyup") {   // mantener una tecla pulsada (partido interactivo; código + 0x100 = extendida)
+        key_event(st.op == "keydown", (u32)st.a, (u32)st.b & 0xFF, (st.b & 0x100) != 0, false);
     } else if (st.op == "poke") {   // pruebas: escribe un byte en la memoria del juego (dirección en hex)
         wr8((u32)st.a, (u32)st.b);
     } else if (st.op == "char") {
         InEvent c{InKind::Char}; c.vk = (u32)st.a; d.push(c);
     } else if (st.op == "shot") {
         save_shot("shot_" + std::to_string(st.a) + ".bmp");
+    } else if (st.op == "joy") {   // mando 1 en x y (0..65535) con los botones c (hex, bit 0 = botón 1)
+        InEvent j{InKind::Joy}; j.x = st.a; j.y = st.b; j.vk = st.c; d.push(j);
     }
 }
 }  // namespace
@@ -317,9 +320,13 @@ static std::string util_nombre_base(const std::string &p) { size_t i = p.find_la
     path += ".exe";
 #endif
     if (a1) args.push_back(a1);
-    std::vector<std::string> cit;   // cada argumento entre comillas (reglas del CRT de Microsoft; los nuestros no llevan comillas)
+    // _spawnv junta los argumentos con espacios sin comillas: van entre comillas los que llevan espacios (reglas del CRT
+    // de Microsoft; los nuestros no llevan comillas), también el argv[0] («…/PCFSite - Source.exe»: sin comillas el
+    // hijo veía «-» como primera opción y salía con el código 2)
+    args.insert(args.begin(), path);
+    std::vector<std::string> cit;
     for (const std::string &s : args) cit.push_back(s.find_first_of(" \t") == std::string::npos ? s : "\"" + s + "\"");
-    std::vector<const char *> av{path.c_str()};
+    std::vector<const char *> av;
     for (const std::string &s : cit) av.push_back(s.c_str());
     av.push_back(nullptr);
     intptr_t rc = _spawnv(_P_WAIT, path.c_str(), av.data());
@@ -405,7 +412,71 @@ struct Host {
     int tex_w = 0, tex_h = 0, last_mx = -1, last_my = -1;
     bool host_cursor_shown = false;
     std::vector<u32> rgb;
+    // mandos del host (los dos primeros: JOYSTICK 1 y 2 del juego, ver user32.cpp joy_event)
+    struct Mando { SDL_Gamepad *g = nullptr; SDL_Joystick *j = nullptr; SDL_JoystickID id = 0; int x = -1, y = -1; u32 b = 0; };
+    Mando mandos[2];
 } H;
+
+// Mandos: se abren al conectarse (un mando conocido por SDL como gamepad: stick izquierdo o cruceta y A, B, X, Y;
+// otro joystick: ejes 0 y 1, el primer hat y los cuatro primeros botones). El estado va al juego al cambiar.
+void mandos_contar() {
+    int n = 0;
+    for (auto &m : H.mandos) n += m.j != nullptr;
+    Display &d = display();
+    std::lock_guard<std::mutex> lk(d.mx);
+    d.mandos = n;
+}
+void mando_conectado(SDL_JoystickID id) {
+    for (auto &m : H.mandos) if (m.j && m.id == id) return;
+    for (auto &m : H.mandos) {
+        if (m.j) continue;
+        if (SDL_IsGamepad(id)) { m.g = SDL_OpenGamepad(id); m.j = m.g ? SDL_GetGamepadJoystick(m.g) : nullptr; }
+        else m.j = SDL_OpenJoystick(id);
+        if (!m.j) { plog("mando: %s", SDL_GetError()); m.g = nullptr; return; }
+        m.id = id; m.x = m.y = -1; m.b = 0;
+        plog("mando %d: %s", (int)(&m - H.mandos) + 1, m.g ? SDL_GetGamepadName(m.g) : SDL_GetJoystickName(m.j));
+        break;
+    }
+    mandos_contar();
+}
+void mando_desconectado(SDL_JoystickID id) {
+    for (auto &m : H.mandos) {
+        if (!m.j || m.id != id) continue;
+        if (m.g) SDL_CloseGamepad(m.g); else SDL_CloseJoystick(m.j);
+        m = Host::Mando{};
+    }
+    mandos_contar();
+}
+void mandos_leer() {
+    auto eje = [](int v) { return std::abs(v) < 8000 ? 32767 : std::clamp(v + 32768, 0, 65535); };   // zona muerta
+    for (int i = 0; i < 2; i++) {
+        Host::Mando &m = H.mandos[i];
+        if (!m.j) continue;
+        int x, y;
+        u32 b = 0;
+        bool izq, der, arr, aba;
+        if (m.g) {
+            x = eje(SDL_GetGamepadAxis(m.g, SDL_GAMEPAD_AXIS_LEFTX)); y = eje(SDL_GetGamepadAxis(m.g, SDL_GAMEPAD_AXIS_LEFTY));
+            izq = SDL_GetGamepadButton(m.g, SDL_GAMEPAD_BUTTON_DPAD_LEFT); der = SDL_GetGamepadButton(m.g, SDL_GAMEPAD_BUTTON_DPAD_RIGHT);
+            arr = SDL_GetGamepadButton(m.g, SDL_GAMEPAD_BUTTON_DPAD_UP); aba = SDL_GetGamepadButton(m.g, SDL_GAMEPAD_BUTTON_DPAD_DOWN);
+            static const SDL_GamepadButton bot[4] = {SDL_GAMEPAD_BUTTON_SOUTH, SDL_GAMEPAD_BUTTON_EAST, SDL_GAMEPAD_BUTTON_WEST,
+                                                     SDL_GAMEPAD_BUTTON_NORTH};
+            for (int k = 0; k < 4; k++) if (SDL_GetGamepadButton(m.g, bot[k])) b |= 1u << k;
+        } else {
+            x = eje(SDL_GetNumJoystickAxes(m.j) > 0 ? SDL_GetJoystickAxis(m.j, 0) : 0);
+            y = eje(SDL_GetNumJoystickAxes(m.j) > 1 ? SDL_GetJoystickAxis(m.j, 1) : 0);
+            u8 h = SDL_GetNumJoystickHats(m.j) > 0 ? SDL_GetJoystickHat(m.j, 0) : 0;
+            izq = h & SDL_HAT_LEFT; der = h & SDL_HAT_RIGHT; arr = h & SDL_HAT_UP; aba = h & SDL_HAT_DOWN;
+            for (int k = 0; k < 4 && k < SDL_GetNumJoystickButtons(m.j); k++) if (SDL_GetJoystickButton(m.j, k)) b |= 1u << k;
+        }
+        if (izq) x = 0; else if (der) x = 65535;
+        if (arr) y = 0; else if (aba) y = 65535;
+        if (x == m.x && y == m.y && b == m.b) continue;
+        m.x = x; m.y = y; m.b = b;
+        InEvent e{InKind::Joy}; e.button = i; e.x = x; e.y = y; e.vk = b;
+        display().push(e);
+    }
+}
 
 // Un fotograma del hilo principal: guion de pruebas, capturas, eventos de SDL y presentación. false = parar.
 bool host_frame() {
@@ -492,11 +563,22 @@ bool host_frame() {
             }
             case SDL_EVENT_KEY_DOWN:
             case SDL_EVENT_KEY_UP: {
+                // pantalla completa: F11 o Alt+Intro (no llegan al juego); la imagen mantiene su proporción (bandas negras)
+#ifndef __EMSCRIPTEN__   // (en el navegador, la página tiene su botón)
+                bool intro = ev.key.scancode == SDL_SCANCODE_RETURN || ev.key.scancode == SDL_SCANCODE_KP_ENTER;
+                if (ev.key.scancode == SDL_SCANCODE_F11 || (intro && (ev.key.mod & SDL_KMOD_ALT))) {
+                    if (ev.type == SDL_EVENT_KEY_DOWN && !ev.key.repeat)
+                        SDL_SetWindowFullscreen(H.win, !(SDL_GetWindowFlags(H.win) & SDL_WINDOW_FULLSCREEN));
+                    break;
+                }
+#endif
                 u32 vk, scan;
                 bool ext;
                 if (map_key(ev.key.scancode, vk, scan, ext)) key_event(ev.type == SDL_EVENT_KEY_DOWN, vk, scan, ext, ev.key.repeat);
                 break;
             }
+            case SDL_EVENT_JOYSTICK_ADDED: mando_conectado(ev.jdevice.which); break;
+            case SDL_EVENT_JOYSTICK_REMOVED: mando_desconectado(ev.jdevice.which); break;
             case SDL_EVENT_TEXT_INPUT: {
                 // UTF-8 → Windows-1252
                 const unsigned char *s = (const unsigned char *)ev.text.text;
@@ -514,6 +596,8 @@ bool host_frame() {
             }
         }
     }
+
+    mandos_leer();
 
     Display &d = display();
     u32 frame;
@@ -582,9 +666,26 @@ int main(int argc, char **argv) {
 
     if (headless) SDL_SetHint(SDL_HINT_AUDIO_DRIVER, "dummy");   // el audio avanza a tiempo real sin altavoz
     SDL_SetHint(SDL_HINT_WINDOWS_INTRESOURCE_ICON, "1");         // Windows: el icono del .exe (platform/win/juego.rc) en la ventana
-    if (!SDL_Init(headless ? SDL_INIT_AUDIO : SDL_INIT_VIDEO | SDL_INIT_AUDIO)) { plog("SDL_Init: %s", SDL_GetError()); return 1; }
+    if (!SDL_Init(headless ? SDL_INIT_AUDIO : SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_GAMEPAD)) { plog("SDL_Init: %s", SDL_GetError()); return 1; }
+    if (!headless) {   // los mandos ya conectados, antes de que el juego llame a joySetCapture
+        int n = 0;
+        if (SDL_JoystickID *ids = SDL_GetJoysticks(&n)) { for (int i = 0; i < n; i++) mando_conectado(ids[i]); SDL_free(ids); }
+    }
+    if (env("PCF7_MANDO_PRUEBA")) { Display &d = display(); std::lock_guard<std::mutex> lk(d.mx); d.mandos = 1; }
     if (!headless) {
-        if (!SDL_CreateWindowAndRenderer(JUEGO_NOMBRE, 1280, 960, SDL_WINDOW_RESIZABLE, &H.win, &H.ren)) {
+        // 1280×960 (el doble de 640×480) si cabe; si no, lo más grande en 4:3 que quepa en el área útil de la pantalla
+        // (portátiles de 768 px de alto, o Windows con la escala al 125-150 %: una ventana más alta salía cortada)
+        int ww = 1280, wh = 960;
+#ifndef __EMSCRIPTEN__
+        SDL_Rect util_;
+        if (SDL_GetDisplayUsableBounds(SDL_GetPrimaryDisplay(), &util_)) {
+            wh = std::max(480, std::min(wh, util_.h - 60));
+            ww = wh * 4 / 3;
+            if (ww > util_.w - 20) { ww = std::max(640, util_.w - 20); wh = ww * 3 / 4; }
+        }
+#endif
+        bool completa = env("PCF7_PANTALLA_COMPLETA") && std::string(env("PCF7_PANTALLA_COMPLETA")) == "1";   // ajuste de la app
+        if (!SDL_CreateWindowAndRenderer(JUEGO_NOMBRE, ww, wh, SDL_WINDOW_RESIZABLE | (completa ? SDL_WINDOW_FULLSCREEN : 0), &H.win, &H.ren)) {
             plog("SDL_CreateWindowAndRenderer: %s", SDL_GetError());
             return 1;
         }

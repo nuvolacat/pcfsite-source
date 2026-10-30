@@ -4,10 +4,11 @@
 #include "json.h"
 #include "util.h"
 
-std::vector<std::string> Version::roles_necesarios() const {
+std::vector<std::string> Version::roles_necesarios(bool con_instalada) const {
     std::vector<std::string> r;
-    if (solo_instalada) r.push_back("instalada");
-    for (auto &d : discos) r.push_back(d.rol);
+    bool instalada = solo_instalada || (con_instalada && admite_instalada());
+    if (instalada) r.push_back("instalada");
+    for (auto &d : discos) if (!(instalada && d.solo_instalar)) r.push_back(d.rol);
     if (!parches.ficheros.empty()) r.push_back("parches");
     return r;
 }
@@ -25,7 +26,7 @@ bool firma_coincide(const std::string &dir, const Firma &f) {
     return util::sha256_fichero(p) == f.sha256;
 }
 
-std::string localizar_parche(const std::string &dir, const Parche &pa) {
+static std::string parche_en(const std::string &dir, const Parche &pa) {
     if (firma_coincide(dir, {pa.nombre, pa.sha256, pa.tam})) return util::resolver(dir, pa.nombre);
     for (const std::string &n : util::listar(dir)) {
         if (n.empty() || n[0] == '.') continue;
@@ -34,6 +35,36 @@ std::string localizar_parche(const std::string &dir, const Parche &pa) {
         if (util::sha256_fichero(p) == pa.sha256) return p;
     }
     return "";
+}
+
+// Los paquetes se buscan en la carpeta elegida y, si no están, en sus subcarpetas; y si la carpeta ya tiene alguno
+// (es una carpeta de actualizaciones a medias), también en la de encima y sus subcarpetas. Así vale la recopilación
+// del foro tal cual se descomprime: las 12 actualizaciones en una carpeta y el parche 3.6 (PCFPATCH.EXE) al lado.
+std::string localizar_parche(const std::string &dir, const Parche &pa) {
+    std::string p = parche_en(dir, pa);
+    if (!p.empty()) return p;
+    auto en_subcarpetas = [&](const std::string &d, const std::string &salvo) -> std::string {
+        for (const std::string &n : util::listar(d)) {
+            if (n.empty() || n[0] == '.' || d + "/" + n == salvo || !util::es_dir(d + "/" + n)) continue;
+            std::string q = parche_en(d + "/" + n, pa);
+            if (!q.empty()) return q;
+        }
+        return "";
+    };
+    p = en_subcarpetas(dir, "");
+    if (!p.empty()) return p;
+    size_t barra = dir.find_last_of("/\\");
+    if (barra == std::string::npos || barra == 0) return "";
+    std::string arriba = dir.substr(0, barra);
+    bool tiene_alguno = false;   // algún PCF*.EXE: si no, no es una carpeta de actualizaciones
+    for (const std::string &n : util::listar(dir)) {
+        std::string m = util::minusculas(n);
+        if (m.size() > 4 && m.substr(m.size() - 4) == ".exe" && m.find("pcf") != std::string::npos) { tiene_alguno = true; break; }
+    }
+    if (!tiene_alguno) return "";
+    p = parche_en(arriba, pa);
+    if (!p.empty()) return p;
+    return en_subcarpetas(arriba, dir);
 }
 
 static std::vector<Firma> firmas_de(const Json &j) {
@@ -72,6 +103,7 @@ bool Versiones::cargar(const std::string &path, std::string &error) {
             if (d["copiar"].tipo == Json::CADENA) disco.copiar_todo = true;
             else { disco.copiar_todo = false; for (size_t m = 0; m < d["copiar"].size(); m++) disco.copiar.push_back(d["copiar"][m].str()); }
             for (size_t m = 0; m < d["sistema"].size(); m++) disco.sistema.emplace_back(d["sistema"][m][0].str(), d["sistema"][m][1].str());
+            disco.solo_instalar = d["solo_instalar"].bul();
             v.discos.push_back(disco);
         }
         for (size_t k = 0; k < x["binarios"].size(); k++) {

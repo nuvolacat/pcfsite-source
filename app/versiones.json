@@ -1,5 +1,5 @@
 {
- "generado": "2026-10-26",
+ "generado": "2026-10-30",
  "versiones": [
   {
    "id": "pcf4",
@@ -1795,8 +1795,8 @@
    ],
    "dos": false,
    "necesita_cd": true,
-   "solo_instalada": true,
-   "nota": "La instalación (base y Extensión, InstallShield) aún no se reproduce desde los CD: hace falta la carpeta C:\\PCF2000 de una instalación completa (con la Extensión) y el CD base.",
+   "solo_instalada": false,
+   "nota": "Hacen falta los dos CD: el de PC Fútbol 2000 y el de su Extensión (valen sus ISO). Si ya lo tienes instalado, también vale la carpeta C:\\PCF2000 de la instalación con la Extensión, junto con el CD de PC Fútbol 2000.",
    "discos": [
     {
      "rol": "cd",
@@ -1818,7 +1818,48 @@
        981
       ]
      ],
-     "instalar": [],
+     "instalar": [
+      [
+       "is6",
+       "Program DLLs",
+       ""
+      ],
+      [
+       "is6",
+       "Program Executable Files",
+       ""
+      ],
+      [
+       "is6",
+       "Help Files",
+       "AYUDA"
+      ],
+      [
+       "copia",
+       "MMX/UTILS.DLL",
+       "Utils.dll"
+      ],
+      [
+       "carpeta",
+       "Goles"
+      ],
+      [
+       "carpeta",
+       "GOLESEXT"
+      ],
+      [
+       "carpeta",
+       "Notas"
+      ],
+      [
+       "carpeta",
+       "Save"
+      ],
+      [
+       "carpeta",
+       "SAVEEXT"
+      ]
+     ],
      "copiar": [
       "DISK.ID",
       "GRAFICOS.PAK",
@@ -1844,7 +1885,73 @@
       "BDRVISA.DRV",
       "GPRINTER.DLL"
      ],
-     "sistema": []
+     "sistema": [
+      [
+       "is6:Shared DLLs",
+       ""
+      ]
+     ]
+    },
+    {
+     "rol": "ext",
+     "nombre": "CD de la Extensión de PC Fútbol 2000",
+     "firmas": [
+      [
+       "Autorun.inf",
+       "9416e2872ffb64f4d67e04829608ad75c0ff393b881a1826f1058fb549cbe015",
+       49
+      ],
+      [
+       "layout.bin",
+       "e3d98517a42d613b4edc2a4aea6bf447cb5dd884a33df919827e4f983e380de2",
+       609
+      ]
+     ],
+     "instalar": [
+      [
+       "is6",
+       "DataBase Files",
+       "DBDAT"
+      ],
+      [
+       "is6",
+       "Dll Extension",
+       "Extension"
+      ],
+      [
+       "is6",
+       "Exe Extension",
+       "Extension"
+      ],
+      [
+       "is6",
+       "SimulDat",
+       "Simuldat"
+      ],
+      [
+       "is6",
+       "Graphics Files",
+       ""
+      ],
+      [
+       "is6",
+       "Root Extension",
+       ""
+      ],
+      [
+       "is6",
+       "Help Files",
+       "AYUDA"
+      ],
+      [
+       "copia",
+       "MMX/Utils.dll",
+       "Extension/Utils.dll"
+      ]
+     ],
+     "copiar": [],
+     "sistema": [],
+     "solo_instalar": true
     }
    ],
    "binarios": [
@@ -1875,6 +1982,10 @@
      "tam": 262144,
      "sha256": "060c923784fe39bbec72b641ead2d06278f95b7640580677b71f2d2856acf616",
      "origen": [
+      [
+       "ext",
+       "MMX/Utils.dll"
+      ],
       [
        "instalacion",
        "Extension/Utils.dll"

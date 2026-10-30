@@ -50,10 +50,22 @@ VERSIONES = [
                       extra_copias=[["SIMULDAT/TEXTURAS/OTROS/vallas.bmp", "SIMULDAT/TEXTURAS/OTROS/vallas%s.bmp" % x] for x in ("esp", "mun", "bar", "arg", "fra", "ita", "ing")],
                       discos=[dict(rol="cd", nombre="CD de PC Fútbol 7", iso="pcf7-work/iso", instalar="nfc"),
                               dict(rol="cd2", nombre="CD de PC Fútbol 7 Plus", iso="pcf7plus-work/iso_plus", instalar="nfo")])),
-    ("pcf2000", dict(detalle="con la Extensión (InstallShield)", anio=1999, corto="2000", portada="2000.jpg", solo_instalada=True,
-                     nota="La instalación (base y Extensión, InstallShield) aún no se reproduce desde los CD: hace falta la carpeta "
-                          "C:\\PCF2000 de una instalación completa (con la Extensión) y el CD base.",
-                     discos=[dict(rol="cd", nombre="CD de PC Fútbol 2000", iso="pcf2000src-work/iso", instalar=None)])),
+    ("pcf2000", dict(detalle="con la Extensión (InstallShield)", anio=1999, corto="2000", portada="2000.jpg",
+                     nota="Hacen falta los dos CD: el de PC Fútbol 2000 y el de su Extensión (valen sus ISO). Si ya lo tienes "
+                          "instalado, también vale la carpeta C:\\PCF2000 de la instalación con la Extensión, junto con el CD de PC Fútbol 2000.",
+                     # la instalación de InstallShield 5 de los dos CD (base y Extensión), deducida comparando con una instalación
+                     # real en Windows 98: grupos de cada CAB a su carpeta, y la Utils.dll con MMX de cada CD (el instalador la
+                     # copiaba si la CPU lo tenía: siempre, aquí)
+                     discos=[dict(rol="cd", nombre="CD de PC Fútbol 2000", iso="pcf2000src-work/iso",
+                                  instalar=[["is6", "Program DLLs", ""], ["is6", "Program Executable Files", ""], ["is6", "Help Files", "AYUDA"],
+                                            ["copia", "MMX/UTILS.DLL", "Utils.dll"],
+                                            ["carpeta", "Goles"], ["carpeta", "GOLESEXT"], ["carpeta", "Notas"], ["carpeta", "Save"], ["carpeta", "SAVEEXT"]],
+                                  sistema_is6="Shared DLLs"),
+                             # solo para instalar (el juego no lo lee como D:); con la carpeta instalada no hace falta
+                             dict(rol="ext", nombre="CD de la Extensión de PC Fútbol 2000", iso="pcf2000src-work/iso_ext", solo_instalar=True,
+                                  instalar=[["is6", "DataBase Files", "DBDAT"], ["is6", "Dll Extension", "Extension"], ["is6", "Exe Extension", "Extension"],
+                                            ["is6", "SimulDat", "Simuldat"], ["is6", "Graphics Files", ""], ["is6", "Root Extension", ""],
+                                            ["is6", "Help Files", "AYUDA"], ["copia", "MMX/Utils.dll", "Extension/Utils.dll"]])])),
     ("pcf2001", dict(detalle="con las 13 actualizaciones oficiales (versión 3.6)", anio=2000, corto="2001", portada="2001.jpg",
                      nota="Hacen falta el CD y la carpeta ACTUALIZ con las 13 actualizaciones oficiales (PCFACT01 a PCFACT12 y PCFPATCH; "
                           "vale su ISO). La app reproduce la instalación de InstallShield y aplica las actualizaciones con el parcheador "
@@ -305,9 +317,13 @@ def version(jid, cfg):
         inst = d.get("instalar")
         if d.get("sistema_is6"):   # las DLL compartidas van dentro del CAB de InstallShield: el grupo entero a WINDOWS\SYSTEM
             sistema = [["is6:" + d["sistema_is6"], ""]]
+        if d.get("solo_instalar"):   # un disco que solo hace falta para instalar: nada a D: ni a WINDOWS\SYSTEM
+            sistema = []
         disco = dict(rol=d["rol"], nombre=d["nombre"], firmas=firmas,
                      instalar=elegidos[di] if inst in ("nfo", "nfc") else (inst or []),
-                     copiar=J.get("web", {}).get("cd", "*") if d["rol"] == "cd" else "*", sistema=sistema)
+                     copiar=[] if d.get("solo_instalar") else J.get("web", {}).get("cd", "*") if d["rol"] == "cd" else "*", sistema=sistema)
+        if d.get("solo_instalar"):
+            disco["solo_instalar"] = True
         discos.append(disco)
     v["discos"] = discos
     if cfg.get("parches"):   # las actualizaciones oficiales: nombre, SHA-256 y tamaño de cada paquete, y qué hacer con cada uno

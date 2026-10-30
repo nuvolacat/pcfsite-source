@@ -4,6 +4,7 @@
 #include "plat.h"
 #include "threads.h"
 
+#include <algorithm>
 #include <csetjmp>
 #include <cstdlib>
 #include <vector>
@@ -79,9 +80,9 @@ static bool load_image(const char *path) {
     return n > 0;
 }
 
-// TLS estático del EXE (IMAGE_TLS_DIRECTORY32): copia la plantilla a un bloque y lo pone en el slot 0
-// del array de TLS del TEB (fs:[0x2c]).
-static void setup_static_tls(u32 tls_array) {
+// TLS estático de los módulos (IMAGE_TLS_DIRECTORY32): copia cada plantilla a un bloque y lo pone en su slot (0, 1…)
+// del array de TLS del TEB (fs:[0x2c]); devuelve cuántos hay.
+static u32 setup_static_tls(u32 tls_array) {
     u32 slot = 0;
     for (unsigned i = 0; i < NMODS; i++) {
         u32 d = MODS[i].tls_dir;
@@ -95,6 +96,7 @@ static void setup_static_tls(u32 tls_array) {
         plog("TLS de %s: %u B + %u a cero, índice %u", MODS[i].name, n, zerofill, slot);
         slot++;
     }
+    return slot;
 }
 
 void tls_reserve_static(u32 n);   // kernel32.cpp: los índices de TlsAlloc empiezan detrás
@@ -195,8 +197,9 @@ int run_game(const char *membin) {
     wr32(mm::TEB + 0x2C, tls_array);        // ThreadLocalStoragePointer
     wr32(mm::TEB + 0x30, mm::PEB);          // ProcessEnvironmentBlock
     wr32(mm::PEB + 0x08, 0x00400000);       // ImageBaseAddress
-    setup_static_tls(tls_array);
-    tls_reserve_static(1);
+    // los índices de TlsAlloc van detrás de TODOS los estáticos (el 2001 tiene dos: manager.exe y gfxwin.dll; si
+    // TlsAlloc diera el 1, el TLS de gfxwin acabaría encima de los datos por hilo de MSVCRT)
+    tls_reserve_static(std::max(1u, setup_static_tls(tls_array)));
 
     threads_init_main();
     set_display_mode(640, 480, 8);   // escritorio inicial; el juego cambia de modo con DirectDraw

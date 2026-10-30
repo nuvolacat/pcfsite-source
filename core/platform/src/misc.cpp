@@ -1,4 +1,4 @@
-// PCF7 — WINMM (tiempo, mmio, joystick), COMDLG32.
+// PCF7 — WINMM (tiempo, mmio), COMDLG32. El joystick de WINMM está en user32.cpp (son mensajes de ventana).
 #include "handles.h"
 
 #include <fcntl.h>
@@ -16,11 +16,6 @@ STUB(ext_winmm_dll_timeGetSystemTime) {
 }
 STUB(ext_winmm_dll_timeBeginPeriod) { RET(0, 1); }
 STUB(ext_winmm_dll_timeEndPeriod) { RET(0, 1); }
-
-// ---------------------------------------------------------------- WINMM: joystick (no hay)
-
-STUB(ext_winmm_dll_joySetCapture) { RET(165, 4); }      // JOYERR_UNPLUGGED
-STUB(ext_winmm_dll_joyReleaseCapture) { RET(165, 1); }
 
 // ---------------------------------------------------------------- WINMM: mmio (lectura de RIFF/WAV)
 // HMMIO = handle de un KFile. MMCKINFO: ckid, cksize, fccType, dwDataOffset, dwFlags.

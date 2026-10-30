@@ -120,6 +120,13 @@ const char ASCII_MIN[0x3A] = {0, 27, '1', '2', '3', '4', '5', '6', '7', '8', '9'
                               'u', 'i', 'o', 'p', '`', '+', 13, 0, 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', '\xf1', '\xb4',
                               '\xba', 0, '\xe7', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '-', 0, '*', 0, ' '};
 
+// Puerto de juegos (0x201) con los mandos del host: cada eje es un monoestable que el juego dispara escribiendo en el
+// puerto y mide contando lecturas hasta que su bit baja (PC Fútbol 4 lo hace así); aquí baja tras un número de
+// lecturas proporcional a la posición. Bits 0-1 ejes del mando 1, 2-3 del 2; 4-5 y 6-7 sus botones (0 = pulsado).
+struct MandoDos { int x = 32767, y = 32767; u32 botones = 0; };
+MandoDos g_mando[2];      // con g_mx
+u32 g_eje_lecturas[4];    // lecturas que le quedan a cada eje con el bit a 1
+
 // Evento del host (display().input) → teclado/ratón de DOS. Lo llama el hilo del temporizador.
 void host_input() {
     Display &d = display();
@@ -168,6 +175,9 @@ void host_input() {
             }
             break;
         }
+        case InKind::Joy:
+            if (e.button >= 0 && e.button < 2) g_mando[e.button] = {e.x, e.y, e.vk};
+            break;
         case InKind::Quit: g_fin = true; break;
         default: break;
         }
@@ -306,7 +316,13 @@ u32 port_in(u32 port, u32 size) {
     case 0x60: return g_port60;
     case 0x61: return 0x20;
     case 0x64: { std::lock_guard<std::mutex> lk(g_mx); return g_scan.empty() ? 0x14u : 0x15u; }
-    case 0x201: return 0xF0;   // puerto de juegos sin joystick: ejes a 0 (nunca «cargando»), botones sin pulsar
+    case 0x201: {   // puerto de juegos (sin mando: ejes a 0, nunca «cargando», y botones sin pulsar)
+        std::lock_guard<std::mutex> lk(g_mx);
+        u32 v = 0xF0;
+        for (int k = 0; k < 4; k++) if (g_eje_lecturas[k]) { g_eje_lecturas[k]--; v |= 1u << k; }
+        for (int m = 0; m < 2; m++) v &= ~((g_mando[m].botones & 3) << (4 + 2 * m));
+        return v;
+    }
     }
     plog_once("in" + std::to_string(port), "DOS: lectura del puerto 0x%x sin emular (f_%x)", port, cur_fn);
     return 0xFF;
@@ -321,6 +337,16 @@ void port_out(u32 port, u32 v, u32 size) {
     switch (port) {
     case 0x20: case 0x21: case 0xA0: case 0xA1: return;   // PIC: EOI y máscaras
     case 0x43: return;                                     // 8253: modo (el divisor llega por 40h, bajo y alto)
+    case 0x201: {                                          // dispara los ejes de los mandos conectados
+        int mandos;
+        { Display &d = display(); std::lock_guard<std::mutex> lk(d.mx); mandos = d.mandos; }
+        std::lock_guard<std::mutex> lk(g_mx);
+        for (int m = 0; m < 2 && m < mandos; m++) {
+            g_eje_lecturas[2 * m] = 16 + (u32)g_mando[m].x * 1000 / 65535;
+            g_eje_lecturas[2 * m + 1] = 16 + (u32)g_mando[m].y * 1000 / 65535;
+        }
+        return;
+    }
     case 0x40: {
         static bool alto = false;
         static u32 bajo = 0;
@@ -334,7 +360,6 @@ void port_out(u32 port, u32 v, u32 size) {
         return;
     }
     case 0x61: return;   // altavoz
-    case 0x201: return;  // disparo del joystick: no hay
     }
     plog_once("out" + std::to_string(port), "DOS: escritura en el puerto 0x%x sin emular (f_%x)", port, cur_fn);
 }

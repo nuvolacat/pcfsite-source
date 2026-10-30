@@ -54,15 +54,16 @@ bool Is6::abrir(const std::string &carpeta, std::string &error) {
     desc_ = u32(hdr_.data() + 12);
     uint32_t desc_tam = u32(hdr_.data() + 16);
     if (!desc_tam || (size_t)desc_ + 0x30 + 0xe + 142 * 4 > hdr_.size()) { error = "DATA1.HDR sin descriptor del CAB"; return false; }
-    if (version_ != 6 && version_ != 7) { error = "InstallShield versión " + std::to_string(version_) + ": solo se entiende la 6"; return false; }
+    if (version_ < 5 || version_ > 7) { error = "InstallShield versión " + std::to_string(version_) + ": solo se entienden la 5 y la 6"; return false; }
     const uint8_t *d = hdr_.data() + desc_;
     tabla_ = u32(d + 0xc);
     ndirs_ = u32(d + 0x1c);
     nfich_ = u32(d + 0x28);
     tabla2_ = u32(d + 0x2c);
     if ((size_t)desc_ + tabla_ + 4 * (ndirs_ + nfich_) > hdr_.size()) { error = "tabla de ficheros fuera del DATA1.HDR"; return false; }
-    tabla_dirs_.resize(ndirs_);
-    for (uint32_t i = 0; i < ndirs_; i++) tabla_dirs_[i] = u32(d + tabla_ + 4 * i);
+    // la tabla: un offset por directorio y, en la versión 5, también uno por fichero (su descriptor)
+    tabla_dirs_.resize(ndirs_ + (version_ == 5 ? nfich_ : 0));
+    for (uint32_t i = 0; i < tabla_dirs_.size(); i++) tabla_dirs_[i] = u32(d + tabla_ + 4 * i);
     // grupos de ficheros: listas enlazadas desde los 71 huecos del descriptor
     const uint8_t *g = d + 0x30 + 0xe;
     for (int i = 0; i < 71; i++) {
@@ -73,11 +74,12 @@ bool Is6::abrir(const std::string &carpeta, std::string &error) {
             const uint8_t *nodo = d + sig;
             uint32_t dsc = u32(nodo + 4);
             sig = u32(nodo + 8);
-            if (!dsc || (size_t)desc_ + dsc + 4 + 0x12 + 8 > hdr_.size()) continue;
+            uint32_t salto = version_ == 5 ? 0x48 : 0x12;
+            if (!dsc || (size_t)desc_ + dsc + 4 + salto + 8 > hdr_.size()) continue;
             Is6Grupo gr;
             gr.nombre = cadena(u32(d + dsc));
-            gr.primero = u32(d + dsc + 4 + 0x12);
-            gr.ultimo = u32(d + dsc + 4 + 0x12 + 4);
+            gr.primero = u32(d + dsc + 4 + salto);
+            gr.ultimo = u32(d + dsc + 4 + salto + 4);
             grupos_.push_back(gr);
         }
     }
@@ -104,6 +106,16 @@ bool Is6::abrir(const std::string &carpeta, std::string &error) {
 
 Is6::Descriptor Is6::descriptor(uint32_t i) const {
     Descriptor fd;
+    if (version_ == 5) {   // descriptor de 0x3a bytes, apuntado desde la tabla; los datos van en el primer volumen que los tenga
+        size_t p = (size_t)desc_ + tabla_ + (ndirs_ + i < tabla_dirs_.size() ? tabla_dirs_[ndirs_ + i] : 0);
+        if (ndirs_ + i >= tabla_dirs_.size() || p + 0x3a > hdr_.size()) { fd.flags = F_NO_VALIDO; return fd; }
+        const uint8_t *q = hdr_.data() + p;
+        fd.nombre = u32(q); fd.directorio = (uint16_t)u32(q + 4); fd.flags = u16(q + 8);
+        fd.tam = u32(q + 10); fd.comprimido = u32(q + 14); fd.datos = u32(q + 0x26);
+        std::memcpy(fd.md5, q + 0x2a, 16);
+        fd.volumen = 0;
+        return fd;
+    }
     size_t p = (size_t)desc_ + tabla_ + tabla2_ + (size_t)i * 0x57;
     if (p + 0x57 > hdr_.size()) { fd.flags = F_NO_VALIDO; return fd; }
     const uint8_t *q = hdr_.data() + p;
@@ -127,6 +139,12 @@ bool Is6::lee_volumen(unsigned n, Volumen &v, int &fd) const {
     uint8_t cab[20 + 64];
     if (!lee_todo(fd, 0, cab, sizeof cab) || u32(cab) != FIRMA) { ::close(fd); fd = -1; return false; }
     const uint8_t *p = cab + 20;
+    if (version_ == 5) {   // versión 5: diez campos de 32 bits
+        v.datos = u32(p); v.primero = u32(p + 8); v.ultimo = u32(p + 12);
+        v.primero_off = u32(p + 16); v.primero_tam = u32(p + 20); v.primero_comp = u32(p + 24);
+        v.ultimo_off = u32(p + 28); v.ultimo_tam = u32(p + 32); v.ultimo_comp = u32(p + 36);
+        return true;
+    }
     v.datos = u32(p) | ((uint64_t)u32(p + 4) << 32);
     v.primero = u32(p + 8); v.ultimo = u32(p + 12);
     v.primero_off = u32(p + 16) | ((uint64_t)u32(p + 20) << 32);
@@ -150,6 +168,13 @@ bool Is6::extraer(uint32_t indice, const std::string &destino, std::string &erro
     unsigned vol = fd.volumen ? fd.volumen : 1;
     int vfd = -1;
     Volumen v;
+    if (version_ == 5)   // el descriptor no dice el volumen: el primero cuyo rango de ficheros lo incluye
+        for (unsigned n = 1; n < 100; n++) {
+            int f5 = -1;
+            if (!lee_volumen(n, v, f5)) break;
+            ::close(f5);
+            if (indice >= v.primero && indice <= v.ultimo) { vol = n; break; }
+        }
     uint64_t pos = 0, quedan_vol = 0;
     auto abre = [&](unsigned n) -> bool {
         if (vfd >= 0) ::close(vfd);

@@ -3,6 +3,35 @@
 Versión = `1.AA.MMDD.HHMM` con la hora real del empaquetado (`app/mac/empaquetar.sh`, el mismo esquema que pcfsite.com).
 Cada entrada lleva la versión que **de verdad se distribuyó**; dos empaquetados en el mismo minuto van en una sola entrada.
 
+## 1.26.1030.1024 — 30-oct-2026
+
+Arreglos de los avisos del foro (t/526 y otros hilos):
+
+- **Windows: «El juego ha terminado con un error (código 2)»** al pasar de un programa a otro: la base de datos del 7 y
+  el 7 Plus, el «PC Fútbol Plus 98-99» del 6.0 Edición de Oro, la Liga Manager y la Pro Manager del 4.0, InfoSurf…
+  La app se volvía a lanzar a sí misma sin poner entre comillas su ruta («…\PCFSite - Source.exe», con espacios).
+- **PC Fútbol 2001: se cerraba con «código 70»** al terminar un partido en chapas o visionado (y por eso, con algunos
+  mods, «solo funcionaba el modo resultado»). La memoria propia de cada hilo del MANAGER.EXE y la de los gráficos se
+  pisaban.
+- **PC Fútbol 6.0 Edición de Oro: tirones en el partido interactivo.** El juego abre dos veces el fichero de los
+  comentarios (100 MB); la segunda no cabía y lo leía a trocitos decenas de miles de veces. Ahora las dos comparten la
+  misma memoria.
+- **El 7 pedía el CD original** si antes, en la misma sesión, se había jugado a otro juego con su ISO.
+- **PC Fútbol 2000 desde sus CD.** Se prepara con las ISO del CD del juego y del de la Extensión (o con la carpeta de
+  una instalación y el CD del juego); antes pedía siempre la carpeta `C:\PCF2000`, y con ella faltaban las DLL de
+  sistema (MFC42.DLL…).
+- **Música MIDI del 2000** con una soundfont General MIDI libre (GeneralUser GS de S. Christian Collins).
+- **Actualizaciones oficiales del 2001:** se encuentran también en subcarpetas (la recopilación del foro trae el
+  parche 3.6 aparte).
+- **Mando:** los juegos leen los mandos (Xbox y cualquiera que reconozca el sistema, hasta dos). En el Panel de Control
+  del partido, elige «JOYSTICK 1» en vez de «TECLADO».
+- **Pantalla completa:** F11 o Alt+Intro durante la partida, y la casilla «Jugar a pantalla completa» en
+  Configuración. La ventana del juego cabe ya en pantallas pequeñas o con la escala de Windows alta.
+- **«Un momento…»** mientras la app abre y comprueba una ISO o importa un mod (antes la ventana se quedaba congelada,
+  a veces minutos), y si falta algo para preparar un juego lo dice («Para poder preparar falta…»).
+- **Mods en Windows:** si algún fichero no se puede copiar (antivirus, «Acceso controlado a carpetas», OneDrive) la
+  importación falla entera y dice cuál, en vez de quedar a medias; se usa siempre el `tar.exe` de Windows.
+
 ## 1.26.1029.2228 — 29-oct-2026
 
 - **Mods con EXE modificado, ahora en todos los juegos.** En la 1.26.1024.2027 solo se retradujeron con «inmediatos
