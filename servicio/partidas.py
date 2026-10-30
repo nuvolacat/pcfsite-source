@@ -11,8 +11,9 @@ Público (por nginx):
   GET    /partidas/<juego>/f/<ruta>      → el fichero (tal como se subió: el cliente lo manda comprimido con gzip)
   PUT    /partidas/<juego>/f/<ruta>?fecha=ms&sha=…   (cuerpo = fichero)   → 409 si el servidor tiene una más nueva
   DELETE /partidas/<juego>/f/<ruta>?fecha=ms
-  POST   /partidas/<juego>/convertir (cuerpo = <juego>.pcfsave de «Mis partidas» de juegos.pcfsite.com) → la copia
-         de partidas en el formato de «Descargar partidas» (pcfsave.py), que la página importa
+  POST   /partidas/<juego>/convertir (cuerpo = <clave>.pcfsave de «Mis partidas» de juegos.pcfsite.com; cabecera
+         X-Pcfsave-Nombre = el nombre del fichero) → la copia de partidas en el formato de «Descargar partidas»
+         (pcfsave.py), que la página importa
   POST   /partidas/hit · /partidas/beat  (cuerpo «<juego> <id de navegador>»): arranque de un juego y latido por minuto
   GET    /estado.json                    → catálogo, aviso y mantenimiento (lo aplica la web, site/pcf/estado.js)
   GET    /acceso/comprobar (auth_request de nginx) → 204 pasa, 401 sin sesión (o /jugar/ sin cuenta: jugar exige
@@ -694,8 +695,9 @@ class H(http.server.BaseHTTPRequestHandler):
         blob = self.rfile.read(n)
         if not _conversiones.acquire(timeout=60):
             return self.responde(503, {"error": "ocupado; prueba dentro de un momento"})
+        nombre = urllib.parse.unquote(self.headers.get("X-Pcfsave-Nombre", ""))[:200]   # p. ej. v86_pcf7.pcfsave
         try:
-            return self.responde(200, pcfsave.a_source(juego, blob))
+            return self.responde(200, pcfsave.a_source(juego, blob, nombre))
         except pcfsave.Error as e:
             return self.responde(422, {"error": str(e)})
         except Exception:   # noqa: BLE001 (R2 caído, disco raro…)

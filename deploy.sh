@@ -28,7 +28,7 @@ rsync -a dist/ "$T/web/"
 cp deploy/nginx-*.conf "$T/nginx/"
 cp deploy/remote.sh "$T/deploy/"
 mkdir -p "$T/servicio"
-cp servicio/partidas.py servicio/pcfsave.py servicio/pcf_interno.py servicio/limpiar.py servicio/copia.sh servicio/cron servicio/source-partidas.service "$T/servicio/"
+cp servicio/partidas.py servicio/pcfsave.py servicio/discos.py servicio/pcf_interno.py servicio/limpiar.py servicio/copia.sh servicio/cron servicio/source-partidas.service "$T/servicio/"
 if [ "$JUGAR" = 1 ]; then
   # cada juego en el navegador: /jugar/<id>/ con su programa (compilado en core/) y los datos en R2 (datos.pcfsite.com/<id>)
   P7=core

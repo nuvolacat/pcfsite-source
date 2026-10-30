@@ -11,8 +11,9 @@
   const yo = document.currentScript;
   const JUEGO = (yo && yo.dataset.juego) || document.documentElement.dataset.juego || "pcf7";
   const API = "/partidas/" + JUEGO + "/";
-  // ficheros de partida (PCF7: save\…; PCF 5 y 6: TACTICS\MANAGER.000…)
-  const ES_PARTIDA = /\/save\/|\/tactics\/manager\.\d|\/tactics\/liga\.\d/i;   // PCF4: TACTICS\LIGA.N
+  // ficheros de partida (PCF7 y 2001: save\…; Extensión del 2000: saveext\…; PCF 5 y 6: TACTICS\MANAGER.000,
+  // PROMANAG.000, MANAG022.000, PROMA003.000…; PCF4: TACTICS\LIGA.N, PROLIGA.N)
+  const ES_PARTIDA = /\/save(ext)?\/|\/tactics\/(manager|promanag|manag\d+|proma\d+|liga|proliga)\.\d/i;
   const BD = JUEGO + "-partidas";
   let bd = null, cola = [], subiendo = false, sesion = null;   // sesion: null = no se sabe, true / false
   const P = (window.PCF7Partidas = { estado: () => {} });
@@ -193,19 +194,33 @@
     const d = (await fichero.slice(0, 1).text()) === "{" ? JSON.parse(await fichero.text()) : await convierte(fichero);
     if (d.formato !== JUEGO + "-partidas" || !Array.isArray(d.ficheros)) throw new Error("no es una copia de partidas de este juego");
     const ahora = Date.now();
+    // con las mayúsculas de lo que ya hay: el juego no las distingue, pero aquí «SAVE/x» y «save/x» serían dos ficheros
+    // (y dos carpetas en el disco del juego, de las que solo se vería una)
+    const canon = new Map();
+    for (const r of await todas()) {
+      const p = r.ruta.split("/");
+      for (let i = 1; i <= p.length; i++) { const k = p.slice(0, i).join("/"); if (!canon.has(k.toLowerCase())) canon.set(k.toLowerCase(), k); }
+    }
+    const ajusta = (ruta) => ruta.split("/").reduce((pre, c) => {
+      const k = pre ? pre + "/" + c : c;
+      if (!canon.has(k.toLowerCase())) canon.set(k.toLowerCase(), k);
+      return canon.get(k.toLowerCase());
+    }, "");
     let n = 0;
     for (const f of d.ficheros) {
       if (typeof f.ruta !== "string" || f.ruta.includes("..")) continue;
-      await pon({ ruta: f.ruta, fecha: ahora, datos: await descomprime(deB64(f.gz)), subido: false });   // lo importado gana
+      await pon({ ruta: ajusta(f.ruta), fecha: ahora, datos: await descomprime(deB64(f.gz)), subido: false });   // lo importado gana
       n++;
     }
     return n;
   };
-  // la partida de juegos.pcfsite.com («Mis partidas» → <juego>.pcfsave: el disco del Windows 98 emulado) la convierte el
-  // servidor (servicio/pcfsave.py), que es quien puede leer el disco original
+  // la partida de juegos.pcfsite.com («Mis partidas» → <clave>.pcfsave: lo que el juego escribió en el disco del Windows 98
+  // o el MS-DOS emulado) la convierte el servidor (servicio/pcfsave.py), que es quien puede leer el disco original
   async function convierte(fichero) {
     let r;
-    try { r = await fetch(API + "convertir", { method: "POST", body: fichero, headers: { "Content-Type": "application/octet-stream" } }); }
+    // el nombre dice de qué juego de juegos.pcfsite.com es (v86_pcf7.pcfsave…): con él, el servidor avisa si es de otra ficha
+    const cab = { "Content-Type": "application/octet-stream", "X-Pcfsave-Nombre": encodeURIComponent(fichero.name || "") };
+    try { r = await fetch(API + "convertir", { method: "POST", body: fichero, headers: cab }); }
     catch (e) { throw new Error("no se ha podido enviar la partida al servidor para convertirla"); }
     if (r.status === 401) throw new Error("para cargar una partida de juegos.pcfsite.com tienes que entrar con tu cuenta de pcfsite");
     if (r.status === 413) throw new Error("el fichero es demasiado grande");

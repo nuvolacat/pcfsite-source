@@ -179,6 +179,23 @@ sin emuladores ni instalaciones.</p>
                   cuerpo, None, v)
 
 
+
+# partidas de juegos.pcfsite.com («Mis partidas» → <clave>.pcfsave) que Source convierte (servicio/pcfsave.py): la
+# versión de Source → el fichero que se descarga allí (el 7 de allí es el 7 Plus; el 5.0 y el 6.0, las Ediciones de Oro)
+PCFSAVE = {"pcf7plus": "v86_pcf7", "pcf5oro": "v86_pcf5", "pcf6oro": "v86_pcf6", "pcf6arg": "v86_pcf6arg",
+           "pcf5arg": "v86_pcf5arg", "pcf4": "v86_pcf4", "pcf2000": "pcf2000", "pcf2001": "pcf2001"}
+
+
+def de_juegos(j):
+    vs = [x for x in j.get("versiones", []) if x.get("jugar") and x["id"] in PCFSAVE]
+    if not vs:
+        return ""
+    x = vs[0]
+    cual = ", elige arriba «" + e(x["nombre"]) + "»" if len([y for y in j["versiones"] if y.get("jugar")]) > 1 else ""
+    return (" ¿Vienes de juegos.pcfsite.com? Descarga allí tu partida en «Mis partidas» (el fichero " + PCFSAVE[x["id"]]
+            + ".pcfsave)" + cual + " y cárgala aquí con «Cargar partidas».")
+
+
 def ficha(j, v):
     prox = j["estado"] == "proximamente"
     tag = etiqueta(j)
@@ -212,7 +229,7 @@ def ficha(j, v):
     </span></div>
   <p class="juego-partidas meta">Las partidas se guardan en este navegador y, si entras con tu cuenta de pcfsite, también
     en el servidor: así las recuperas desde cualquier ordenador. Puedes descargar una copia cuando quieras.{
-    " ¿Vienes de juegos.pcfsite.com? Descarga allí tu partida en «Mis partidas» (el fichero " + j["id"] + ".pcfsave) y cárgala aquí con «Cargar partidas»." if j["id"] in ("pcf2000", "pcf2001") else ""}</p>
+    de_juegos(j)}</p>
 </section>""")
     if j.get("capturas"):
         figs = "".join(f'<figure><img src="{captura(j["id"], c["id"])}" alt="{e(c["texto"])}" loading="lazy" data-visor>'

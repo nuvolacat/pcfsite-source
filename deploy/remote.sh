@@ -28,7 +28,12 @@ if [ -d "$SRC/servicio" ]; then
   id source-partidas >/dev/null 2>&1 || useradd --system --home-dir /var/lib/source-partidas --shell /usr/sbin/nologin source-partidas
   install -d -m 750 -o source-partidas -g source-partidas /var/lib/source-partidas
   install -d -m 755 -o root -g root /opt/source-partidas
-  install -m 644 -o root -g root "$SRC/servicio/partidas.py" "$SRC/servicio/pcfsave.py" "$SRC/servicio/pcf_interno.py" "$SRC/servicio/limpiar.py" /opt/source-partidas/
+  install -m 644 -o root -g root "$SRC/servicio/partidas.py" "$SRC/servicio/pcfsave.py" "$SRC/servicio/discos.py" "$SRC/servicio/pcf_interno.py" "$SRC/servicio/limpiar.py" /opt/source-partidas/
+  # discos originales de juegos.pcfsite.com para convertir sus partidas (pcfsave.py); las imágenes enteras de R2 piden el
+  # token del portal de juegos, que solo puede leer root. La primera vez baja ~3,7 GB; luego solo comprueba
+  install -d -m 750 -o source-partidas -g source-partidas /var/cache/source-partidas /var/cache/source-partidas/discos
+  python3 /opt/source-partidas/discos.py /var/cache/source-partidas/discos || echo "discos: alguno no cuadra (las partidas de ese juego no se podrán convertir)"
+  chown -R source-partidas:source-partidas /var/cache/source-partidas
   install -m 755 -o root -g root "$SRC/servicio/copia.sh" /usr/local/sbin/source-partidas-copia
   install -m 644 -o root -g root "$SRC/servicio/cron" /etc/cron.d/source-partidas
   install -m 644 -o root -g root "$SRC/servicio/source-partidas.service" /etc/systemd/system/source-partidas.service

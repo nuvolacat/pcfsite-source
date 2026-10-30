@@ -7,6 +7,10 @@ User=source-partidas
 Group=source-partidas
 ExecStart=/usr/bin/python3 /opt/source-partidas/partidas.py
 Environment=PARTIDAS_DATOS=/var/lib/source-partidas
+# discos originales de juegos.pcfsite.com para convertir sus partidas (pcfsave.py; los deja discos.py): fuera de los
+# datos, que no entren en la copia diaria
+Environment=PARTIDAS_DISCOS=/var/cache/source-partidas/discos
+CacheDirectory=source-partidas
 # la API interna del Admin (admin.pcfsite.com): clave pública con la que firma sus tokens (la misma que en foro.service)
 # y carpeta de los jti usados (en /run, que es de este servicio y se vacía al reiniciar)
 Environment=PCF_ADMIN_FIRMA_PUB=k20261008:MCowBQYDK2VwAyEAvW5NDY8Mw2bcoHg0sXzU2tM2r/yeHxUHsIUSxzuWcf8=
