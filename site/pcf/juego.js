@@ -93,6 +93,7 @@
     var f = fichero.files[0];
     fichero.value = "";
     if (!f) return;
+    if (/\.pcfsave$/i.test(f.name) && !confirm("Aviso: las partidas de juegos.pcfsite.com vienen de un Windows 98 o un MS-DOS emulado, un sistema totalmente distinto, y hay que adaptarlas al nuevo lanzador nativo. No podemos asegurar que funcionen. ¿Probar igualmente?")) return;
     if (!confirm("Las partidas del fichero sustituirán a las que tengan el mismo nombre (las de ahora quedan en una copia de respaldo del navegador). ¿Seguir?")) return;
     partidas()
       .then(function (P) { return P.importar(f); })

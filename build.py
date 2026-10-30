@@ -193,7 +193,9 @@ def de_juegos(j):
     x = vs[0]
     cual = ", elige arriba «" + e(x["nombre"]) + "»" if len([y for y in j["versiones"] if y.get("jugar")]) > 1 else ""
     return (" ¿Vienes de juegos.pcfsite.com? Descarga allí tu partida en «Mis partidas» (el fichero " + PCFSAVE[x["id"]]
-            + ".pcfsave)" + cual + " y cárgala aquí con «Cargar partidas».")
+            + ".pcfsave)" + cual + " y cárgala aquí con «Cargar partidas». Aviso: allí el juego corría en un Windows"
+            " 98 o un MS-DOS emulado, un sistema totalmente distinto, y su partida hay que adaptarla al nuevo lanzador"
+            " nativo; no podemos asegurar que todas funcionen.")
 
 
 def ficha(j, v):
