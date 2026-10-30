@@ -91,12 +91,12 @@ done
 
 # firma (ad hoc por defecto)
 SELLO=(); [ "$FIRMA" = - ] || SELLO=(--timestamp)   # (con Developer ID, sello de tiempo: la notarización lo exige)
-codesign --force --sign "$FIRMA" "${SELLO[@]}" "$C/Frameworks/libSDL3.0.dylib"
+codesign --force --sign "$FIRMA" ${SELLO[@]+"${SELLO[@]}"} "$C/Frameworks/libSDL3.0.dylib"
 # primero los juegos y luego el lanzador (el ejecutable principal: al firmarlo, codesign mira los demás; en x86_64 el
 # enlazador no los firma solo como en arm64)
-for exe in "$C/MacOS"/*; do [ "$(basename "$exe")" = lanzador ] || codesign --force --sign "$FIRMA" "${SELLO[@]}" --options runtime --entitlements app/mac/entitlements.plist "$exe"; done
-codesign --force --sign "$FIRMA" "${SELLO[@]}" --options runtime --entitlements app/mac/entitlements.plist "$C/MacOS/lanzador"
-codesign --force --sign "$FIRMA" "${SELLO[@]}" --options runtime --entitlements app/mac/entitlements.plist "$APP"
+for exe in "$C/MacOS"/*; do [ "$(basename "$exe")" = lanzador ] || codesign --force --sign "$FIRMA" ${SELLO[@]+"${SELLO[@]}"} --options runtime --entitlements app/mac/entitlements.plist "$exe"; done
+codesign --force --sign "$FIRMA" ${SELLO[@]+"${SELLO[@]}"} --options runtime --entitlements app/mac/entitlements.plist "$C/MacOS/lanzador"
+codesign --force --sign "$FIRMA" ${SELLO[@]+"${SELLO[@]}"} --options runtime --entitlements app/mac/entitlements.plist "$APP"
 codesign --verify --deep --strict "$APP" && echo "firmada ($FIRMA)"
 # todo de la arquitectura pedida y para el macOS mínimo (si no, en otros Mac no abre: «no es compatible»)
 for exe in "$C/MacOS"/* "$C/Frameworks/libSDL3.0.dylib"; do
@@ -111,9 +111,47 @@ if [ "$DMG" = 1 ]; then
   DMGF="$B/PCFSite-Source-$VERSION-macos-$SUF.dmg"
   rm -f "$B"/PCFSite-Source-*-macos-$SUF.dmg
   rm -f "$DMGF"
-  T=$(mktemp -d); cp -R "$APP" "$T/"; ln -s /Applications "$T/Applications"
-  hdiutil create -volname "PCFSite - Source" -srcfolder "$T" -ov -format UDZO "$DMGF" >/dev/null 2>&1   # UDZO (zlib): ULZO ya no lo crea hdiutil en macOS 27 y UDZO lo abre cualquier Mac
+  # ventana del .dmg: fondo (app/mac/dmg/fondo.py), la app a la izquierda y Aplicaciones a la derecha, a 128 px, y el
+  # disco con el icono de la app. Se monta en lectura y escritura para que Finder guarde la vista en .DS_Store y luego
+  # se comprime.
+  VOL="PCFSite - Source"
+  [ -d "/Volumes/$VOL" ] && { echo "desmonta antes /Volumes/$VOL (Finder no distinguiría los dos discos)"; exit 1; }
+  T=$(mktemp -d); cp -R "$APP" "$T/"; ln -s /Applications "$T/Aplicaciones"
+  mkdir "$T/.background"
+  tiffutil -cathidpicheck app/mac/dmg/fondo.png app/mac/dmg/fondo@2x.png -out "$T/.background/fondo.tiff" >/dev/null 2>&1
+  cp app/mac/pcfsite.icns "$T/.VolumeIcon.icns"
+  RW="$B/dmg-rw.dmg"; rm -f "$RW"
+  hdiutil create -volname "$VOL" -srcfolder "$T" -fs HFS+ -format UDRW -ov "$RW" >/dev/null 2>&1
   rm -rf "$T"
+  hdiutil attach -readwrite -noverify -noautoopen "$RW" >/dev/null
+  SetFile -a C "/Volumes/$VOL"
+  osascript >/dev/null <<OSA
+tell application "Finder"
+  tell disk "$VOL"
+    open
+    set current view of container window to icon view
+    set toolbar visible of container window to false
+    set statusbar visible of container window to false
+    set the bounds of container window to {200, 120, 860, 548}
+    set opts to the icon view options of container window
+    set arrangement of opts to not arranged
+    set icon size of opts to 128
+    set text size of opts to 13
+    set background picture of opts to file ".background:fondo.tiff"
+    set position of item "PCFSite - Source.app" of container window to {170, 205}
+    set position of item "Aplicaciones" of container window to {490, 205}
+    close
+    open
+    delay 1
+    close
+  end tell
+end tell
+OSA
+  sync; sleep 1
+  hdiutil detach "/Volumes/$VOL" >/dev/null || { sleep 3; hdiutil detach -force "/Volumes/$VOL" >/dev/null; }
+  # UDZO (zlib): ULZO ya no lo crea hdiutil en macOS 27 y UDZO lo abre cualquier Mac
+  hdiutil convert "$RW" -format UDZO -o "$DMGF" >/dev/null
+  rm -f "$RW"
   if [ "$FIRMA" != - ]; then codesign --force --sign "$FIRMA" --timestamp "$DMGF"; fi
   if [ "$NOTARIZAR" = 1 ]; then
     ( source ~/.appstoreconnect/config
