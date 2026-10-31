@@ -36,6 +36,7 @@ Admin (solo desde la propia máquina, con el JWT firmado del Admin: pcf_interno.
 Disco: DATOS/<id usuario>/<juego>/actual/<ruta> + meta.json; cada versión sustituida o borrada se guarda en
 historial/<ruta>/<fecha> (las 10 últimas), para poder recuperar una partida estropeada (Admin › Source › Partidas).
 DATOS/acceso.json y DATOS/ajustes.json son el estado del sitio; DATOS/estadisticas.sqlite, los arranques."""
+import contextlib
 import datetime
 import hashlib
 import html
@@ -255,14 +256,22 @@ _bd_mx = threading.Lock()
 _latidos, _latidos_mx = {}, threading.Lock()   # (quién, juego) → último latido
 
 
+@contextlib.contextmanager
 def bd():
+    """Conexión a las estadísticas: confirma al salir (o deshace si hay error) y SIEMPRE la cierra. 1-nov-2026: antes
+    era `with sqlite3.connect(...)`, que confirma pero no cierra; cada lanzamiento dejaba un descriptor abierto y a los
+    1.024 el servicio no podía abrir ni acceso.json (source.pcfsite.com entero en 500)."""
     c = sqlite3.connect(BD, timeout=5)
-    c.execute("CREATE TABLE IF NOT EXISTS lanzamientos (id INTEGER PRIMARY KEY, ts INTEGER NOT NULL, juego TEXT NOT NULL,"
-              " uid INTEGER, ip TEXT, sid TEXT)")
-    c.execute("CREATE INDEX IF NOT EXISTS lanzamientos_ts ON lanzamientos (ts)")
-    c.execute("CREATE INDEX IF NOT EXISTS lanzamientos_quien ON lanzamientos (sid, juego, ts)")
-    c.execute("CREATE TABLE IF NOT EXISTS meta (clave TEXT PRIMARY KEY, valor TEXT)")
-    return c
+    try:
+        with c:
+            c.execute("CREATE TABLE IF NOT EXISTS lanzamientos (id INTEGER PRIMARY KEY, ts INTEGER NOT NULL, juego TEXT NOT NULL,"
+                      " uid INTEGER, ip TEXT, sid TEXT)")
+            c.execute("CREATE INDEX IF NOT EXISTS lanzamientos_ts ON lanzamientos (ts)")
+            c.execute("CREATE INDEX IF NOT EXISTS lanzamientos_quien ON lanzamientos (sid, juego, ts)")
+            c.execute("CREATE TABLE IF NOT EXISTS meta (clave TEXT PRIMARY KEY, valor TEXT)")
+            yield c
+    finally:
+        c.close()
 
 
 def quien(uid, sid, ip):
