@@ -712,10 +712,14 @@ int main(int argc, char **argv) {
 #endif
         bool completa = env("PCF7_PANTALLA_COMPLETA") && std::string(env("PCF7_PANTALLA_COMPLETA")) == "1";   // ajuste de la app
         // alta densidad (1-nov-2026): sin ella, en un Mac con Retina el juego se dibujaba a la mitad de resolución y
-        // macOS ampliaba la ventana ×2 con suavizado (borroso); el ratón ya pasa por SDL_RenderCoordinatesFromWindow
-        SDL_WindowFlags fl = SDL_WINDOW_RESIZABLE | (completa ? SDL_WINDOW_FULLSCREEN : 0);
-#ifndef __EMSCRIPTEN__
-        fl |= SDL_WINDOW_HIGH_PIXEL_DENSITY;
+        // macOS ampliaba la ventana ×2 con suavizado (borroso); en la web, el lienzo iba a densidad 1 y el navegador lo
+        // estiraba igual. El ratón ya pasa por SDL_RenderCoordinatesFromWindow
+        SDL_WindowFlags fl = SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY | (completa ? SDL_WINDOW_FULLSCREEN : 0);
+#ifdef __EMSCRIPTEN__
+        // ya con WebGL: si no, el renderizador recrea la ventana y SDL (3.4, Emscripten_DestroyWindow), con densidad
+        // distinta de 1, deja en el lienzo un estilo de 1×1 px; la ventana nueva cree entonces que la página no fija su
+        // tamaño y lo clava a 1280×960 (se salía de la ficha)
+        fl |= SDL_WINDOW_OPENGL;
 #endif
         if (!SDL_CreateWindowAndRenderer(JUEGO_NOMBRE, ww, wh, fl, &H.win, &H.ren)) {
             plog("SDL_CreateWindowAndRenderer: %s", SDL_GetError());
