@@ -1,5 +1,5 @@
 {
- "generado": "2026-10-30",
+ "generado": "2026-11-01",
  "versiones": [
   {
    "id": "pcf4",
@@ -2448,7 +2448,16 @@
       839680
      ]
     ]
-   }
+   },
+   "mods_programa": [
+    {
+     "programa": "pcf2001act",
+     "nombre": "Actualización 26/27",
+     "fichero": "manager.exe",
+     "sha256": "3a34be0948734ae18ea26aaf27861acd8097661217a055cb13885f787eb59721",
+     "tam": 7991296
+    }
+   ]
   }
  ]
 }

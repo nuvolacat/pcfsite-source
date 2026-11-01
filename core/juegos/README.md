@@ -28,6 +28,7 @@ El C traducido va a `build/gen*` para `pcf7` y a `build/<id>/gen*` para los dem�
 | `pcf7plus` | PC Fútbol 7 Plus (sept-1999) | completado, también en el navegador |
 | `pcf2000` | PC Fútbol 2000 + Extensión (dic-1999/sept-2000) | completado: menú, Euromanager, oficina y partido 3D (motor nuevo: DirectX 7); Historia, Base de datos, Seguimiento y FutbolQuiz (DBASEWIN, encadenado con `salida_menu`); música MIDI (DirectMusic, con reverberación) y panel de ayuda; en el navegador, datos en R2 (datos.pcfsite.com/pcf2000) |
 | `pcf2001` | PC Fútbol 2001 con las 13 actualizaciones (3.6, jul-2001) | completado: menú, Euromanager (ofertas y contrato), oficina, partido en modo resultado y en 3D, música MP3 por DirectShow (dshow.cpp), partidas; en el navegador, datos en R2 (datos.pcfsite.com/pcf2001) |
+| `pcf2001act` | PC Fútbol 2001 · Actualización 26/27: el mod de la comunidad (temporada 2026/27, de Fernandiyol) sobre el 3.6, con su `manager.exe` cambiado y código nuevo en el relleno de `.text` | completado en nativo y en la app (se arranca cuando el mod importado trae su `manager.exe`): menú, Euromanager, ofertas, pretemporada, oficina y partido; la versión web, preparada en la rama `pcf2001act-web` sin publicar |
 
 | `pcfpatch` | (no es un juego) el parcheador RTPatch de las actualizaciones del 2001: `patchw32.dll` traducida, que la app llama con `PCF7_RTPATCH` (`platform/src/pcfpatch.cpp`) |
 
@@ -64,6 +65,8 @@ Las rutas se pueden cambiar sin tocar `juego.json`: `PCF7_WORK` (toda la carpeta
 | `entorno` | variables de entorno propias del juego, además de las de un Windows 98 recién instalado |
 | `pila` | (hex, opcional) tamaño de la pila del hilo principal si el juego necesita más |
 | `parches` | `{binario: [[dirección, bytes hex, motivo]]}`: parches de bytes al binario antes de traducir (lo mínimo: anticopia) |
+| `mod_de`, `mod_nombre` | en un mod con programa propio: la versión sobre la que va y su nombre. `app/tools/versiones.py` lo apunta en la ficha de esa versión (`mods_programa`) y la app, si el mod activo trae este EXE principal, arranca esta traducción en vez de la de la versión |
+| `texto_relleno` | `[programas]` cuyo código sigue en el relleno de `.text`, tras su `VirtualSize` (Windows lo carga: la sección ocupa la página entera). Para los mods que meten código nuevo ahí (`pcf2001act`) |
 | `web.excluir` | ficheros de los datos que no se publican (la partida de prueba, lo que el juego deja al usarse) |
 | `web.cd` | la parte del CD que se publica (sin instalador, DirectX, vídeos de la intro…); sin la clave, todo |
 | `sha256` | `{binario de bin/: SHA-256}`: los de la edición soportada. `recomp/build.py` se para si el binario es otro (otra edición del CD: necesita su propio `juegos/<id>/`); `PCF7_OTRA_EDICION=1` traduce igualmente |

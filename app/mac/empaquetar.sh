@@ -17,7 +17,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/../.."
 REPO=$(pwd)
-JUEGOS="pcf4 pcf5 pcf5oro pcf5arg pcf6 pcf6oro pcf6arg pcf7 pcf7plus pcf2000 pcf2001 pcfpatch"   # pcfpatch: el parcheador de las actualizaciones del 2001
+JUEGOS="pcf4 pcf5 pcf5oro pcf5arg pcf6 pcf6oro pcf6arg pcf7 pcf7plus pcf2000 pcf2001 pcf2001act pcfpatch"   # pcfpatch: el parcheador de las actualizaciones del 2001
 COMPILAR=1; DMG=0; FIRMA="${APP_FIRMA:--}"; NOTARIZAR=0; ARCHS="arm64 x86_64"; MINIMO=12.0
 while [ $# -gt 0 ]; do
   case "$1" in

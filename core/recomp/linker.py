@@ -91,6 +91,12 @@ class Module:
         self._funcs(decname)
         sec = next(s for s in self.pe.sections if b".text" in s.Name)
         lo, hi = sec.VirtualAddress, sec.VirtualAddress + sec.Misc_VirtualSize
+        # juego.json «texto_relleno»: [programas] cuyo código sigue en el relleno de .text, tras su VirtualSize
+        # (Windows lo carga: la sección ocupa la página entera). Lo usan los mods que meten código nuevo ahí
+        # (pcf2001act); en los demás juegos no cambia nada.
+        if self.alias.lower() in [x.lower() for x in J.CFG.get("texto_relleno", [])]:
+            al = self.pe.OPTIONAL_HEADER.SectionAlignment
+            hi = max(hi, min(sec.VirtualAddress + sec.SizeOfRawData, (hi + al - 1) // al * al))
         # secciones de código contiguas detrás de .text (MSVBVM50 tiene ENGINE, el intérprete de p-code:
         # se traduce como un solo grupo de entradas, ver lift.lift_function(cluster=…))
         align = self.pe.OPTIONAL_HEADER.SectionAlignment

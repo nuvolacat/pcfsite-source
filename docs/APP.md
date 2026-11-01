@@ -3,7 +3,7 @@
 Vuelta al [README](../README.md).
 
 Un lanzador en C++17 y SDL3 con interfaz propia (biblioteca de carátulas o lista, ficha por juego, Configuración, Acerca
-de) que lleva dentro los 36 programas traducidos y **ningún fichero de los juegos**. El usuario aporta su CD; la app hace
+de) que lleva dentro los 38 programas traducidos y **ningún fichero de los juegos**. El usuario aporta su CD; la app hace
 lo que en 1998 hacía el instalador, y después arranca el juego nativo. Paso a paso:
 
 1. **Reconocer el CD.** «Añadir juego» pide la imagen ISO (o la carpeta con el contenido del CD, o la carpeta del juego
@@ -45,6 +45,13 @@ lo que en 1998 hacía el instalador, y después arranca el juego nativo. Paso a 
    es: la app lo sabe por su `pcfsite-mod.json` (`{"juego": "pcf7plus"}`, en la raíz del zip o junto a los ficheros del
    juego) o, si no lo trae, por sus EXE y DLL comparados con los `binarios` de `versiones.json` (el `MANAGER.EXE` mide
    distinto en cada edición). Si es de otra, no lo importa, ni deja activarlo o jugar con él si ya estaba importado.
+   Algunos mods cambian también el **código** del EXE (saltos a código nuevo que meten en el relleno de la sección), y
+   eso los inmediatos no lo cubren: esos mods tienen **su propia traducción**, que va en la app como un programa más
+   (`core/juegos/<id>` con `mod_de`; hoy, `pcf2001act`: la Actualización 26/27 del 2001). La ficha de la versión en
+   `versiones.json` los lista en `mods_programa` (EXE principal, tamaño y SHA-256); al jugar, si el mod activo de más
+   prioridad que trae ese EXE es uno de ellos, la app arranca su programa en vez del de la versión, y este reconstruye la
+   memoria con el EXE del mod (la imagen busca en todas las capas). La app no trae ningún fichero del mod: se importa
+   como cualquier otro.
 6. **Actualizarse.** Al abrirse (se puede apagar en «Acerca de», que tiene también el botón «Buscar actualizaciones»),
    la app mira la última release de GitHub. Si es más nueva, propone actualizar: baja el paquete de su sistema,
    comprueba el SHA-256 que publica GitHub y la firma (Developer ID notarizado en macOS, Authenticode en Windows, las

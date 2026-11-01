@@ -537,6 +537,23 @@ bool preparar_cd(const Instalado &i) {
     return true;
 }
 
+// qué programa traducido se arranca: el de la versión o, si el mod activo de más prioridad que trae el EXE principal es
+// uno con programa propio (versiones.json «mods_programa»: su EXE cambia código, no solo datos e inmediatos), el suyo.
+// Con otro EXE en ese mod, el de la versión con los inmediatos del mod encima (core/platform/src/imagen.cpp).
+std::string programa_de(const Instalado &i) {
+    const Version *v = A.versiones.por_id(i.id);
+    if (!v || v->mods_programa.empty()) return i.id;
+    for (const std::string &dir : mods_activos(i)) {
+        for (const ModPrograma &mp : v->mods_programa) {
+            std::string f = util::resolver(dir, mp.fichero);
+            if (f.empty()) continue;
+            if (util::tam(f) == mp.tam && util::sha256_fichero(f) == mp.sha256) return mp.programa;
+            return i.id;   // el EXE que manda es otro
+        }
+    }
+    return i.id;
+}
+
 // arranca el juego: en la app, como proceso hijo (la ventana se oculta y vuelve a la biblioteca cuando el juego se
 // cierra); desde la terminal, sustituyendo al lanzador
 void jugar(const Instalado &i) {
@@ -548,7 +565,7 @@ void jugar(const Instalado &i) {
     if (!preparar_cd(i)) return;
     // la ISO del CD se queda montada mientras el juego corre (y hasta que se expulse o se reinicie)
     A.montajes.clear();
-    std::vector<std::string> orden = util::orden_programa(i.id);
+    std::vector<std::string> orden = util::orden_programa(programa_de(i));
     std::string exe = orden[0];
     std::vector<std::string> args(orden.begin() + 1, orden.end());
     setenv("PCF7_WORK", i.carpeta.c_str(), 1);

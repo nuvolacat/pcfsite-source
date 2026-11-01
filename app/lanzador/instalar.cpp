@@ -650,6 +650,15 @@ bool importar_mod(const Instalado &i, const Versiones &vs, const std::string &ru
     // (los EXE y DLL del mod se copian: la plataforma aplica sobre la imagen reconstruida sus diferencias de datos y de
     // código; las de código solo cuentan si son inmediatos, que el traductor lee de la memoria: ver platform/src/imagen.cpp)
     if (binarios) error = "trae " + std::to_string(binarios) + " ejecutable(s): se aplican sus textos, equipos y valores, pero no los cambios en la lógica del juego";   // aviso, no fallo
+    // un mod con programa propio (versiones.json «mods_programa»): se juega con su traducción, entero
+    if (const Version *v = vs.por_id(i.id))
+        for (const ModPrograma &mp : v->mods_programa) {
+            std::string f = util::resolver(dst, mp.fichero);
+            if (!f.empty() && util::tam(f) == mp.tam && util::sha256_fichero(f) == mp.sha256) {
+                error = "es la " + mp.nombre + ": se juega con su propia traducción, con todos sus cambios";
+                break;
+            }
+        }
     if (!aviso.empty()) error += (error.empty() ? "" : "; ") + aviso;
     return true;
 }

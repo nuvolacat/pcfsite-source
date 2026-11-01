@@ -51,7 +51,7 @@ done
 
 ```bash
 app/mac/preparar.sh                     # una vez: SDL3 para arm64 y x86_64, macOS 12+, en ~/pcfsite-mac
-app/mac/empaquetar.sh                   # compila los 36 programas para Apple Silicon e Intel: core/build/mac-<arch>/PCFSite - Source.app
+app/mac/empaquetar.sh                   # compila los 38 programas para Apple Silicon e Intel: core/build/mac-<arch>/PCFSite - Source.app
 app/mac/empaquetar.sh --dmg             # además los .dmg (UDZO): …-macos-apple-silicon.dmg y …-macos-intel.dmg
 app/mac/empaquetar.sh --arch x86_64     # solo una arquitectura
 app/win/preparar.sh                     # una vez: llvm-mingw y SDL3 para x86_64 y aarch64 en ~/pcfsite-win

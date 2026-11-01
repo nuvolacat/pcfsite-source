@@ -115,6 +115,10 @@ bool Versiones::cargar(const std::string &path, std::string &error) {
             v.binarios.push_back(bin);
         }
         v.instalada = firmas_de(x["instalada"]["firmas"]);
+        for (size_t k = 0; k < x["mods_programa"].size(); k++) {
+            const Json &m = x["mods_programa"][k];
+            v.mods_programa.push_back({m["programa"].str(), m["nombre"].str(), m["fichero"].str(), m["sha256"].str(), (uint64_t)m["tam"].num()});
+        }
         if (x.tiene("parches")) {
             const Json &pj = x["parches"];
             v.parches.nombre = pj["nombre"].str();

@@ -360,6 +360,23 @@ def version(jid, cfg):
         if o and len(inst_firmas) < 2:
             inst_firmas.append([o[1], b["sha256"], b["tam"]])
     v["instalada"] = dict(firmas=inst_firmas)
+    # mods con programa propio (core/juegos/<id>/juego.json con «mod_de»: este juego): la app los reconoce por su EXE
+    # principal y, si el mod activo lo trae, arranca su traducción en vez de la de esta versión
+    mp = []
+    for d in sorted(os.listdir(os.path.join(CORE, "juegos"))):
+        jj = os.path.join(CORE, "juegos", d, "juego.json")
+        if not os.path.exists(jj):
+            continue
+        M = json.load(open(jj, encoding="utf-8"))
+        if M.get("mod_de") != jid:
+            continue
+        exe = os.path.join(H, os.path.basename(os.path.expanduser(M["trabajo"])), "bin", M["principal"])
+        mp.append(dict(programa=M["id"], nombre=M.get("mod_nombre", M["nombre"]), fichero=M["principal"],
+                       sha256=M["sha256"][M["principal"]], tam=os.path.getsize(exe)))
+        if sha(exe) != M["sha256"][M["principal"]]:
+            raise SystemExit(f"{M['id']}: {exe} no es el de juego.json")
+    if mp:
+        v["mods_programa"] = mp
     return v
 
 

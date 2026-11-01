@@ -29,6 +29,13 @@ struct Parches {
     std::vector<std::pair<std::string, std::string>> escribe;       // ficheros que quedan al final (update.ini → "V3.6")
 };
 
+// un mod con programa propio (1-nov-2026): su EXE cambia código, no solo datos e inmediatos, así que se juega con su
+// propia traducción (core/juegos/<programa>, «mod_de» en su juego.json). Se reconoce por el fichero del mod.
+struct ModPrograma {
+    std::string programa, nombre, fichero, sha256;
+    uint64_t tam = 0;
+};
+
 struct Version {
     std::string id, nombre, detalle, carpeta, nota, extra;
     std::string corto;   // para la portada de la tarjeta si no hay carátula: «7 PLUS», «5.0 ORO»
@@ -41,6 +48,7 @@ struct Version {
     std::vector<Binario> binarios;
     std::vector<Firma> instalada;   // firmas de una carpeta C:\<carpeta> ya instalada
     Parches parches;                // si no está vacío, hace falta además la carpeta de las actualizaciones (rol "parches")
+    std::vector<ModPrograma> mods_programa;   // mods que se juegan con su propio programa traducido
 
     std::string titulo() const { return nombre + (detalle.empty() ? "" : " · " + detalle); }
     const Disco *disco(const std::string &rol) const { for (auto &d : discos) if (d.rol == rol) return &d; return nullptr; }
