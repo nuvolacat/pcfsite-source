@@ -150,8 +150,10 @@ def main():
     def sube(t):
         clave, p = t
         texto = p.endswith(".txt")
+        # no-transform: si no, Cloudflare sirve los .txt comprimidos y el tamaño ya no es el de la consulta HEAD; con un
+        # indice.txt de más de 1 MB (WasmFS lo pide por trozos) las peticiones Range daban 416 (1-nov-2026, el mod del 2001)
         extra = {"Content-Type": "text/plain; charset=utf-8" if texto else "application/octet-stream",
-                 "Cache-Control": "no-cache" if texto else "public, max-age=86400"}
+                 "Cache-Control": "no-cache, no-transform" if texto else "public, max-age=86400, no-transform"}
         if os.environ.get("CF_TOKEN") and os.path.getsize(p) > GRANDE:
             sube_por_partes(clave, p, extra)
             return os.path.getsize(p)
