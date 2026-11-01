@@ -700,6 +700,11 @@
      "id": "pcf2001",
      "nombre": "PC Fútbol 2001 (3.6)",
      "jugar": "/jugar/pcf2001/"
+    },
+    {
+     "id": "pcf2001act",
+     "nombre": "Actualización 26/27 (mod)",
+     "jugar": "/jugar/pcf2001act/"
     }
    ]
   }

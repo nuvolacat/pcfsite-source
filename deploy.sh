@@ -16,7 +16,8 @@ JUEGOS_WEB=("pcf7|build/web|PC Fútbol 7" "pcf7plus|build/web-pcf7plus|PC Fútbo
             "pcf5arg|build/web-pcf5arg|PC Fútbol 5.0 Apertura 97|managarg" "pcf6arg|build/web-pcf6arg|PC Fútbol 6.0 Apertura 98|managarg"
             "pcf4|build/web-pcf4|PC Fútbol 4.0|pcfutbol"
             "pcf2000|build/web-pcf2000|PC Fútbol 2000|manager"
-            "pcf2001|build/web-pcf2001|PC Fútbol 2001|manager")
+            "pcf2001|build/web-pcf2001|PC Fútbol 2001|manager"
+            "pcf2001act|build/web-pcf2001act|PC Fútbol 2001 · Actualización 26/27|manager")
 # --jugar=<id>[,<id>…]: solo esos juegos (los demás se quedan como estén en el servidor)
 SOLO=""
 for a in "$@"; do case "$a" in --nginx) NG=1 ;; --jugar) JUGAR=1 ;; --jugar=*) JUGAR=1; SOLO=",${a#--jugar=}," ;; *) echo "opción desconocida: $a"; exit 1 ;; esac; done
