@@ -3,6 +3,20 @@
 Versión = `1.AA.MMDD.HHMM` con la hora real del empaquetado (`app/mac/empaquetar.sh`, el mismo esquema que pcfsite.com).
 Cada entrada lleva la versión que **de verdad se distribuyó**; dos empaquetados en el mismo minuto van en una sola entrada.
 
+## 1.26.1101.1245 — 1-nov-2026
+
+- **Compatible con el mod «Actualización 26/27» del PC Fútbol 2001** (temporada 2026/27, de Fernandiyol, descarga libre
+  en el foro). Ese mod cambia el código del `manager.exe`, no solo sus textos y valores, así que la app lleva ahora su
+  propia traducción: se importa como cualquier mod en la ficha del 2001 (el .rar tal cual) y, con él activado, la app
+  arranca esa traducción en vez de la del 2001 3.6, con todos sus cambios (equipos, calendarios y fechas de 2026). La
+  app no trae ningún fichero del mod. Con cualquier otro mod del 2001 todo sigue como antes.
+- **Imagen más nítida.** En los Mac con pantalla Retina el juego se dibujaba a la mitad de resolución y macOS lo
+  ampliaba con suavizado (se veía borroso): ahora usa la resolución real de la pantalla. Y en todas partes, cuando la
+  ventana no es un múltiplo exacto del juego (el 2000 y el 2001, de 800×600, en una ventana de 1280×960), la imagen se
+  amplía primero a un múltiplo entero sin suavizar y luego se ajusta a la ventana: letras y bordes nítidos y del mismo
+  grosor.
+- **La música suena 3 dB más fuerte**: con el banco libre GeneralUser GS sonaba más baja que antes.
+
 ## 1.26.1030.1024 — 30-oct-2026
 
 Arreglos de los avisos del foro (t/526 y otros hilos):
