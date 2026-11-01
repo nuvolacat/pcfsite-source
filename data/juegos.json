@@ -679,7 +679,8 @@
     "En el navegador (WebAssembly), con los datos en datos.pcfsite.com"
    ],
    "notas": [
-    "Instalación completa del CD más las 13 actualizaciones, en el orden de su nombre (PCFACT01 a 04, PCFPATCH, PCFACT05 a 12)."
+    "Instalación completa del CD más las 13 actualizaciones, en el orden de su nombre (PCFACT01 a 04, PCFPATCH, PCFACT05 a 12).",
+    "La «Actualización 26/27 (mod)» es la instalación del 3.6 con el mod de Fernandiyol encima (su manager.exe, DBDAT y gráficos), con su propia traducción del programa."
    ],
    "hitos": [
     {
@@ -693,6 +694,10 @@
     {
      "fecha": "2026-10-21",
      "texto": "Versión web desplegada con los datos en R2 y las partidas guardadas comprobadas (grabar, recargar la página y cargar). Con el 2001 queda cubierta la serie entera, del 4.0 al 2001; a partir de aquí, arreglos puntuales."
+    },
+    {
+     "fecha": "2026-11-01",
+     "texto": "La «Actualización 26/27» de Fernandiyol (temporada 2026/27, descarga libre en el foro) se juega también aquí: arriba se elige entre el 2001 original (3.6) y el mod. Su manager.exe cambia código, no solo datos, así que tiene su propia traducción; sus 47.000 gráficos sueltos se piden a medida que el juego los usa. Las partidas de cada versión van aparte."
     }
    ],
    "versiones": [
