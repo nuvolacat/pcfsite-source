@@ -117,7 +117,7 @@ bool synth_ready() {
         if (s.sf) { plog("DirectMusic: soundfont %s (%d presets)", p.c_str(), tsf_get_presetcount(s.sf)); break; }
     }
     if (!s.sf) { plog("DirectMusic: no se encuentra platform/fonts/gm.sf2: sin música"); return false; }
-    tsf_set_output(s.sf, TSF_STEREO_INTERLEAVED, 44100, -6.0f);   // margen: la soundfont satura a 0 dB
+    tsf_set_output(s.sf, TSF_STEREO_INTERLEAVED, 44100, -3.0f);   // GeneralUser GS suena ~3 dB más bajo que el banco de Roland; picos a -2,4 dBFS en las músicas del 2000
     if (!SDL_WasInit(SDL_INIT_AUDIO)) SDL_InitSubSystem(SDL_INIT_AUDIO);
     SDL_AudioSpec spec{SDL_AUDIO_F32, 2, 44100};
     s.stream = SDL_OpenAudioDeviceStream(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &spec, audio_cb, nullptr);
