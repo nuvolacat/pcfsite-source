@@ -102,6 +102,9 @@ def main():
 # al arrancar y en un recorrido típico (juegos/<id>/precarga-caliente.txt, en ese orden), después el resto de la instalación.
 # Fuera quedan el CD (salvo lo de la lista) y los apartados que la web no abre.
 PRECARGA_NO = (f"game/{J.CARPETA}/PROQUINI/", f"game/{J.CARPETA}/INFOFUT/", f"game/{J.CARPETA}/ACTUALIZ/", "cd/")
+# y lo que el juego marque en juego.json «web.precarga_no» (carpetas bajo game/<CARPETA>/, tal como se escriben): los mods con
+# miles de gráficos sueltos (pcf2001act: 37.575 fotos en DBDAT/minifoto) se piden al leerlos, no fichero a fichero de golpe
+PRECARGA_NO += tuple(f"game/{J.CARPETA}/{c}" for c in J.CFG.get("web", {}).get("precarga_no", []))
 
 
 def precarga(lineas):

@@ -61,7 +61,16 @@
       "JUGADOR.PIE",
       "PARTIDA.EYF"
     ],
-    "cd_notas": "D: = solo lo que no está en C:\\PCF2001 (instalación completa: GRAFICOS.PAK, SFX, Simuldat y DBDAT ya están en C:): DISK.ID (el juego lo busca al arrancar) y los datos del partido 3D (3DDXF, CAMPO, CONTROL, PLAY3D, GOLES.ODE, JUGADOR.PIE, PARTIDA.EYF). Sin el instalador, DirectX, IE5, MMX ni INTROPCF.MPG. Con PCF7_TRACE_FILES=1 el juego solo pide del CD DISK.ID hasta la selección de ofertas."
+    "cd_notas": "D: = solo lo que no está en C:\\PCF2001 (instalación completa: GRAFICOS.PAK, SFX, Simuldat y DBDAT ya están en C:): DISK.ID (el juego lo busca al arrancar) y los datos del partido 3D (3DDXF, CAMPO, CONTROL, PLAY3D, GOLES.ODE, JUGADOR.PIE, PARTIDA.EYF). Sin el instalador, DirectX, IE5, MMX ni INTROPCF.MPG. Con PCF7_TRACE_FILES=1 el juego solo pide del CD DISK.ID hasta la selección de ofertas.",
+    "precarga_no": [
+      "DBDAT/minifoto/",
+      "DBDAT/miniesc/",
+      "DBDAT/nanoesc/",
+      "DBDAT/ridiesc/",
+      "DBDAT/aniband/",
+      "DBDAT/miniband/",
+      "DBDAT/banderas/"
+    ]
   },
   "origen_notas": "CD original (PCF_2001.iso: volumen PCF_2001, 4-dic-2000, 687 MB, DISK.ID «PCF9 00») y la carpeta ACTUALIZ con las 13 actualizaciones oficiales en el orden de su nombre (01-04 PCFACT01-04, 05 PCFPATCH, 06-13 PCFACT05-12), que Dinamic publicó entre diciembre de 2000 y julio de 2001.",
   "parches_notas": "Las 13 actualizaciones son envoltorios PackageForTheWeb (un CAB de Microsoft, MSZIP) con RTPatch dentro: PCFPATCH.exe (el diálogo con marca de Dinamic, distinto en cada parche: nombre del .RTP y jornadas que espera), patchw32.dll (idéntica en los que la traen) y el .RTP (diferencias binarias, formato propietario sin implementación abierta). Doce son de datos (DBDAT: eq/jug/ent/est00022.fdi y las jornadas jorn112-138 y jorn214-242 nuevas, jornad1m/2m) y la 05 (PCFPATCH36, 2-feb-2001, «3.6») es la de código: manager.exe (7.852.032 → 7.991.296 B), gfxwin, d2s2, dcd3d, DllDPlay, DLLSockets, DBaseWin y Utils; su PCFPATCH.exe copia además UtilsMMX.dll como Utils.dll si la CPU tiene MMX (CPUID.dll) y deja update.ini = «V3.6». La app las aplica con la propia patchw32.dll traducida (juegos/pcfpatch, platform/src/pcfpatch.cpp: PCF7_RTPATCH llama a RTPatchApply32 con un callback), en orden 01-04, PCFPATCH, 05-12; verificado el 2026-10-24: la instalación resultante es idéntica fichero a fichero a la de Windows 98. Para que la DLL funcionara hubo que arreglar tres cosas del traductor (push/pop de 16 bits, el jmp eax de __chkstk, bt/bts con el bit fuera del operando) y la plataforma (vistas de MapViewOfFile de escritura, SetFileTime, MoveFileEx).",
