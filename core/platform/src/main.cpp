@@ -36,6 +36,7 @@
 #include <unistd.h>
 
 #include <algorithm>
+#include <cmath>
 #include <atomic>
 #include <cstring>
 #include <cstdlib>
@@ -409,6 +410,8 @@ struct Host {
     SDL_Window *win = nullptr;
     SDL_Renderer *ren = nullptr;
     SDL_Texture *tex = nullptr;
+    SDL_Texture *grande = nullptr;   // el fotograma ampliado ×grande_k sin suavizar («sharp bilinear», ver presenta)
+    int grande_k = 0;
     int tex_w = 0, tex_h = 0, last_mx = -1, last_my = -1;
     bool host_cursor_shown = false;
     std::vector<u32> rgb;
@@ -613,6 +616,7 @@ bool host_frame() {
             SDL_SetTextureScaleMode(H.tex, SDL_SCALEMODE_NEAREST);
             SDL_SetRenderLogicalPresentation(H.ren, w, h, SDL_LOGICAL_PRESENTATION_LETTERBOX);
             H.tex_w = w; H.tex_h = h;
+            H.grande_k = 0;   // la intermedia se rehace con el tamaño nuevo
         }
         SDL_UpdateTexture(H.tex, nullptr, H.rgb.data(), w * 4);
 #ifdef __EMSCRIPTEN__
@@ -622,7 +626,29 @@ bool host_frame() {
     }
     SDL_SetRenderDrawColor(H.ren, 0, 0, 0, 255);
     SDL_RenderClear(H.ren);
-    if (H.tex) SDL_RenderTexture(H.ren, H.tex, nullptr, nullptr);
+    if (H.tex) {
+        // «Sharp bilinear» (1-nov-2026, quejas de imagen borrosa en el 2000/2001: 800×600 en una ventana de 1280×960 es
+        // ×1,6): con el vecino más próximo a escala no entera unas columnas de píxeles salían dobles y otras no (letras
+        // irregulares). Ahora el fotograma se amplía antes al múltiplo entero de encima, sin suavizar, y esa textura se
+        // reduce a la ventana con suavizado: nítido y con todos los píxeles iguales. A escala entera sale igual que antes.
+        int ow = 0, oh = 0;
+        SDL_GetRenderOutputSize(H.ren, &ow, &oh);
+        int k = H.tex_w > 0 && H.tex_h > 0 ? (int)std::ceil(std::min((double)ow / H.tex_w, (double)oh / H.tex_h) - 1e-6) : 1;
+        k = std::max(1, std::min(k, 8));
+        if (k > 1 && k != H.grande_k) {
+            if (H.grande) SDL_DestroyTexture(H.grande);
+            H.grande = SDL_CreateTexture(H.ren, SDL_PIXELFORMAT_XRGB8888, SDL_TEXTUREACCESS_TARGET, H.tex_w * k, H.tex_h * k);
+            if (H.grande) SDL_SetTextureScaleMode(H.grande, SDL_SCALEMODE_LINEAR);
+            H.grande_k = k;
+        }
+        if (k > 1 && H.grande && SDL_SetRenderTarget(H.ren, H.grande)) {
+            SDL_RenderTexture(H.ren, H.tex, nullptr, nullptr);   // (la intermedia no tiene presentación lógica)
+            SDL_SetRenderTarget(H.ren, nullptr);
+            SDL_RenderTexture(H.ren, H.grande, nullptr, nullptr);
+        } else {
+            SDL_RenderTexture(H.ren, H.tex, nullptr, nullptr);
+        }
+    }
     SDL_RenderPresent(H.ren);
     return true;
 }
@@ -685,7 +711,13 @@ int main(int argc, char **argv) {
         }
 #endif
         bool completa = env("PCF7_PANTALLA_COMPLETA") && std::string(env("PCF7_PANTALLA_COMPLETA")) == "1";   // ajuste de la app
-        if (!SDL_CreateWindowAndRenderer(JUEGO_NOMBRE, ww, wh, SDL_WINDOW_RESIZABLE | (completa ? SDL_WINDOW_FULLSCREEN : 0), &H.win, &H.ren)) {
+        // alta densidad (1-nov-2026): sin ella, en un Mac con Retina el juego se dibujaba a la mitad de resolución y
+        // macOS ampliaba la ventana ×2 con suavizado (borroso); el ratón ya pasa por SDL_RenderCoordinatesFromWindow
+        SDL_WindowFlags fl = SDL_WINDOW_RESIZABLE | (completa ? SDL_WINDOW_FULLSCREEN : 0);
+#ifndef __EMSCRIPTEN__
+        fl |= SDL_WINDOW_HIGH_PIXEL_DENSITY;
+#endif
+        if (!SDL_CreateWindowAndRenderer(JUEGO_NOMBRE, ww, wh, fl, &H.win, &H.ren)) {
             plog("SDL_CreateWindowAndRenderer: %s", SDL_GetError());
             return 1;
         }
