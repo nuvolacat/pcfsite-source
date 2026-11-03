@@ -123,5 +123,5 @@ teclado a `window`, que es donde escucha SDL: las teclas por `keydown`/`keyup` (
   imagen de 32 px ampliada píxel a píxel, y el nombre, solo «PC Fútbol» y su versión. `deploy.sh` pone en la página de
   cada juego su manifiesto, su icono y ese nombre (`apple-mobile-web-app-title`, el que usa iOS), y la ficha los enlaza
   también (`build.py`), así que el acceso directo ya no sale como «PC Fútbol 7 · source.pcfsite.com». El 4.0 es de
-  MS-DOS y su ejecutable no trae icono: lleva el de la web.
+  MS-DOS y su ejecutable no trae icono: lleva el del 2000.
 

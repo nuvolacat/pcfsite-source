@@ -4,7 +4,7 @@
 El icono es el original del programa principal de cada edición (el MANAGER.EXE, MANAGARG.EXE en las Apertura): su
 imagen de 32x32 con más colores, ampliada píxel a píxel (sin suavizar) sobre fondo negro, que es como iOS pinta lo
 transparente. El ejecutable se lee de los datos del juego (datos.pcfsite.com/<id>/) o de una carpeta local con --exe.
-El PC Fútbol 4.0 es de MS-DOS y su ejecutable no trae icono: queda con el de la web.
+El PC Fútbol 4.0 es de MS-DOS y su ejecutable no trae icono: lleva el del PC Fútbol 2000.
 
 Sale en site/pcf/pwa/: <id>-180.png (apple-touch-icon), <id>-192.png, <id>-512.png y <id>.webmanifest (nombre corto:
 «PC Fútbol» y su versión). Lo enlazan la página del juego (core/web/index.html, deploy.sh pone el id) y la ficha.
@@ -20,9 +20,10 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 SALIDA = os.path.join(HERE, "..", "site", "pcf", "pwa")
 DATOS = "https://datos.pcfsite.com"
 
-# id del juego en /jugar/<id>/ → (programa principal dentro de sus datos, nombre para la pantalla de inicio)
+# id del juego en /jugar/<id>/ → (programa principal dentro de sus datos, nombre para la pantalla de inicio); con
+# «otro:ruta», el de los datos de otro juego
 JUEGOS = {
-    "pcf4": (None, "PC Fútbol 4.0"),
+    "pcf4": ("pcf2000:game/PCF2000/manager.exe", "PC Fútbol 4.0"),   # MS-DOS, sin icono: el del 2000
     "pcf5": ("game/FUTBOL5/MANAGER.EXE", "PC Fútbol 5.0"),
     "pcf5oro": ("game/FUTBOL5/MANAGER.EXE", "PC Fútbol 5.0 Oro"),
     "pcf5arg": ("game/APERTURA97/MANAGARG.EXE", "PC Fútbol 5.0 Apertura 97"),
@@ -69,6 +70,8 @@ def leer(id_, ruta, carpeta):
     if carpeta:
         with open(os.path.join(carpeta, id_ + ".exe"), "rb") as f:
             return f.read()
+    if ":" in ruta:
+        id_, ruta = ruta.split(":", 1)
     pide = urllib.request.Request(f"{DATOS}/{id_}/{ruta}", headers={"Origin": "https://source.pcfsite.com", "User-Agent": "Mozilla/5.0 (pcfsite-source iconos_pwa)"})
     with urllib.request.urlopen(pide, timeout=60) as r:
         return r.read()
