@@ -359,7 +359,8 @@ def landing_pads(codes, lk):
         owners = {}
         for c, at in conts.items():
             j = bisect.bisect_right(starts, at) - 1
-            while j >= 0 and starts[j] in catches:   # Ghidra separa los funclets `catch` como funciones
+            # Ghidra separa los funclets `catch` (y los de desenrollado) como funciones: la dueña es la de antes
+            while j >= 0 and (starts[j] in catches or starts[j] in m.eh_unwinds):
                 j -= 1
             if j < 0:
                 continue

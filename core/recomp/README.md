@@ -56,7 +56,11 @@ ninja no sabe que el C depende de él.
 - **Tablas de salto** (`jmp [tabla + reg*4]`) → `switch`; las tablas lejanas de `memcpy` de MSVCRT también.
 - **SEH y C++**: los prólogos de MSVC (`push manejador; mov eax, fs:[0]` y sus variantes) se reconocen; los `catch` y
   los `__except` son «pistas de aterrizaje» (`setjmp`/`longjmp`) a las que la plataforma salta al despachar una
-  excepción (`kernel32.cpp`, `RaiseException`/`RtlUnwind`).
+  excepción (`kernel32.cpp`, `RaiseException`/`RtlUnwind`). Los bloques `catch` salen de Ghidra (`Catch@…`) y
+  también de las propias tablas de MSVC (`linker.Module._tablas_eh`: `mov eax, FuncInfo; jmp __CxxFrameHandler` →
+  TryBlockMap y UnwindMap), porque en el 5.0 Ghidra no los marca; sin ellos la continuación del `catch` no tiene pista
+  y el juego acaba en «abnormal program termination» (salir del Manager del 5.0). Para dar con la función dueña de
+  una continuación se saltan los funclets de `catch` y los de desenrollado, que pueden ir delante de ella.
 - **x87 completa**, MMX, SSE básico, cadenas (`rep movs/stos/scas/cmps/lods`), `pushf/popf` de 16 y 32 bits,
   `loop/loope/loopne`, `bswap/shld/shrd/rcl/rcr`, `cpuid`, `rdtsc`…
 - **MS-DOS** (`dos: true`): `int n` → `dos_int(n)`, `in`/`out` → `port_in`/`port_out`, registros de segmento con base

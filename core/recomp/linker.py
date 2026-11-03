@@ -85,6 +85,7 @@ class Module:
         self.imports = {}   # iat_va → (dll, name)
         self.funcs = {}
         self.catches = []
+        self.eh_unwinds = set()   # funclets de desenrollado de C++ (destructores de la tabla FuncInfo, ver _tablas_eh)
         self._sin_refs = set()   # entradas de Ghidra sin referencias (FUN_*, nrefs 0)
         self._exports()
         self._imports()
@@ -113,6 +114,55 @@ class Module:
                 if d.Size and mid < d.VirtualAddress < hi:
                     hi = d.VirtualAddress
         self.text = (base + lo, base + hi)
+        self._tablas_eh()
+
+    def _tablas_eh(self):
+        """Los funclets de C++ sacados de las tablas de excepciones de MSVC, sin depender de Ghidra: cada función con
+        `try`/destructores instala `mov eax, FuncInfo; jmp __CxxFrameHandler`, y su FuncInfo (magic 0x1993052x) da
+        los bloques `catch` (TryBlockMap → HandlerType.addressOfHandler) y las acciones de desenrollado (UnwindMap).
+        En el 5.0 y el 5.0 Oro Ghidra no los marca como `Catch@…` (salen como FUN_…): sin ellos no había pista de
+        aterrizaje para la continuación del `catch` y salir del Manager («Salir» → «Sí», que lanza un `int`) acababa
+        en «abnormal program termination»."""
+        img, base = self.image, self.base
+        lo, hi = self.text
+        n = len(img)
+
+        def u32(va):
+            o = va - base
+            return struct.unpack_from("<I", img, o)[0] if 0 <= o <= n - 4 else None
+
+        def en_texto(va):
+            return va is not None and lo <= va < hi
+
+        vistos, nuevos = set(), 0
+        catches = set(self.catches)
+        for o in range(lo - base, hi - base - 10):
+            if img[o] != 0xB8 or img[o + 5] != 0xE9:   # mov eax, imm32 ; jmp rel32
+                continue
+            fi = struct.unpack_from("<I", img, o + 1)[0]
+            if fi in vistos or (u32(fi) or 0) & 0xFFFFFFF0 != 0x19930520:
+                continue
+            vistos.add(fi)
+            maxs, pun, ntry, ptry = (u32(fi + 4), u32(fi + 8), u32(fi + 12), u32(fi + 16))
+            if None in (maxs, pun, ntry, ptry) or maxs > 4096 or ntry > 1024:
+                continue
+            for i in range(maxs if pun else 0):
+                accion = u32(pun + 8 * i + 4)
+                if en_texto(accion):
+                    self.eh_unwinds.add(accion)
+            for t in range(ntry):
+                nc, pc = u32(ptry + 20 * t + 12), u32(ptry + 20 * t + 16)
+                if nc is None or pc is None or nc > 256:
+                    continue
+                for c in range(nc):
+                    h = u32(pc + 16 * c + 12)
+                    if en_texto(h) and h not in catches:
+                        catches.add(h)
+                        self.catches.append(h)
+                        self.funcs.setdefault(h, 0)
+                        nuevos += 1
+        if nuevos:
+            print(f"  {self.alias}: {nuevos} bloques catch sacados de las tablas de excepciones (FuncInfo)")
 
     def _relocate(self):
         delta = self.base - self.pref
