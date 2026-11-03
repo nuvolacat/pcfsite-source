@@ -37,7 +37,7 @@ va a `historial/<ruta>/<fecha>` (las 10 últimas), para recuperar a mano una par
 | `discos.py` | deja en `/var/cache/source-partidas/discos` (fuera de la copia diaria) los discos originales de juegos.pcfsite.com que usa `pcfsave.py`, por trozos de 1 MiB, y comprueba su SHA-256; las imágenes enteras de R2 piden el token del portal de juegos, por eso lo lanza `deploy/remote.sh` como root. La primera vez baja ~3,7 GB |
 | `pcf_interno.py` | verificador de los tokens del Admin (copia canónica en el repo del Admin; no se edita aquí) |
 | `limpiar.py` | borra las partidas de quien ha borrado su cuenta del foro (lo que promete pcfsite.com/legal) y vacía `_papelera/` a los 30 días; lo lanza el cron |
-| `copia.sh` | copia diaria: un `tar.gz` por día en `/var/backups/source-partidas` (14 días) y otro cifrado con la clave pública de copias en `/var/backups/foro-cifradas`, de donde se lo lleva el servidor de copias cada noche |
+| `copia.sh` | copia diaria: un `tar.gz` en `/var/backups/source-partidas` y otro cifrado con la clave pública de copias en `/var/backups/foro-cifradas`, de donde se lo lleva el servidor de copias cada noche; de cada uno solo se guarda el último (con 14 días de copias de más de 14 GB el disco se llenó el 03-nov y tumbó el foro) |
 | `cron` | la copia y la limpieza, en `/etc/cron.d/source-partidas` |
 | `source-partidas.service` | la unidad de systemd (usuario de sistema `source-partidas`, sin shell) |
 
