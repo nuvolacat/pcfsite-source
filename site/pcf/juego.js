@@ -15,6 +15,9 @@
   }
   function empezar() {
     if (frame) return;
+    // en pantallas táctiles el juego va en su propia página, a toda pantalla: con el teclado del sistema abierto se
+    // encaja en lo que queda visible (en iOS el iframe no se puede poner a pantalla completa); se vuelve con «atrás»
+    if (window.matchMedia && matchMedia("(pointer: coarse)").matches) { location.href = marco.getAttribute("data-juego"); return; }
     conSesion().then(function (hay) {
       if (hay) return arranca();
       sesion = null;

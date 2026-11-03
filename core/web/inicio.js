@@ -107,6 +107,92 @@
   js.src = conVer(PROG ? "juego-" + PROG + ".js" : "juego.js");
   document.body.appendChild(js);
   precargar(window.Module.pcf7Datos);
+  tactil();
+
+  // Pantallas táctiles (móvil, tableta): los toques ya llegan como ratón (SDL), pero no hay teclado. Una barra con las
+  // teclas que no tiene el teclado del móvil (Esc, Intro, flechas, F1-F10…) y un botón ⌨ que abre el del sistema.
+  // Todo se manda como eventos de teclado a window, que es donde los escucha SDL: el texto le llega por keypress
+  // (charCode) y las teclas por keydown/keyup (code). Con ?tactil se ve también en el ordenador.
+  function tactil() {
+    const tactilQ = q.has("tactil");
+    if (!tactilQ && !(window.matchMedia && matchMedia("(pointer: coarse)").matches)) return;
+    document.documentElement.classList.add("tactil");
+    const barra = document.getElementById("tactil");
+    const texto = document.getElementById("tactil-texto");
+    const mas = document.getElementById("tactil-mas");
+    const CODIGOS = { Escape: 27, Enter: 13, Backspace: 8, Tab: 9, Delete: 46, Space: 32, ArrowLeft: 37, ArrowUp: 38,
+                      ArrowRight: 39, ArrowDown: 40, Home: 36, End: 35, PageUp: 33, PageDown: 34 };
+    for (let i = 1; i <= 10; i++) CODIGOS["F" + i] = 111 + i;
+    const enviar = (tipo, o) => window.dispatchEvent(new KeyboardEvent(tipo, Object.assign({ bubbles: true, cancelable: true }, o)));
+    function tecla(code) {   // una tecla sin texto (Esc, Intro, flechas…)
+      const k = CODIGOS[code] || 0, o = { code, key: code === "Space" ? " " : code, keyCode: k, which: k };
+      enviar("keydown", o);
+      enviar("keyup", o);
+    }
+    function caracter(c) {   // una letra: como en un teclado, keydown + keypress (el texto) + keyup
+      const cp = c.codePointAt(0);
+      if (c === "\n") return tecla("Enter");
+      const may = c.toUpperCase();
+      const code = /^[A-Z]$/.test(may) ? "Key" + may : /^[0-9]$/.test(c) ? "Digit" + c : c === " " ? "Space" : "";
+      const k = code ? (code === "Space" ? 32 : may.charCodeAt(0)) : 0;
+      enviar("keydown", { code, key: c, keyCode: k, which: k });
+      enviar("keypress", { code, key: c, charCode: cp, keyCode: cp, which: cp });
+      enviar("keyup", { code, key: c, keyCode: k, which: k });
+    }
+
+    barra.addEventListener("pointerdown", (e) => {
+      const b = e.target.closest("button");
+      if (!b || e.target === texto) return;
+      e.preventDefault();   // que el botón no se quede el foco (ni cierre el teclado del sistema)
+      if (b.dataset.tecla) tecla(b.dataset.tecla);
+      else if (b.id === "tactil-f") mas.hidden = !mas.hidden;
+      else if (b.id === "tactil-ocultar") { document.documentElement.classList.add("tactil-oculta"); texto.blur(); }
+    });
+    // con el teclado del sistema abierto, el juego se encaja en lo que queda visible (en iOS el teclado no achica la
+    // página, solo lo visible; en Android lo hace interactive-widget=resizes-content, y esto no estorba)
+    const vv = window.visualViewport;
+    if (vv) {
+      const encaja = () => {
+        const s = document.documentElement.style;
+        s.setProperty("--vv-alto", Math.round(vv.height) + "px");
+        s.setProperty("--vv-arriba", Math.round(vv.offsetTop) + "px");
+      };
+      vv.addEventListener("resize", encaja);
+      vv.addEventListener("scroll", encaja);
+      encaja();
+    }
+    document.getElementById("tactil-ver").addEventListener("click", () => document.documentElement.classList.remove("tactil-oculta"));
+
+    // El teclado del sistema: un campo invisible encima del botón ⌨ (iOS solo lo abre si el toque cae en el campo).
+    // Lo escrito se saca comparando el contenido antes y después: así valen también el autocorrector y las
+    // sugerencias de Android, que no mandan teclas sino palabras (keydown con keyCode 229). Siempre lleva un carácter
+    // de relleno delante para que el borrado se note aunque no haya nada escrito.
+    const RELLENO = " ";
+    let antes = RELLENO, componiendo = false;
+    const vacia = () => { texto.value = antes = RELLENO; texto.setSelectionRange(1, 1); };
+    texto.addEventListener("pointerdown", (e) => {
+      if (document.activeElement === texto) { e.preventDefault(); texto.blur(); }   // segundo toque: se cierra
+    });
+    texto.addEventListener("focus", () => { barra.classList.add("escribiendo"); vacia(); });
+    texto.addEventListener("blur", () => { barra.classList.remove("escribiendo"); canvas.focus({ preventScroll: true }); });
+    texto.addEventListener("compositionstart", () => { componiendo = true; });
+    texto.addEventListener("compositionend", () => { componiendo = false; vacia(); });
+    texto.addEventListener("input", () => {
+      const ahora = texto.value;
+      let i = 0;
+      while (i < antes.length && i < ahora.length && antes[i] === ahora[i]) i++;
+      for (let n = antes.length - i; n > 0; n--) tecla("Backspace");
+      for (const c of ahora.slice(i)) caracter(c);
+      antes = ahora;
+      if (!componiendo && ahora !== RELLENO) vacia();
+    });
+    // las teclas del propio campo no llegan al juego tal cual (irían repetidas con lo de input); Intro sí, que no
+    // escribe nada en el campo
+    for (const t of ["keydown", "keypress", "keyup"]) texto.addEventListener(t, (e) => {
+      if (e.isTrusted) e.stopPropagation();
+      if (t === "keydown" && e.key === "Enter") { e.preventDefault(); tecla("Enter"); }
+    });
+  }
 
   // Precarga: los datos que usa el juego se descargan enteros, en segundo plano, a la caché del navegador
   // («<juego>-datos-<versión del índice>»); el juego (web/libwasmfs_fetch.js) los lee de allí en vez de esperar a la red.

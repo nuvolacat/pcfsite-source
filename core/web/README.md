@@ -7,8 +7,8 @@ reales para los `jmp` entre funciones. Sale `juego.js` + `juego.wasm` por progra
 demás programas del CD).
 
 ```
-index.html              la página: el canvas, la pantalla de carga, el aviso de precarga y el registro (?log)
-inicio.js               configura el módulo antes de cargar juego.js: URL de los datos, precarga, partidas, lanzador
+index.html              la página: el canvas, la pantalla de carga, el aviso de precarga, el registro (?log) y la barra táctil
+inicio.js               configura el módulo antes de cargar juego.js: URL de los datos, precarga, partidas, lanzador, táctil
 partidas.js             las partidas guardadas en tres capas (navegador, cuenta, copia manual)
 libwasmfs_fetch.js      copia del backend de WasmFS por red de Emscripten 6.0.12 con un arreglo (se enlaza con --js-library)
 ```
@@ -93,3 +93,22 @@ registro se pinta sobre la parte baja del canvas y se traga los clics de esa zon
   de sonido o de espera.
 - `PCF7_HASHES` vuelca los hashes de la memoria por bloques de 64 KB: comparando nativo y web se encuentra dónde
   divergen dos ejecuciones con el mismo guion (`PCF7_RELOJ_VIRTUAL=1` para que sean deterministas).
+
+## Pantallas táctiles
+
+En el móvil los toques ya llegan como ratón (SDL convierte el táctil), pero no hay teclado: SDL 3.4 no abre el del
+sistema en el navegador. En pantallas táctiles (`pointer: coarse`, o `?tactil` para verlo en el ordenador) `inicio.js`
+pone debajo del juego una barra con las teclas que no tiene el teclado del móvil (Esc, Intro, ⌫, Tab, flechas y, en un
+desplegable, F1-F10, Supr, Inicio, Fin, RePág y AvPág) y un botón ⌨ que abre el del sistema. Todo va como eventos de
+teclado a `window`, que es donde escucha SDL: las teclas por `keydown`/`keyup` (`code`) y el texto por `keypress`
+(`charCode`, como haría un teclado de verdad).
+
+- El botón ⌨ lleva encima un campo invisible: iOS solo abre el teclado si el toque cae en el propio campo.
+- Lo escrito se saca comparando el contenido del campo antes y después de cada `input`, no de sus teclas: el teclado
+  de Android manda palabras enteras (sugerencias, autocorrector) con `keyCode` 229. El campo lleva siempre un carácter
+  de relleno para que el borrado se note aunque esté vacío. Sus teclas no llegan al juego (irían repetidas), salvo Intro.
+- Con el teclado del sistema abierto, el juego y la barra se encajan en lo que queda visible (`visualViewport`, que
+  pone `--vv-alto` y `--vv-arriba`; en Android ayuda `interactive-widget=resizes-content`).
+- En la ficha (`site/pcf/juego.js`), con pantalla táctil «Jugar» abre `/jugar/<id>/` en su propia página en vez del
+  iframe: en iOS un iframe no se puede poner a pantalla completa, y el teclado tapaba la ficha.
+
