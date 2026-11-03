@@ -66,6 +66,19 @@
   #tactil-ios p { margin: 0 0 10px; }
   #tactil-ios button { float: right; height: 34px; padding: 0 16px; border: 1px solid #5a6f99; border-radius: 4px; background: #33405a;
                        color: #fff; font: 600 14px system-ui, sans-serif; }
+  /* siempre en horizontal (inicio.js): en vertical, el juego tapado y el aviso de girar el móvil */
+  #girar { display: none; }
+  @media (orientation: portrait) {
+    .tactil #girar { position: fixed; inset: 0; z-index: 3; display: flex; flex-direction: column; align-items: center;
+                     justify-content: center; gap: 14px; padding: 24px; background: #000; color: #d8dde6; text-align: center; }
+  }
+  #girar p { margin: 0; font-size: 15px; line-height: 1.45; max-width: 300px; }
+  #girar b { font-size: 18px; }
+  #girar svg { animation: girar 2.4s ease-in-out infinite; }
+  @keyframes girar { 0%, 20% { transform: rotate(0); } 50%, 80% { transform: rotate(-90deg); } 100% { transform: rotate(0); } }
+  #girar button { height: 40px; padding: 0 18px; border: 1px solid #5a6f99; border-radius: 4px; background: #33405a; color: #fff;
+                  font: 600 15px system-ui, sans-serif; }
+  #girar button[hidden] { display: none; }
   #registro { position: fixed; left: 0; right: 0; bottom: 0; padding: 8px 12px; background: rgba(0,0,0,.75);
               font: 12px ui-monospace, monospace; white-space: pre-wrap; max-height: 30vh; overflow: auto; display: none; }
 </style>
@@ -97,6 +110,10 @@
 <div id="tactil-ios" hidden><p>En el iPhone, Safari no deja poner una página a pantalla completa.</p>
   <p>Para jugar sin las barras de Safari: pulsa <b>Compartir</b> y luego <b>«Añadir a pantalla de inicio»</b>, y abre el
   juego desde ese icono. Se abre como una app, a toda pantalla.</p><button id="tactil-ios-vale">Vale</button></div>
+<div id="girar"><svg viewBox="0 0 64 64" width="64" height="64" aria-hidden="true"><rect x="20" y="6" width="24" height="52" rx="4"
+  fill="none" stroke="currentColor" stroke-width="3"/><circle cx="32" cy="51" r="2.2" fill="currentColor"/></svg>
+  <p><b>Gira el móvil</b></p><p>PC Fútbol se juega en horizontal.</p>
+  <button id="girar-ya" hidden>Poner en horizontal</button></div>
 <button id="tactil-ver" aria-label="Ver las teclas"><svg viewBox="0 0 24 16" width="24" height="16" aria-hidden="true"><rect x=".75" y=".75" width="22.5" height="14.5" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path fill="currentColor" d="M4 4h2v2H4zM8 4h2v2H8zM12 4h2v2h-2zM16 4h2v2h-2zM4 8h2v2H4zM8 8h2v2H8zM12 8h2v2h-2zM16 8h4v2h-4zM7 11.5h10v1.5H7z"/></svg></button>
 <script src="partidas.js"></script>
 <script src="inicio.js"></script>

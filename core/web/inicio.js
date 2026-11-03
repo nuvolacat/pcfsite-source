@@ -180,13 +180,22 @@
     const comoApp = navigator.standalone || (window.matchMedia && matchMedia("(display-mode: standalone), (display-mode: fullscreen)").matches);
     const bCompleta = document.getElementById("tactil-completa"), ios = document.getElementById("tactil-ios");
     if (comoApp) bCompleta.hidden = true;
+    const horizontal = () => Promise.resolve(pedir.call(raiz)).then(() => {
+      if (screen.orientation && screen.orientation.lock) return screen.orientation.lock("landscape");
+    }).catch(() => {});
     bCompleta.addEventListener("click", () => {
       if (completa()) { if (salir) salir.call(document); return; }
       if (!pedir) { ios.hidden = false; return; }
-      Promise.resolve(pedir.call(raiz)).then(() => {
-        if (screen.orientation && screen.orientation.lock) return screen.orientation.lock("landscape");
-      }).catch(() => {});
+      horizontal();
     });
+    // Siempre en horizontal: en vertical el juego se tapa y se pide girar el móvil (en el iPhone no hay forma de
+    // bloquear la orientación; en Android solo a pantalla completa o instalado, y el botón hace las dos cosas)
+    const girarYa = document.getElementById("girar-ya");
+    if (pedir && screen.orientation && screen.orientation.lock) girarYa.hidden = false;
+    girarYa.addEventListener("click", horizontal);
+    const vertical = window.matchMedia("(orientation: portrait)");
+    const alGirar = () => { if (vertical.matches) texto.blur(); else remide(); };
+    if (vertical.addEventListener) vertical.addEventListener("change", alGirar);
     document.getElementById("tactil-ios-vale").addEventListener("click", () => { ios.hidden = true; });
     document.getElementById("tactil-ocultar").addEventListener("click", () => {
       document.documentElement.classList.add("tactil-oculta");
