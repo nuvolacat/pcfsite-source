@@ -65,6 +65,13 @@ programa que toca (Historia, Base de datos…). En la web, `juego.js` avisa a la
 argumento)`) y `inicio.js` carga `juego-<programa>.js` con su `mem-<programa>.bin`, sobre los mismos datos y
 partidas; al terminar, vuelve al principal.
 
+## Navegadores
+
+Las llamadas de cola de WebAssembly (`-mtail-call`) piden Chrome/Edge 112, Firefox 121 o Safari 18.2 en adelante. Sin
+ellas el `.wasm` no compila, así que `inicio.js` lo comprueba antes de cargar nada (`WebAssembly.validate` de un
+módulo mínimo con `return_call`) y dice qué versión hace falta en vez del «se ha detenido por un error». Le pasa sobre
+todo a Chrome 109, el último que hay para Windows 7 y 8.1 (≈2 % de quienes juegan, nov-2026).
+
 ## Versiones y caché
 
 `deploy.sh --jugar` calcula una versión por compilación (sha de los `.js`, `.wasm`, `inicio.js` y `partidas.js`) y la

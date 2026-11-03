@@ -103,6 +103,15 @@
   const marca = (que) => { try { navigator.sendBeacon("/partidas/" + que, new Blob([JUEGO + " " + SID], { type: "text/plain" })); } catch (e) {} };
   if (!PROG) marca("hit");
   setInterval(() => { if (!document.hidden) marca("beat"); }, 60000);
+  // el juego se compila con llamadas de cola de WebAssembly (los jmp entre funciones, ver web/README.md): sin ellas el
+  // .wasm no compila y solo saldría «se ha detenido por un error». Les pasa a Chrome 109, el último de Windows 7 y 8.1
+  const colas = new Uint8Array([0, 97, 115, 109, 1, 0, 0, 0, 1, 4, 1, 96, 0, 0, 3, 2, 1, 0, 10, 6, 1, 4, 0, 18, 0, 11]);
+  if (!window.WebAssembly || !WebAssembly.validate(colas)) {
+    document.getElementById("carga-texto").textContent = "No se puede jugar en este navegador";
+    fallo("Este navegador es demasiado antiguo para los PC Fútbol: hace falta Chrome o Edge 112, Firefox 121 o Safari 18.2 " +
+          "(iPhone o iPad con iOS 18.2), o una versión posterior. En Windows 7 y 8.1, Chrome ya no se actualiza (se queda en la 109).");
+    return;
+  }
   const js = document.createElement("script");
   js.src = conVer(PROG ? "juego-" + PROG + ".js" : "juego.js");
   document.body.appendChild(js);
