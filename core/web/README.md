@@ -118,4 +118,10 @@ teclado a `window`, que es donde escucha SDL: las teclas por `keydown`/`keyup` (
   para páginas, solo para vídeo: el botón explica cómo abrir el juego como app con «Añadir a pantalla de inicio»
   (`apple-mobile-web-app-capable`), que sí va a toda pantalla; ya abierto así, el botón no sale. En la ficha, el botón
   de pantalla completa del iframe hace lo mismo: con prefijo en el iPad y, si no hay, abre el juego en su página.
+- «Añadir a pantalla de inicio» (PWA): cada juego tiene su manifiesto y su icono en `site/pcf/pwa/` (los hace
+  `tools/iconos_pwa.py`): el icono es el original del MANAGER.EXE de su edición (MANAGARG.EXE en las Apertura), su
+  imagen de 32 px ampliada píxel a píxel, y el nombre, solo «PC Fútbol» y su versión. `deploy.sh` pone en la página de
+  cada juego su manifiesto, su icono y ese nombre (`apple-mobile-web-app-title`, el que usa iOS), y la ficha los enlaza
+  también (`build.py`), así que el acceso directo ya no sale como «PC Fútbol 7 · source.pcfsite.com». El 4.0 es de
+  MS-DOS y su ejecutable no trae icono: lleva el de la web.
 

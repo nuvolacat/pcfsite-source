@@ -42,9 +42,14 @@ if [ "$JUGAR" = 1 ]; then
     # versión de esta compilación: los .js y .wasm se piden con ?v=<versión>, así el navegador nunca mezcla un
     # juego.js guardado de un despliegue anterior con el .wasm nuevo
     ver=$(cat "$T/jugar/$id"/juego*.js "$T/jugar/$id"/juego*.wasm "$T/jugar/$id"/inicio.js "$T/jugar/$id"/partidas.js | shasum | cut -c1-12)
+    # «Añadir a pantalla de inicio»: el manifiesto y el icono de este juego, y su nombre corto (tools/iconos_pwa.py)
+    app=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["short_name"])' "site/pcf/pwa/$id.webmanifest")
     sed -e "s|<html lang=\"es\" data-juego=\"pcf7\">|<html lang=\"es\" data-juego=\"$id\" data-datos=\"$datos\" data-version=\"$ver\" data-principal=\"$principal\">|" \
         -e "s|<script src=\"partidas.js\">|<script src=\"partidas.js?v=$ver\">|" -e "s|<script src=\"inicio.js\">|<script src=\"inicio.js?v=$ver\">|" \
+        -e "s|/pcf/pwa/pcf7|/pcf/pwa/$id|g" -e "s|name=\"apple-mobile-web-app-title\" content=\"PC Fútbol 7\"|name=\"apple-mobile-web-app-title\" content=\"$app\"|" \
         -e "s|<title>PC Fútbol 7</title>|<title>$titulo</title>|" "$P7/web/index.html" > "$T/jugar/$id/index.html"
+    grep -q "/pcf/pwa/$id.webmanifest" "$T/jugar/$id/index.html"
+    grep -q "apple-mobile-web-app-title\" content=\"$app\"" "$T/jugar/$id/index.html"
     grep -q "data-datos=\"$datos\" data-version=\"$ver\"" "$T/jugar/$id/index.html"
     grep -q "inicio.js?v=$ver" "$T/jugar/$id/index.html"
     grep -q "<title>$titulo</title>" "$T/jugar/$id/index.html"

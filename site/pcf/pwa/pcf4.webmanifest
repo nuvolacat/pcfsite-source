@@ -1,0 +1,23 @@
+{
+ "name": "PC Fútbol 4.0",
+ "short_name": "PC Fútbol 4.0",
+ "lang": "es",
+ "start_url": "/jugar/pcf4/",
+ "scope": "/jugar/pcf4/",
+ "id": "/jugar/pcf4/",
+ "display": "fullscreen",
+ "display_override": [
+  "fullscreen",
+  "standalone"
+ ],
+ "orientation": "landscape",
+ "background_color": "#000000",
+ "theme_color": "#000000",
+ "icons": [
+  {
+   "src": "/pcf/img/apple-touch-icon.png",
+   "sizes": "180x180",
+   "type": "image/png"
+  }
+ ]
+}

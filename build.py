@@ -29,11 +29,22 @@ def version():
     return f"1.{n:%y}.{n:%m%d}.{n:%H%M}"
 
 
-def pagina(ruta, titulo, descripcion, cuerpo, imagen=None, v=""):
-    """Documento completo: cabecera con Open Graph, estilos del diseño y la barra común."""
+def pagina(ruta, titulo, descripcion, cuerpo, imagen=None, v="", app=None):
+    """Documento completo: cabecera con Open Graph, estilos del diseño y la barra común. Con app=(id, nombre), la ficha
+    de un juego: «Añadir a pantalla de inicio» lo llama solo por su nombre y con el icono de su MANAGER.EXE
+    (site/pcf/pwa, tools/iconos_pwa.py)."""
     url = BASE_URL + ruta
     og = BASE_URL + (imagen or "/pcf/img/og.jpg") + f"?v={OG_V}"
     css = "".join(f'<link rel="stylesheet" href="/pcf/{n}?v={v}">' for n in ("fonts.css", "ds.css", "comun.css", "source.css"))
+    toque = "/pcf/img/apple-touch-icon.png"
+    if app and os.path.exists(os.path.join(SITE, "pcf", "pwa", f"{app[0]}-180.png")):
+        toque = f"/pcf/pwa/{app[0]}-180.png?v={v}"
+    inicio = f'<link rel="apple-touch-icon" href="{toque}">'
+    if app:
+        inicio += f'\n<meta name="apple-mobile-web-app-title" content="{e(app[1])}">'
+        if os.path.exists(os.path.join(SITE, "pcf", "pwa", f"{app[0]}.webmanifest")):   # en Android abre el juego
+            inicio += f'\n<link rel="manifest" href="/pcf/pwa/{app[0]}.webmanifest?v={v}">'
+
     return f"""<!doctype html>
 <html lang="es">
 <head>
@@ -57,7 +68,7 @@ def pagina(ruta, titulo, descripcion, cuerpo, imagen=None, v=""):
 <meta name="theme-color" content="#5980a6">
 <link rel="icon" href="/pcf/img/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
-<link rel="apple-touch-icon" href="/pcf/img/apple-touch-icon.png">
+{inicio}
 {css}
 <script src="/pcf/tema.js?v={v}"></script>
 </head>
@@ -258,7 +269,7 @@ def ficha(j, v):
         partes.append('<p class="aviso-cd">Todavía no hay trabajo publicado de este juego. Sigue el avance en el '
                       '<a href="https://foro.pcfsite.com/">foro</a>.</p>')
     img = f"/pcf/img/og-{j['id']}.jpg" if os.path.exists(os.path.join(SITE, "pcf", "img", f"og-{j['id']}.jpg")) else None
-    return pagina("/" + j["id"], f'{j["nombre"]} · source.pcfsite.com', j["resumen"], "".join(partes), img, v)
+    return pagina("/" + j["id"], f'{j["nombre"]} · source.pcfsite.com', j["resumen"], "".join(partes), img, v, (j["id"], j["nombre"]))
 
 
 MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"]
