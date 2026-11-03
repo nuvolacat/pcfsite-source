@@ -33,6 +33,7 @@
      (--vv-alto y --vv-arriba los pone inicio.js desde visualViewport) */
   .tactil #pantalla { top: var(--vv-arriba, 0px); bottom: auto; height: calc(var(--vv-alto, 100dvh) - var(--barra)); }
   .tactil.tactil-oculta #pantalla { height: var(--vv-alto, 100dvh); }
+  .tactil:not(.tactil-oculta) #precarga, .tactil:not(.tactil-oculta) #partida { bottom: calc(100% - var(--vv-arriba, 0px) - var(--vv-alto, 100dvh) + var(--barra) + 10px); }
   .tactil:not(.tactil-oculta) #tactil { display: flex; }
   .tactil.tactil-oculta #tactil-ver { display: block; }
   :root { --barra: calc(46px + env(safe-area-inset-bottom)); }

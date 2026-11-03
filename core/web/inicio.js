@@ -142,12 +142,20 @@
 
     barra.addEventListener("pointerdown", (e) => {
       const b = e.target.closest("button");
-      if (!b || e.target === texto || b.id === "tactil-completa") return;   // pantalla completa: va por click (más abajo)
+      // pantalla completa y ocultar van por click (más abajo): la primera solo se permite desde un gesto completo, y al
+      // ocultar en pointerdown el clic de ese mismo toque caía en el botón ⌨ que aparece en su sitio y la volvía a abrir
+      if (!b || e.target === texto || b.id === "tactil-completa" || b.id === "tactil-ocultar") return;
       e.preventDefault();   // que el botón no se quede el foco (ni cierre el teclado del sistema)
       if (b.dataset.tecla) tecla(b.dataset.tecla);
       else if (b.id === "tactil-f") mas.hidden = !mas.hidden;
-      else if (b.id === "tactil-ocultar") { document.documentElement.classList.add("tactil-oculta"); texto.blur(); }
     });
+    // SDL solo vuelve a medir el lienzo (y a dibujar el juego en 4:3 con bandas) cuando la ventana cambia de tamaño, y
+    // con el teclado de iOS o al ocultar la barra la ventana no cambia: se le avisa con un resize en cuanto se recoloca
+    let medir = 0;
+    const remide = () => {
+      cancelAnimationFrame(medir);
+      medir = requestAnimationFrame(() => window.dispatchEvent(new Event("resize")));
+    };
     // con el teclado del sistema abierto, el juego se encaja en lo que queda visible (en iOS el teclado no achica la
     // página, solo lo visible; en Android lo hace interactive-widget=resizes-content, y esto no estorba)
     const vv = window.visualViewport;
@@ -156,6 +164,7 @@
         const s = document.documentElement.style;
         s.setProperty("--vv-alto", Math.round(vv.height) + "px");
         s.setProperty("--vv-arriba", Math.round(vv.offsetTop) + "px");
+        remide();
       };
       vv.addEventListener("resize", encaja);
       vv.addEventListener("scroll", encaja);
@@ -179,7 +188,12 @@
       }).catch(() => {});
     });
     document.getElementById("tactil-ios-vale").addEventListener("click", () => { ios.hidden = true; });
-    document.getElementById("tactil-ver").addEventListener("click", () => document.documentElement.classList.remove("tactil-oculta"));
+    document.getElementById("tactil-ocultar").addEventListener("click", () => {
+      document.documentElement.classList.add("tactil-oculta");
+      texto.blur();
+      remide();
+    });
+    document.getElementById("tactil-ver").addEventListener("click", () => { document.documentElement.classList.remove("tactil-oculta"); remide(); });
 
     // El teclado del sistema: un campo invisible encima del botón ⌨ (iOS solo lo abre si el toque cae en el campo).
     // Lo escrito se saca comparando el contenido antes y después: así valen también el autocorrector y las

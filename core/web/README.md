@@ -108,7 +108,9 @@ teclado a `window`, que es donde escucha SDL: las teclas por `keydown`/`keyup` (
   de Android manda palabras enteras (sugerencias, autocorrector) con `keyCode` 229. El campo lleva siempre un carácter
   de relleno para que el borrado se note aunque esté vacío. Sus teclas no llegan al juego (irían repetidas), salvo Intro.
 - Con el teclado del sistema abierto, el juego y la barra se encajan en lo que queda visible (`visualViewport`, que
-  pone `--vv-alto` y `--vv-arriba`; en Android ayuda `interactive-widget=resizes-content`).
+  pone `--vv-alto` y `--vv-arriba`; en Android ayuda `interactive-widget=resizes-content`), y en 4:3: SDL solo vuelve a
+  medir el lienzo cuando la ventana cambia de tamaño, y con el teclado de iOS (o al ocultar la barra) no cambia, así que
+  se le manda un `resize` en cuanto se recoloca; sin él la imagen se estiraba.
 - En la ficha (`site/pcf/juego.js`), con pantalla táctil «Jugar» abre `/jugar/<id>/` en su propia página en vez del
   iframe: en iOS un iframe no se puede poner a pantalla completa, y el teclado tapaba la ficha.
 - Pantalla completa: botón en la barra (por `click`, que es el gesto que la permite en pantallas táctiles), con
