@@ -111,4 +111,9 @@ teclado a `window`, que es donde escucha SDL: las teclas por `keydown`/`keyup` (
   pone `--vv-alto` y `--vv-arriba`; en Android ayuda `interactive-widget=resizes-content`).
 - En la ficha (`site/pcf/juego.js`), con pantalla táctil «Jugar» abre `/jugar/<id>/` en su propia página en vez del
   iframe: en iOS un iframe no se puede poner a pantalla completa, y el teclado tapaba la ficha.
+- Pantalla completa: botón en la barra (por `click`, que es el gesto que la permite en pantallas táctiles), con
+  `webkitRequestFullscreen` de reserva y el giro a horizontal donde se deja (Android). El Safari del iPhone no la tiene
+  para páginas, solo para vídeo: el botón explica cómo abrir el juego como app con «Añadir a pantalla de inicio»
+  (`apple-mobile-web-app-capable`), que sí va a toda pantalla; ya abierto así, el botón no sale. En la ficha, el botón
+  de pantalla completa del iframe hace lo mismo: con prefijo en el iPad y, si no hay, abre el juego en su página.
 

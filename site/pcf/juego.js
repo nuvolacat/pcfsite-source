@@ -57,7 +57,13 @@
     var ultima = localStorage.getItem("version:" + location.pathname);
     versiones.forEach(function (b) { if (b.getAttribute("data-id") === ultima) elige(b, false); });
   } catch (e) {}
-  if (completa) completa.addEventListener("click", function () { if (frame && frame.requestFullscreen) frame.requestFullscreen(); });
+  // Safari (iPad) la tiene con prefijo; donde no hay (Safari del iPhone: solo vídeo), el juego en su propia página
+  if (completa) completa.addEventListener("click", function () {
+    if (!frame) return;
+    if (frame.requestFullscreen) frame.requestFullscreen();
+    else if (frame.webkitRequestFullscreen) frame.webkitRequestFullscreen();
+    else location.href = marco.getAttribute("data-juego");
+  });
   if (location.hash === "#jugar") marco.scrollIntoView({ block: "center" });
 
   // Copia manual de las partidas (las guarda el juego en este navegador: /jugar/<id>/partidas.js, mismo origen)

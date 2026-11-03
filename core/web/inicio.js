@@ -142,7 +142,7 @@
 
     barra.addEventListener("pointerdown", (e) => {
       const b = e.target.closest("button");
-      if (!b || e.target === texto) return;
+      if (!b || e.target === texto || b.id === "tactil-completa") return;   // pantalla completa: va por click (más abajo)
       e.preventDefault();   // que el botón no se quede el foco (ni cierre el teclado del sistema)
       if (b.dataset.tecla) tecla(b.dataset.tecla);
       else if (b.id === "tactil-f") mas.hidden = !mas.hidden;
@@ -161,6 +161,24 @@
       vv.addEventListener("scroll", encaja);
       encaja();
     }
+    // Pantalla completa (y en horizontal, donde se deja). Con el clic y no con pointerdown: en pantallas táctiles el
+    // navegador solo la permite desde un gesto «completo». En el iPhone Safari no la tiene para páginas (solo vídeo):
+    // se explica cómo abrirlo como app desde la pantalla de inicio, que sí va a toda pantalla. Ya abierto así, sobra.
+    const raiz = document.documentElement;
+    const pedir = raiz.requestFullscreen || raiz.webkitRequestFullscreen;
+    const salir = document.exitFullscreen || document.webkitExitFullscreen;
+    const completa = () => document.fullscreenElement || document.webkitFullscreenElement;
+    const comoApp = navigator.standalone || (window.matchMedia && matchMedia("(display-mode: standalone), (display-mode: fullscreen)").matches);
+    const bCompleta = document.getElementById("tactil-completa"), ios = document.getElementById("tactil-ios");
+    if (comoApp) bCompleta.hidden = true;
+    bCompleta.addEventListener("click", () => {
+      if (completa()) { if (salir) salir.call(document); return; }
+      if (!pedir) { ios.hidden = false; return; }
+      Promise.resolve(pedir.call(raiz)).then(() => {
+        if (screen.orientation && screen.orientation.lock) return screen.orientation.lock("landscape");
+      }).catch(() => {});
+    });
+    document.getElementById("tactil-ios-vale").addEventListener("click", () => { ios.hidden = true; });
     document.getElementById("tactil-ver").addEventListener("click", () => document.documentElement.classList.remove("tactil-oculta"));
 
     // El teclado del sistema: un campo invisible encima del botón ⌨ (iOS solo lo abre si el toque cae en el campo).

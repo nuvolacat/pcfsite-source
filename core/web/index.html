@@ -2,7 +2,11 @@
 <html lang="es" data-juego="pcf7">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content">
+<meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content, viewport-fit=cover">
+<!-- «Añadir a pantalla de inicio» (iOS): se abre como una app, sin las barras de Safari -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 <title>PC Fútbol 7</title>
 <style>
   html, body { margin: 0; height: 100%; background: #000; color: #ccc; font: 15px system-ui, sans-serif; overflow: hidden; }
@@ -50,6 +54,12 @@
   #tactil-texto { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; font-size: 16px; border: 0; padding: 0;
                   background: transparent; color: transparent; caret-color: transparent; }
   #tactil-ver { position: fixed; right: 8px; bottom: calc(8px + env(safe-area-inset-bottom)); opacity: .75; }
+  #tactil-ios { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(86vw, 380px); padding: 14px 16px;
+                background: #15181f; border: 1px solid #3a4459; border-radius: 6px; color: #d8dde6; font-size: 14px; line-height: 1.45; z-index: 2; }
+  #tactil-ios[hidden] { display: none; }
+  #tactil-ios p { margin: 0 0 10px; }
+  #tactil-ios button { float: right; height: 34px; padding: 0 16px; border: 1px solid #5a6f99; border-radius: 4px; background: #33405a;
+                       color: #fff; font: 600 14px system-ui, sans-serif; }
   #registro { position: fixed; left: 0; right: 0; bottom: 0; padding: 8px 12px; background: rgba(0,0,0,.75);
               font: 12px ui-monospace, monospace; white-space: pre-wrap; max-height: 30vh; overflow: auto; display: none; }
 </style>
@@ -74,9 +84,13 @@
     <button data-tecla="Escape">Esc</button><button data-tecla="Enter">Intro</button><button data-tecla="Backspace">⌫</button>
     <button data-tecla="Tab">Tab</button><button data-tecla="ArrowLeft">←</button><button data-tecla="ArrowUp">↑</button>
     <button data-tecla="ArrowDown">↓</button><button data-tecla="ArrowRight">→</button><button id="tactil-f">F1–F10 ▴</button>
-    <span class="sep"></span><button id="tactil-ocultar" aria-label="Ocultar las teclas">▾</button>
+    <span class="sep"></span><button id="tactil-completa" aria-label="Pantalla completa"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" d="M1 5.5V1h4.5M10.5 1H15v4.5M15 10.5V15h-4.5M5.5 15H1v-4.5"/></svg></button>
+    <button id="tactil-ocultar" aria-label="Ocultar las teclas">▾</button>
   </div>
 </div>
+<div id="tactil-ios" hidden><p>En el iPhone, Safari no deja poner una página a pantalla completa.</p>
+  <p>Para jugar sin las barras de Safari: pulsa <b>Compartir</b> y luego <b>«Añadir a pantalla de inicio»</b>, y abre el
+  juego desde ese icono. Se abre como una app, a toda pantalla.</p><button id="tactil-ios-vale">Vale</button></div>
 <button id="tactil-ver" aria-label="Ver las teclas"><svg viewBox="0 0 24 16" width="24" height="16" aria-hidden="true"><rect x=".75" y=".75" width="22.5" height="14.5" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path fill="currentColor" d="M4 4h2v2H4zM8 4h2v2H8zM12 4h2v2h-2zM16 4h2v2h-2zM4 8h2v2H4zM8 8h2v2H8zM12 8h2v2h-2zM16 8h4v2h-4zM7 11.5h10v1.5H7z"/></svg></button>
 <script src="partidas.js"></script>
 <script src="inicio.js"></script>
