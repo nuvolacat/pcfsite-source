@@ -121,11 +121,32 @@
   // escrituras en curso (el lanzador espera a que acaben antes de cambiar de programa)
   const enCurso = new Set();
   const sigue = (pr) => { enCurso.add(pr); pr.finally(() => enCurso.delete(pr)); return pr; };
-  P.pendientes = () => Promise.allSettled([...enCurso]);
+  P.pendientes = () => { for (const ruta of [...borrados.keys()]) ejecutaBorrado(ruta); return Promise.allSettled([...enCurso]); };
+
+  // Para grabar, el juego borra antes la partida entera y la vuelve a escribir. Si el borrado se aplicase en el acto y el
+  // navegador se cerrase a medio grabar (Safari del iPad mata la pestaña cuando se queda sin memoria), en la cuenta
+  // quedaría la partida sin alguno de sus ficheros y ya no cargaría (foro #573). Por eso el borrado de una partida
+  // espera: si el fichero vuelve, no se borra; si la pestaña muere, sigue la partida anterior entera.
+  const ESPERA_BORRADO = 20000;
+  const borrados = new Map();   // ruta → temporizador
+  function ejecutaBorrado(ruta) {
+    clearTimeout(borrados.get(ruta));
+    borrados.delete(ruta);
+    sigue(borrar(ruta));
+  }
 
   // El juego ha escrito (o borrado) un fichero
-  P.guardar = (ruta, datos) => sigue(guardar(ruta, datos));
-  P.borrar = (ruta) => sigue(borrar(ruta));
+  P.guardar = (ruta, datos) => {
+    clearTimeout(borrados.get(ruta));
+    borrados.delete(ruta);
+    return sigue(guardar(ruta, datos));
+  };
+  P.borrar = (ruta) => {
+    if (!ES_PARTIDA.test(ruta)) return sigue(borrar(ruta));
+    clearTimeout(borrados.get(ruta));
+    borrados.set(ruta, setTimeout(() => ejecutaBorrado(ruta), ESPERA_BORRADO));
+    return Promise.resolve();
+  };
   async function guardar(ruta, datos) {
     await pon({ ruta, fecha: Date.now(), datos, subido: false });
     if (ES_PARTIDA.test(ruta)) P.estado(sesion === false ? "navegador" : "guardando");
@@ -134,7 +155,8 @@
   async function borrar(ruta) {
     const fecha = Date.now();
     for (const r of await todas()) {
-      if ((r.ruta === ruta || r.ruta.startsWith(ruta + "/")) && r.datos) {
+      // sin cambiar lo que se haya escrito mientras se leía todo: el borrado no puede pisar un fichero más nuevo
+      if ((r.ruta === ruta || r.ruta.startsWith(ruta + "/")) && r.datos && (await una(r.ruta))?.fecha < fecha) {
         await pon({ ruta: r.ruta, fecha, datos: null, subido: false });
         encola(r.ruta);
       }
