@@ -1,9 +1,12 @@
 # deploy — lo que corre en el servidor
 
-`deploy.sh` (en la raíz) sube una carpeta temporal a `~/source-deploy/` del usuario de despliegue y ejecuta
-`remote.sh` como root con `sudo -S` (la contraseña va por la entrada estándar, no por la línea de órdenes). Accesos en
-`deploy.env` (no versionado): `DEPLOY_HOST`, `DEPLOY_PASS`, `DEPLOY_SSH_OPTS` (lleva el salto `-J`; para un ssh a
-mano hay que hacer `eval` con esas opciones).
+`deploy.sh` (en la raíz) sube una carpeta temporal a `/root/source-deploy/` del servidor y ejecuta `remote.sh` como root.
+**Desde el 05-nov-2026** el servidor es el de Doku: source.pcfsite.com es parte de la suscripción pcfsite.com del panel
+(`/var/www/source` → `/var/www/vhosts/pcfsite.com/web/source`, el servicio de partidas es la app `pcf-source` =
+`doku-pcf-source` en 127.0.0.1:8902 como usuario pcfsite, con su copia y limpieza nocturnas como temporizadores
+`pcf-source-copia` / `pcf-source-limpiar`, y el vhost va en el nginx interno 127.0.0.1:8099 detrás del Apache del panel).
+Accesos en `deploy.env` (no versionado): `DEPLOY_HOST=root@servidor` y `DEPLOY_KEY` (clave SSH de root); ya no hay
+contraseña, `sudo` ni salto. `lab/deploy-lab.sh` funciona igual (app `pcf-lab`, 127.0.0.1:8871).
 
 ## remote.sh
 

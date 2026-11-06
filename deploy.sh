@@ -1,12 +1,11 @@
 #!/bin/bash
 # Publica source.pcfsite.com (dist/, generada por build.py); con --nginx, también su configuración de nginx.
-# Accesos en deploy.env (no versionado): los mismos que el deploy.env del foro.
+# Accesos en deploy.env (no versionado): DEPLOY_HOST=root@servidor Doku y DEPLOY_KEY (clave SSH de root), desde el 05-nov-2026.
 set -euo pipefail
 cd "$(dirname "$0")"
 source deploy.env
-: "${DEPLOY_HOST:?}" "${DEPLOY_PASS:?}"
-SSHOPTS="${DEPLOY_SSH_OPTS:-} -o PreferredAuthentications=password -o PubkeyAuthentication=no"
-export SSHPASS="$DEPLOY_PASS"
+: "${DEPLOY_HOST:?}" "${DEPLOY_KEY:?falta DEPLOY_KEY en deploy.env (clave SSH de root del servidor Doku)}"
+SSHOPTS="${DEPLOY_SSH_OPTS:-} -i $DEPLOY_KEY -o IdentitiesOnly=yes -o BatchMode=yes"
 # --nginx: también la configuración de nginx; --jugar: también los juegos en el navegador (desde core/, compilado
 # con emcmake; los datos van aparte a R2 con tools/subir_r2.py)
 NG=0; JUGAR=0
@@ -29,7 +28,7 @@ rsync -a dist/ "$T/web/"
 cp deploy/nginx-*.conf "$T/nginx/"
 cp deploy/remote.sh "$T/deploy/"
 mkdir -p "$T/servicio"
-cp servicio/partidas.py servicio/pcfsave.py servicio/discos.py servicio/pcf_interno.py servicio/limpiar.py servicio/copia.sh servicio/cron servicio/source-partidas.service "$T/servicio/"
+cp servicio/*.py servicio/copia.sh "$T/servicio/"   # (el servicio y sus temporizadores los gestiona el panel Doku: pcf-source, pcf-source-copia, pcf-source-limpiar)
 if [ "$JUGAR" = 1 ]; then
   # cada juego en el navegador: /jugar/<id>/ con su programa (compilado en core/) y los datos en R2 (datos.pcfsite.com/<id>)
   P7=core
@@ -56,8 +55,6 @@ if [ "$JUGAR" = 1 ]; then
     gzip -9 -k "$T/jugar/$id"/juego*.wasm "$T/jugar/$id"/juego*.js
   done
 fi   # sin --jugar, remote.sh no toca lo que ya haya en el servidor
-sshpass -e rsync -rlt --delete --rsync-path="mkdir -p -m 700 source-deploy && chmod 700 source-deploy && rsync" \
+rsync -rlt --delete --rsync-path="mkdir -p -m 700 source-deploy && chmod 700 source-deploy && rsync" \
   -e "ssh $SSHOPTS" "$T/" "$DEPLOY_HOST:source-deploy/"
-# la contraseña de sudo va por la entrada estándar (en la orden se podía leer en /proc)
-printf '%s\n' "$DEPLOY_PASS" | sshpass -e ssh $SSHOPTS "$DEPLOY_HOST" \
-  "sudo -S -p '' bash \"\$HOME/source-deploy/deploy/remote.sh\" \"\$HOME/source-deploy\" $NG"
+ssh $SSHOPTS "$DEPLOY_HOST" "bash \"\$HOME/source-deploy/deploy/remote.sh\" \"\$HOME/source-deploy\" $NG"

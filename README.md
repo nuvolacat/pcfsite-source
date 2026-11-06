@@ -151,6 +151,8 @@ Cada carpeta lleva su README: [`core/`](core/README.md), [`core/recomp/`](core/r
 
 ## 🔧 Construir
 
+> Desde el 05-nov-2026 se despliega en el servidor Doku (suscripción pcfsite.com) con la clave SSH de root (`DEPLOY_KEY` en `deploy.env`); detalle en [deploy/README.md](deploy/README.md).
+
 ```bash
 brew install cmake ninja sdl3                                   # macOS (Linux: ver docs/APP.md#en-linux)
 python3 -m venv core/.venv && core/.venv/bin/pip install capstone pefile
