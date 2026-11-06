@@ -19,6 +19,7 @@ NOMBRE = CFG["nombre"]
 CARPETA = CFG["carpeta"]                   # C:\<CARPETA>: la instalación
 TRABAJO = os.path.expanduser(os.environ.get("PCF7_WORK", CFG["trabajo"]))
 PRINCIPAL = CFG["principal"].lower()
+PARCHEADOS = []   # tramos (desde, hasta) de los parches aplicados (linker.py): lift.py no los trata como inmediatos vivos
 SALIDA_MENU = int(CFG.get("salida_menu") or "0", 0)
 DLLS = [(n, int(b, 16)) for n, b in CFG["dlls"]]
 PROGRAMAS = {k.lower(): v for k, v in CFG.get("programas", {}).items()}

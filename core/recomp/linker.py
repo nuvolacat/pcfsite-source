@@ -79,6 +79,7 @@ class Module:
             off = int(dir_, 16) - base
             nuevo = bytes.fromhex(hexb)
             self.image[off:off + len(nuevo)] = nuevo
+            J.PARCHEADOS.append((int(dir_, 16), int(dir_, 16) + len(nuevo)))
             print(f"  {alias}: parche en {dir_} ({motivo})")
         self.exports = {}
         self.forwards = {}   # exportaciones reenviadas: nombre u ordinal → "DLL.nombre"

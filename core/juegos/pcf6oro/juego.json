@@ -14,6 +14,15 @@
       "0x02200000"
     ]
   ],
+  "parches": {
+    "manager.exe": [
+      [
+        "0x4fb8b0",
+        "69c0e8030000c1f80f8b575c8b4f6066837c4afe007404e2f6eb2833c9",
+        "sorteo: si no queda plaza libre para el clasificado, se salta en vez de buscar para siempre (bucle infinito del original con más equipos que plazas, como ya hacen los demás sorteos; foro #625)"
+      ]
+    ]
+  },
   "salida_menu": "0x689e94",
   "lanzador": {
     "2": [

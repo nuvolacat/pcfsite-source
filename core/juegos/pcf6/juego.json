@@ -15,6 +15,15 @@
       "0x02200000"
     ]
   ],
+  "parches": {
+    "manager.exe": [
+      [
+        "0x502e66",
+        "69c0e8030000c1f80f8b555c8b4d6066837c4afe007404e2f6eb2833c9",
+        "sorteo: si no queda plaza libre para el clasificado, se salta en vez de buscar para siempre (bucle infinito del original con más equipos que plazas, como ya hacen los demás sorteos; foro #625)"
+      ]
+    ]
+  },
   "lanzador": {
     "2": [
       "infosurf",

@@ -99,7 +99,9 @@ retraducir. `PCF7_UNRESOLVED=<fichero>` hace que la plataforma las vaya apuntand
 
 `parches` en `juego.json` (`{binario: [[dirección, bytes, motivo]]}`) los aplica `linker.py` sobre la imagen antes de
 traducir. Se usan lo mínimo: la protección anticopia del 4.0 (`b8 01 00 00 00 c3`: siempre correcta, como en las
-reediciones). Todo lo demás se arregla imitando mejor a Windows.
+reediciones) y el sorteo del 6.0 y su Oro (sin plaza libre, el original buscaba para siempre). Todo lo demás se arregla
+imitando mejor a Windows. Los inmediatos de lo parcheado no son vivos, sino constantes: así un parche solo pide publicar
+el `.wasm`, sin tocar `mem.bin` (en R2 y en la caché del navegador; cambiarlo obligaría a descargar de nuevo los datos).
 
 ## Firmas de las APIs (`winapi_sigs.py`)
 

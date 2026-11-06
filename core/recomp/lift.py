@@ -225,6 +225,9 @@ def _imm_vivo(op, size):
     ins = _CUR_INS
     if ins is None or ins.mnemonic not in _IMM_VIVOS or not ins.imm_size or ins.imm_size > 4:
         return None
+    # lo parcheado es constante: en la web, mem.bin (R2, caché del navegador) puede ser de antes del parche
+    if any(a <= ins.address < b for a, b in _J.PARCHEADOS):
+        return None
     if sum(1 for o in ins.operands if o.type == X86_OP_IMM) != 1:
         return None
     a = ins.address + ins.imm_offset
