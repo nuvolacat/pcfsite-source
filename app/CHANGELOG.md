@@ -3,6 +3,16 @@
 Versión = `1.AA.MMDD.HHMM` con la hora real del empaquetado (`app/mac/empaquetar.sh`, el mismo esquema que pcfsite.com).
 Cada entrada lleva la versión que **de verdad se distribuyó**; dos empaquetados en el mismo minuto van en una sola entrada.
 
+## 1.26.1107.1643 — 7-nov-2026
+
+Arreglos de los avisos del foro (t/625 y t/613):
+
+- **PC Fútbol 6.0 y Edición de Oro: la partida se colgaba al pasar de fecha.** Un sorteo intentaba colocar un equipo más
+  de los que caben y se quedaba buscando plaza para siempre; en el juego original pasa igual. Ahora, si no queda plaza,
+  el equipo que sobra se queda fuera de la competición y la partida sigue.
+- **PC Fútbol 5.0, Edición de Oro y Apertura 97: «Salir» cerraba el juego con error (código 70).** Ahora vuelve al menú
+  principal, como en el original.
+
 ## 1.26.1101.1245 — 1-nov-2026
 
 - **Compatible con el mod «Actualización 26/27» del PC Fútbol 2001** (temporada 2026/27, de Fernandiyol, descarga libre
