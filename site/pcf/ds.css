@@ -292,3 +292,9 @@ textarea.input { min-height: 90px; resize: vertical; }
 }
 @keyframes pcf-aleja { to { opacity: 0; transform: scale(.985); } }
 @keyframes pcf-acerca { from { opacity: 0; transform: scale(1.015); } }
+
+/* Barra y pie: fondo y línea a todo el ancho, y lo de dentro alineado con el contenido (main: 1200px con sus márgenes) */
+html .nav, html #topbar.nav, html footer.pie {
+  --pcf-lado: clamp(16px, 4vw, 48px);
+  padding-inline: max(var(--pcf-lado), calc((100% - 1200px) / 2 + var(--pcf-lado)));
+}
