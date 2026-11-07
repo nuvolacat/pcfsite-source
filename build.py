@@ -8,6 +8,7 @@ Páginas: portada (/), ficha de cada juego (/<id>), /como-funciona y /diario. La
 pinta site/topbar.js (generado aquí desde topbar.src.js), igual que en las demás zonas de pcfsite.com.
 """
 import datetime
+import hashlib
 import html
 import json
 import os
@@ -17,7 +18,6 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 SITE = os.path.join(HERE, "site")
 DIST = os.path.join(HERE, "dist")
 BASE_URL = "https://source.pcfsite.com"
-OG_V = 1   # súbelo si se rehacen las imágenes para redes (tools/og.sh): las redes guardan la imagen en caché
 
 e = html.escape
 CORNERS = '<i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>'
@@ -34,7 +34,10 @@ def pagina(ruta, titulo, descripcion, cuerpo, imagen=None, v="", app=None):
     de un juego: «Añadir a pantalla de inicio» lo llama solo por su nombre y con el icono de su MANAGER.EXE
     (site/pcf/pwa, tools/iconos_pwa.py)."""
     url = BASE_URL + ruta
-    og = BASE_URL + (imagen or "/pcf/img/og.jpg") + f"?v={OG_V}"
+    og = BASE_URL + (imagen or "/pcf/img/og.jpg")
+    ruta_og = os.path.join(SITE, (imagen or "/pcf/img/og.jpg").lstrip("/"))
+    with open(ruta_og, "rb") as f:   # las redes guardan cada imagen por su URL
+        og += "?v=" + hashlib.sha256(f.read()).hexdigest()[:10]
     css = "".join(f'<link rel="stylesheet" href="/pcf/{n}?v={v}">' for n in ("fonts.css", "ds.css", "comun.css", "source.css"))
     toque = "/pcf/img/apple-touch-icon.png"
     if app and os.path.exists(os.path.join(SITE, "pcf", "pwa", f"{app[0]}-180.png")):
@@ -268,7 +271,7 @@ def ficha(j, v):
     if prox:
         partes.append('<p class="aviso-cd">Todavía no hay trabajo publicado de este juego. Sigue el avance en el '
                       '<a href="https://foro.pcfsite.com/">foro</a>.</p>')
-    img = f"/pcf/img/og-{j['id']}.jpg" if os.path.exists(os.path.join(SITE, "pcf", "img", f"og-{j['id']}.jpg")) else None
+    img = f"/pcf/img/og/{j['id']}.jpg"
     return pagina("/" + j["id"], f'{j["nombre"]} · source.pcfsite.com', j["resumen"], "".join(partes), img, v, (j["id"], j["nombre"]))
 
 
@@ -286,14 +289,15 @@ def diario(datos, v):
     hs = "".join(f'<li><span class="f">{fecha(f)}</span><span class="j">{e(j["nombre"])}</span><p>{e(h["texto"])}</p></li>'
                  for f, j, h in todos)
     cuerpo = f'<div class="texto"><h1>Diario</h1><p>Los avances de cada juego, del más reciente al más antiguo.</p></div><ol class="diario">{hs}</ol>'
-    return pagina("/diario", "Diario · source.pcfsite.com", "Los avances de la traducción de cada PC Fútbol.", cuerpo, None, v)
+    return pagina("/diario", "Diario · source.pcfsite.com", "Los avances de la traducción de cada PC Fútbol.", cuerpo, "/pcf/img/og/diario.jpg", v)
 
 
 def como_funciona(v):
     with open(os.path.join(SITE, "como-funciona.frag"), encoding="utf-8") as f:
         cuerpo = f.read()
     return pagina("/como-funciona", "Cómo funciona · source.pcfsite.com",
-                  "Cómo se traducen los PC Fútbol desde su código original a aplicaciones modernas.", cuerpo, None, v)
+                  "Cómo se traducen los PC Fútbol desde su código original a aplicaciones modernas.", cuerpo,
+                  "/pcf/img/og/como-funciona.jpg", v)
 
 
 def main():
@@ -310,8 +314,13 @@ def main():
         f.write(tb)
 
     paginas = {"index.html": portada(datos, v), "diario.html": diario(datos, v), "como-funciona.html": como_funciona(v)}
+    os.makedirs(os.path.join(DIST, "og"), exist_ok=True)
     for j in datos["juegos"]:
         paginas[j["id"] + ".html"] = ficha(j, v)
+        for x in j.get("versiones", []):   # /jugar/<id>/ al compartirlo (nginx da esta página a los rastreadores)
+            if x.get("jugar"):
+                paginas[f'og/{x["id"]}.html'] = pagina(x["jugar"], f'{x["nombre"]} · source.pcfsite.com', j["resumen"], "",
+                                                       f'/pcf/img/og/{x["id"]}.jpg', v)
     for nombre, texto in paginas.items():
         with open(os.path.join(DIST, nombre), "w", encoding="utf-8") as f:
             f.write(texto)

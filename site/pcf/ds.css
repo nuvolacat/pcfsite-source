@@ -283,3 +283,12 @@ textarea.input { min-height: 90px; resize: vertical; }
 .btn-primary { border-color: var(--color-accent); }
 .btn-ghost { border-color: transparent; }
 
+/* Transición entre páginas de un mismo sitio («zoom suave», 07-nov-2026). Cada usuario puede apagarla en sus
+   preferencias: cookie «transiciones=no», que lee tema.js. */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; }
+  ::view-transition-old(root) { animation: pcf-aleja 340ms cubic-bezier(.22, .61, .36, 1) both; }
+  ::view-transition-new(root) { animation: pcf-acerca 340ms cubic-bezier(.22, .61, .36, 1) both; }
+}
+@keyframes pcf-aleja { to { opacity: 0; transform: scale(.985); } }
+@keyframes pcf-acerca { from { opacity: 0; transform: scale(1.015); } }

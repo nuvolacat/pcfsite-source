@@ -1,6 +1,6 @@
 #!/bin/bash
 # Genera las imágenes para redes (1200×630) con el navegador headless: og.jpg (general) y og-pcf7.jpg (ficha).
-# Si se rehacen, subir OG_V en build.py: Facebook, WhatsApp y X guardan la imagen en caché.
+# build.py las enlaza con la huella del fichero (?v=), así que las redes piden la nueva al rehacerlas.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 E="${NAVEGADOR:-/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge}"
