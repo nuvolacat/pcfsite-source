@@ -39,6 +39,20 @@
       "0x02390000"
     ]
   ],
+  "parches": {
+    "manager.exe": [
+      [
+        "0x5db932",
+        "89450c91668b8690000000663947447507c7470c01000000e30657e82e1fecff",
+        "estadísticas de jugadores tras el partido: si el jugador no está en la tabla (búsqueda 0x4a5640 = NULL) no se suman (0x49d880 sobre NULL escribía en NULL+0x2c, que en la plataforma es fs:[0x2c] del TEB: el TLS de gfxwin quedaba descuadrado y la partida acababa cerrándose; foro #628) (equipo local)"
+      ],
+      [
+        "0x5db9a2",
+        "668b969000000089450c6639574475056a018f470c91e30757e8c01eecff90",
+        "estadísticas de jugadores tras el partido: si el jugador no está en la tabla (búsqueda 0x4a5640 = NULL) no se suman (0x49d880 sobre NULL escribía en NULL+0x2c, que en la plataforma es fs:[0x2c] del TEB: el TLS de gfxwin quedaba descuadrado y la partida acababa cerrándose; foro #628) (equipo visitante)"
+      ]
+    ]
+  },
   "programas": {
     "dbasewin.exe": {}
   },

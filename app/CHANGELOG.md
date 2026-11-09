@@ -3,6 +3,16 @@
 Versión = `1.AA.MMDD.HHMM` con la hora real del empaquetado (`app/mac/empaquetar.sh`, el mismo esquema que pcfsite.com).
 Cada entrada lleva la versión que **de verdad se distribuyó**; dos empaquetados en el mismo minuto van en una sola entrada.
 
+## 1.26.1109.2002 — 9-nov-2026
+
+Arreglo del aviso del foro t/628:
+
+- **PC Fútbol 2000: la partida se cerraba al cabo de unas temporadas (código 70).** Tras cada partido el juego suma las
+  estadísticas de cada jugador, y si uno no estaba en la tabla de jugadores las sumaba igualmente sobre un puntero nulo.
+  En la app eso estropeaba un dato interno del motor gráfico, y a partir de ahí el juego iba leyendo memoria fuera de
+  sitio hasta cerrarse, normalmente al empezar una temporada. Ahora, si el jugador no está, no se suma nada y la partida
+  sigue. Las partidas guardadas que ya fallaban vuelven a funcionar.
+
 ## 1.26.1107.1643 — 7-nov-2026
 
 Arreglos de los avisos del foro (t/625 y t/613):
