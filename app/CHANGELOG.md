@@ -3,6 +3,16 @@
 Versión = `1.AA.MMDD.HHMM` con la hora real del empaquetado (`app/mac/empaquetar.sh`, el mismo esquema que pcfsite.com).
 Cada entrada lleva la versión que **de verdad se distribuyó**; dos empaquetados en el mismo minuto van en una sola entrada.
 
+## 1.26.1110.1450 — 10-nov-2026
+
+Arreglo del aviso del foro t/526:
+
+- **PC Fútbol 2001: el juego se cerraba (código 70) al pinchar en los partidos ganados, empatados o perdidos de un
+  equipo en «Clasificación».** Esa ventana usa unos objetos que el juego prepara con una función a la que solo llega
+  por un puntero, y la traducción no la incluía: los objetos se quedaban a medio hacer y el juego acababa saltando a
+  una dirección vacía. Ahora la función está traducida y la ventana sale con los partidos. También en la
+  «Actualización 26/27» (mod), que tiene la misma función.
+
 ## 1.26.1109.2002 — 9-nov-2026
 
 Arreglo del aviso del foro t/628:
