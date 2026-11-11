@@ -50,6 +50,46 @@
         "0x5db9a2",
         "668b969000000089450c6639574475056a018f470c91e30757e8c01eecff90",
         "estadísticas de jugadores tras el partido: si el jugador no está en la tabla (búsqueda 0x4a5640 = NULL) no se suman (0x49d880 sobre NULL escribía en NULL+0x2c, que en la plataforma es fs:[0x2c] del TEB: el TLS de gfxwin quedaba descuadrado y la partida acababa cerrándose; foro #628) (equipo visitante)"
+      ],
+      [
+        "0x5bd381",
+        "31db90",
+        "sorteo de copa (0x5bd320 y su variante 0x5bd540, la misma función de Dinamic que en el 7 Plus): si la lista trae un equipo repetido no hay plaza para todos y el original buscaba para siempre (cuelgue en «Calculando fechas» al cambiar de temporada; foro #626). Contador de intentos por cruce: pasados 65536 el equipo sorteado solo se compara con su rival de ese cruce y pasados 131072 se acepta sin más. Con listas sin repetidos el sorteo es el mismo (contador a 0 en cada cruce)"
+      ],
+      [
+        "0x5bd390",
+        "66837f0200",
+        "sorteo de copa (0x5bd320 y su variante 0x5bd540, la misma función de Dinamic que en el 7 Plus): si la lista trae un equipo repetido no hay plaza para todos y el original buscaba para siempre (cuelgue en «Calculando fechas» al cambiar de temporada; foro #626). Contador de intentos por cruce: pasados 65536 el equipo sorteado solo se compara con su rival de ese cruce y pasados 131072 se acepta sin más. Con listas sin repetidos el sorteo es el mismo (el puntero del cruce sale de edi)"
+      ],
+      [
+        "0x5bd3a3",
+        "909090",
+        "sorteo de copa (0x5bd320 y su variante 0x5bd540, la misma función de Dinamic que en el 7 Plus): si la lista trae un equipo repetido no hay plaza para todos y el original buscaba para siempre (cuelgue en «Calculando fechas» al cambiar de temporada; foro #626). Contador de intentos por cruce: pasados 65536 el equipo sorteado solo se compara con su rival de ese cruce y pasados 131072 se acepta sin más. Con listas sin repetidos el sorteo es el mismo (el puntero del cruce sale de edi)"
+      ],
+      [
+        "0x5bd3b9",
+        "430faf4424108b4c24209981e2ff7f000001d0c1f80f668b04416685c074ae8d553e8b4c241c4181fb00000100720d81fb00000200731889fa6a0159663b02748c663b4202748681c2ac000000e2ed668906e976ffffff909090909090909090909090",
+        "sorteo de copa (0x5bd320 y su variante 0x5bd540, la misma función de Dinamic que en el 7 Plus): si la lista trae un equipo repetido no hay plaza para todos y el original buscaba para siempre (cuelgue en «Calculando fechas» al cambiar de temporada; foro #626). Contador de intentos por cruce: pasados 65536 el equipo sorteado solo se compara con su rival de ese cruce y pasados 131072 se acepta sin más. Con listas sin repetidos el sorteo es el mismo (elegir equipo y comprobarlo antes de escribirlo)"
+      ],
+      [
+        "0x5bd59d",
+        "31ed90",
+        "sorteo de copa (0x5bd320 y su variante 0x5bd540, la misma función de Dinamic que en el 7 Plus): si la lista trae un equipo repetido no hay plaza para todos y el original buscaba para siempre (cuelgue en «Calculando fechas» al cambiar de temporada; foro #626). Contador de intentos por cruce: pasados 65536 el equipo sorteado solo se compara con su rival de ese cruce y pasados 131072 se acepta sin más. Con listas sin repetidos el sorteo es el mismo (variante: contador a 0 en cada cruce)"
+      ],
+      [
+        "0x5bd5a5",
+        "66395f02",
+        "sorteo de copa (0x5bd320 y su variante 0x5bd540, la misma función de Dinamic que en el 7 Plus): si la lista trae un equipo repetido no hay plaza para todos y el original buscaba para siempre (cuelgue en «Calculando fechas» al cambiar de temporada; foro #626). Contador de intentos por cruce: pasados 65536 el equipo sorteado solo se compara con su rival de ese cruce y pasados 131072 se acepta sin más. Con listas sin repetidos el sorteo es el mismo (variante: el puntero del cruce sale de edi)"
+      ],
+      [
+        "0x5bd5b3",
+        "909090",
+        "sorteo de copa (0x5bd320 y su variante 0x5bd540, la misma función de Dinamic que en el 7 Plus): si la lista trae un equipo repetido no hay plaza para todos y el original buscaba para siempre (cuelgue en «Calculando fechas» al cambiar de temporada; foro #626). Contador de intentos por cruce: pasados 65536 el equipo sorteado solo se compara con su rival de ese cruce y pasados 131072 se acepta sin más. Con listas sin repetidos el sorteo es el mismo (variante: el puntero del cruce sale de edi)"
+      ],
+      [
+        "0x5bd5c8",
+        "450faf4424148b4c24209981e2ff7f000001d0c1f80f668b04416685c074b98b54242483c23e8b4c241c4181fd00000100720d81fd00000200731889fa6a0159663b027493663b4202748d81c2ac000000e2ed668906eb8090909090909090909090",
+        "sorteo de copa (0x5bd320 y su variante 0x5bd540, la misma función de Dinamic que en el 7 Plus): si la lista trae un equipo repetido no hay plaza para todos y el original buscaba para siempre (cuelgue en «Calculando fechas» al cambiar de temporada; foro #626). Contador de intentos por cruce: pasados 65536 el equipo sorteado solo se compara con su rival de ese cruce y pasados 131072 se acepta sin más. Con listas sin repetidos el sorteo es el mismo (variante: elegir equipo y comprobarlo antes de escribirlo)"
       ]
     ]
   },

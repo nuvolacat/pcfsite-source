@@ -3,6 +3,16 @@
 Versión = `1.AA.MMDD.HHMM` con la hora real del empaquetado (`app/mac/empaquetar.sh`, el mismo esquema que pcfsite.com).
 Cada entrada lleva la versión que **de verdad se distribuyó**; dos empaquetados en el mismo minuto van en una sola entrada.
 
+## @VERSION@ — 11-nov-2026
+
+Arreglo del aviso del foro t/626:
+
+- **PC Fútbol 2000: la partida se podía quedar colgada en «Calculando fechas» al cambiar de temporada.** El 2000 sortea
+  las copas con la misma función de Dinamic que colgaba el 7 Plus: saca equipos al azar hasta llenar los cruces y
+  descarta los que ya han salido, así que si la lista trae un equipo repetido busca para siempre un hueco que no existe.
+  Ahora, si no queda ningún equipo libre, el hueco lo ocupa uno que ya jugaba otro cruce y la partida sigue. Con una
+  lista normal el sorteo es exactamente el mismo de antes. También en la web.
+
 ## 1.26.1111.0336 — 11-nov-2026
 
 Arreglo del aviso del foro t/526:
