@@ -3,6 +3,17 @@
 Versión = `1.AA.MMDD.HHMM` con la hora real del empaquetado (`app/mac/empaquetar.sh`, el mismo esquema que pcfsite.com).
 Cada entrada lleva la versión que **de verdad se distribuyó**; dos empaquetados en el mismo minuto van en una sola entrada.
 
+## 1.26.1111.0336 — 11-nov-2026
+
+Arreglo del aviso del foro t/526:
+
+- **PC Fútbol 7 Plus: la partida se quedaba colgada con el logo de Dinamic al pasar de fecha** (Euro PCFútbol, a
+  finales de agosto, con el sorteo de una copa inglesa). El sorteo saca equipos al azar hasta llenar todos los cruces y
+  descarta los que ya están puestos; si la lista de la copa trae un equipo repetido, falta uno para el último hueco y
+  el juego lo buscaba para siempre (en el original pasa igual). Ahora, si no queda ningún equipo libre, el hueco lo
+  ocupa uno que ya jugaba otro cruce (nunca contra sí mismo) y la partida sigue. Con una lista normal el sorteo es
+  exactamente el mismo de antes. Las partidas guardadas que se colgaban vuelven a funcionar. También en la web.
+
 ## 1.26.1110.1450 — 10-nov-2026
 
 Arreglo del aviso del foro t/526:
