@@ -3,7 +3,8 @@
 //  2. Cuenta de pcfsite.com: si hay sesión, también en el servidor (/partidas/pcf7/, servicio/partidas.py de
 //     pcfsite-source), comprimido. Al arrancar se juntan las dos copias: gana la más nueva de cada fichero.
 //  3. Copia manual: exportar() / importar() (botones de la ficha del juego en source.pcfsite.com). importar() admite
-//     también la partida de juegos.pcfsite.com (<juego>.pcfsave), que convierte el servidor.
+//     también la partida de juegos.pcfsite.com (<juego>.pcfsave), que convierte el servidor, y la carpeta de partidas de
+//     un juego instalado comprimida en .zip (desdeZip, sin pasar por el servidor).
 // Antes de sustituir o borrar una copia local, la anterior va a «respaldo» (las 5 últimas de cada fichero).
 (function () {
   "use strict";
@@ -213,7 +214,10 @@
     return { n: ficheros.length, blob: new Blob([JSON.stringify({ formato: JUEGO + "-partidas", version: 1, fecha: new Date().toISOString(), ficheros })], { type: "application/json" }) };
   };
   P.importar = async function (fichero) {
-    const d = (await fichero.slice(0, 1).text()) === "{" ? JSON.parse(await fichero.text()) : await convierte(fichero);
+    const cab = new Uint8Array(await fichero.slice(0, 4).arrayBuffer());
+    const d = cab[0] === 0x7b ? JSON.parse(await fichero.text())
+      : cab[0] === 0x50 && cab[1] === 0x4b && cab[2] === 3 && cab[3] === 4 ? await desdeZip(fichero)
+      : await convierte(fichero);
     if (d.formato !== JUEGO + "-partidas" || !Array.isArray(d.ficheros)) throw new Error("no es una copia de partidas de este juego");
     const ahora = Date.now();
     // con las mayúsculas de lo que ya hay: el juego no las distingue, pero aquí «SAVE/x» y «save/x» serían dos ficheros
@@ -231,11 +235,63 @@
     let n = 0;
     for (const f of d.ficheros) {
       if (typeof f.ruta !== "string" || f.ruta.includes("..")) continue;
-      await pon({ ruta: ajusta(f.ruta), fecha: ahora, datos: await descomprime(deB64(f.gz)), subido: false });   // lo importado gana
+      const datos = f.datos || await descomprime(deB64(f.gz));
+      await pon({ ruta: ajusta(f.ruta), fecha: ahora, datos, subido: false });   // lo importado gana
       n++;
     }
     return n;
   };
+  // ---- la carpeta de partidas de un juego instalado (Windows, la app…), comprimida en .zip (foro t/461)
+  // Vale el .zip de la carpeta del juego, el de SAVE (o SAVEEXT, TACTICS…) o el de una sola ranura (022-0): cada fichero se
+  // coloca donde lo busca el juego. Lo que no es una partida se ignora. Se lee aquí mismo, sin pasar por el servidor.
+  const CARPETA = { pcf2000: "PCF2000", pcf2001: "PCF2001", pcf2001act: "PCF2001", pcf4: "FUTBOL4", pcf5: "FUTBOL5",
+    pcf5arg: "APERTURA97", pcf5oro: "FUTBOL5", pcf6: "FUTBOL6", pcf6arg: "APERTURA98", pcf6oro: "FUTBOL6", pcf7: "FUTBOL7",
+    pcf7plus: "FUTBOL7" };
+  const SAVE = JUEGO === "pcf2000" ? "saveext" : "save";   // la Extensión del 2000 guarda en SAVEEXT
+  function rutaDeZip(nombre, carpeta) {
+    const p = nombre.replace(/\\/g, "/").split("/").filter((c) => c && c !== "." && c !== "..");
+    if (!p.length) return null;
+    const l = p.map((c) => c.toLowerCase());
+    let rel = null, i;
+    if ((i = l.findIndex((c) => c === "save" || c === "saveext" || c === "tactics")) >= 0) rel = p.slice(i);
+    else if ((i = l.findIndex((c) => c === "manager" || c === "promanag")) >= 0) rel = [SAVE].concat(p.slice(i));
+    else if (/^(manager|promanag|manag\d+|proma\d+|liga|proliga)\.\d+$/i.test(p[p.length - 1])) rel = ["TACTICS", p[p.length - 1]];
+    else if ((i = l.map((c) => /^e?\d{3}-\d+$/.test(c)).lastIndexOf(true)) >= 0) rel = [SAVE, "manager"].concat(p.slice(i));   // una ranura suelta (la más interior: 022-0/022-0/main.dat)
+    if (!rel) return null;
+    const ruta = "game/" + carpeta + "/" + rel.join("/");
+    return ES_PARTIDA.test(ruta) ? ruta : null;
+  }
+  async function desdeZip(fichero) {
+    const b = new Uint8Array(await fichero.arrayBuffer()), v = new DataView(b.buffer);
+    let fin = -1;
+    for (let o = b.length - 22; o >= Math.max(0, b.length - 65557); o--) if (v.getUint32(o, true) === 0x06054b50) { fin = o; break; }
+    if (fin < 0) throw new Error("el .zip está dañado o incompleto");
+    const total = v.getUint16(fin + 10, true);
+    let o = v.getUint32(fin + 16, true);
+    // la carpeta del juego: la de las partidas que ya hay (si hay) o la de su instalación
+    const ya = (await todas()).find((r) => /^game\/[^/]+\//.test(r.ruta));
+    const carpeta = ya ? ya.ruta.split("/")[1] : CARPETA[JUEGO] || "FUTBOL7";
+    const ficheros = [];
+    for (let k = 0; k < total; k++) {
+      if (v.getUint32(o, true) !== 0x02014b50) throw new Error("el .zip está dañado");
+      const flags = v.getUint16(o + 8, true), metodo = v.getUint16(o + 10, true), tam = v.getUint32(o + 20, true);
+      const ln = v.getUint16(o + 28, true), le = v.getUint16(o + 30, true), lc = v.getUint16(o + 32, true), loc = v.getUint32(o + 42, true);
+      const nombre = new TextDecoder(flags & 0x800 ? "utf-8" : "latin1").decode(b.subarray(o + 46, o + 46 + ln));
+      o += 46 + ln + le + lc;
+      if (nombre.endsWith("/") || flags & 1) continue;   // carpetas y cifrados, fuera
+      const ruta = rutaDeZip(nombre, carpeta);
+      if (!ruta) continue;
+      const ini = loc + 30 + v.getUint16(loc + 26, true) + v.getUint16(loc + 28, true);
+      const crudo = b.subarray(ini, ini + tam);
+      let datos;
+      if (metodo === 0) datos = crudo.slice();
+      else if (metodo === 8) datos = new Uint8Array(await new Response(new Blob([crudo]).stream().pipeThrough(new DecompressionStream("deflate-raw"))).arrayBuffer());
+      else throw new Error("el .zip usa un tipo de compresión que el navegador no sabe abrir: vuelve a comprimirlo con el normal (Deflate)");
+      ficheros.push({ ruta, datos });
+    }
+    if (!ficheros.length) throw new Error("en el .zip no hay partidas de este juego (busca la carpeta SAVE o la de la ranura, p. ej. 022-0)");
+    return { formato: JUEGO + "-partidas", ficheros };
+  }
   // la partida de juegos.pcfsite.com («Mis partidas» → <clave>.pcfsave: lo que el juego escribió en el disco del Windows 98
   // o el MS-DOS emulado) la convierte el servidor (servicio/pcfsave.py), que es quien puede leer el disco original
   async function convierte(fichero) {

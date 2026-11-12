@@ -240,7 +240,7 @@ def ficha(j, v):
     <span class="juego-botones">
       <button class="btn btn-secondary juego-exportar" type="button">Descargar mis partidas</button>
       <button class="btn btn-secondary juego-importar" type="button">Cargar partidas</button>
-      <input class="juego-fichero" type="file" accept=".json,.pcfsave,application/json" hidden>
+      <input class="juego-fichero" type="file" accept=".json,.pcfsave,.zip,application/json,application/zip" hidden>
       <button class="btn btn-secondary juego-completa" type="button" hidden>Pantalla completa</button>
     </span></div>
   <p class="juego-partidas meta">Las partidas se guardan en este navegador y, si entras con tu cuenta de pcfsite, también

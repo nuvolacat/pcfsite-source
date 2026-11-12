@@ -12,6 +12,9 @@ Arreglo del aviso del foro t/626:
   descarta los que ya han salido, así que si la lista trae un equipo repetido busca para siempre un hueco que no existe.
   Ahora, si no queda ningún equipo libre, el hueco lo ocupa uno que ya jugaba otro cruce y la partida sigue. Con una
   lista normal el sorteo es exactamente el mismo de antes. También en la web.
+- **Web (source.pcfsite.com): «Cargar partidas» acepta también un .zip con la carpeta de partidas de un juego
+  instalado** (la carpeta del juego, la de SAVE o una sola ranura como 022-0), para seguir en el navegador una partida
+  empezada en Windows o en la app. Se lee en el propio navegador; lo que no es una partida se ignora (foro t/461).
 
 ## 1.26.1111.0336 — 11-nov-2026
 
