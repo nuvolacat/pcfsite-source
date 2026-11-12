@@ -12,6 +12,12 @@ Arreglo del aviso del foro t/626:
   descarta los que ya han salido, así que si la lista trae un equipo repetido busca para siempre un hueco que no existe.
   Ahora, si no queda ningún equipo libre, el hueco lo ocupa uno que ya jugaba otro cruce y la partida sigue. Con una
   lista normal el sorteo es exactamente el mismo de antes. También en la web.
+- **PC Fútbol 7 Plus: con algunos mods, después de un partido el juego leía datos de un equipo que no existe.** Tras
+  cada partido recorre las plantillas y, si un jugador figura como de otro equipo, busca ese equipo y lo usa sin
+  comprobar que exista. Con un jugador de «equipo 0» (en mods ampliados, fichado o cedido de un club que no juega
+  ninguna competición), en Windows el juego se cierra con «Por alguna razón el manager no ha podido continuar», y aquí
+  leía basura. Ahora ese jugador cuenta como de la plantilla en la que está (foro t/667). El editor de pcfsite ya mete
+  este mismo arreglo en el MANAGER.EXE de los mods.
 - **Web (source.pcfsite.com): «Cargar partidas» acepta también un .zip con la carpeta de partidas de un juego
   instalado** (la carpeta del juego, la de SAVE o una sola ranura como 022-0), para seguir en el navegador una partida
   empezada en Windows o en la app. Se lee en el propio navegador; lo que no es una partida se ignora (foro t/461).

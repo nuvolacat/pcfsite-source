@@ -37,6 +37,11 @@
         "0x59c519",
         "450faf4424108b4c24209981e2ff7f000001d0c1f80f668b04416685c074ae8d53368b4c241c4181fd00000100720d81fd00000200731889fa6a0159663b02748c663b4202748681c2b8000000e2ed668906e976ffffff909090909090909090909090",
         "sorteo de copa (0x59c480): si la lista trae un equipo repetido no hay plaza para todos y el original buscaba para siempre (cuelgue con el logo de Dinamic; foro #526, copa inglesa de una partida de Euro PCFútbol). Ahora cada cruce cuenta sus intentos en ebp: pasados 65536 el equipo sorteado solo se compara con su rival de ese cruce (el hueco que sobra lo ocupa un equipo que ya jugaba otro cruce) y pasados 131072 se acepta sin más (solo si ya no queda otra, p. ej. una final con el mismo equipo en las dos plazas). Con listas sin repetidos el sorteo es el mismo (elegir equipo y comprobarlo antes de escribirlo)"
+      ],
+      [
+        "0x4d7673",
+        "8b34910fb7467085c074093b43100f852a030000",
+        "tras cada partido (0x4d75d0) el juego recorre las plantillas y, si un jugador es de otro equipo, busca ese equipo (0x4ce2c0) y lo usa sin comprobar (0x4d74e0, 0x4d6080): con un jugador de equipo 0 (mods ampliados) la búsqueda da NULL; en Windows el juego se cierra («el manager no ha podido continuar»), aquí leía basura de la página 0. Ahora el jugador de equipo 0 cuenta como de la plantilla en la que está (foro #667; mismo arreglo que lleva el MANAGER.EXE de los mods del editor)"
       ]
     ]
   },
