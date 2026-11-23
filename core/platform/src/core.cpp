@@ -15,7 +15,11 @@
 #include <vector>
 
 extern "C" {
+#ifndef _WIN32
 alignas(16384) u8 MEM[MEMSZ];   // alineado a página: PCF7_NULLTRAP protege la página 0
+#else
+u8 MEM[MEMSZ];
+#endif
 u32 eax, ecx, edx, ebx, esp, ebp, esi, edi, CF, ZF, SF, OF, PF, t, DF;
 u32 cur_fn; u32 fnring[256]; u32 fnring_i;
 u32 w_steps;
