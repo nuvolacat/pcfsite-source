@@ -12,7 +12,6 @@ import csv
 import re
 import functools
 import os
-import os
 
 import pefile
 from capstone import Cs, CS_ARCH_X86, CS_MODE_32
@@ -195,12 +194,17 @@ def _dos_ins(m, ins, d, s, rep):
     return None
 
 
+_BAJO = int(os.environ["PCF7_BAJO"], 16) if os.environ.get("PCF7_BAJO") else 0
+
+
 def mem_addr(op, seg=True):
     m = op.mem
     parts = []
     if DOS and seg:   # base del segmento (sbase[]: 0 en el código plano normal; el PSP, el entorno… tienen la suya)
         sr = m.segment if m.segment in _SREG else (X86_REG_SS if m.base in (X86_REG_ESP, X86_REG_EBP) else X86_REG_DS)
         parts.append(f"sbase[{_SREG[sr]}]")
+    if not DOS and _BAJO and m.segment == X86_REG_FS:   # TEB fuera de la dirección 0 (ver PCF7_BAJO en plat.h)
+        parts.append(str(_BAJO))
     if m.base:
         parts.append(R32.get(m.base) or R16.get(m.base) or (_ for _ in ()).throw(Unsupported("base")))
     if m.index:
@@ -778,18 +782,18 @@ def _emit(va, insns, pe_path, head):
                     out += ["{u64 p=(u64)eax*(u64)" + rd(d, d.size) + "; eax=(u32)p; edx=(u32)(p>>32); CF=OF=(edx!=0);}"]
             elif m == "div" and len(ops) == 1:
                 if d.size == 1:
-                    out += ["{u32 dv=(" + rd(d, 1) + ")&0xFF; if(dv){u32 n=eax&0xFFFF; eax=(eax&0xFFFF0000u)|((n/dv)&0xFF)|(((n%dv)&0xFF)<<8);} }"]
+                    out += ["{u32 dv=(" + rd(d, 1) + ")&0xFF; if(!dv) js_div0(0x" + f"{ins.address:x}" + "u); else {u32 n=eax&0xFFFF; eax=(eax&0xFFFF0000u)|((n/dv)&0xFF)|(((n%dv)&0xFF)<<8);} }"]
                 elif d.size == 2:
-                    out += ["{u32 dv=(" + rd(d, 2) + ")&0xFFFF; if(dv){u32 n=((edx&0xFFFF)<<16)|(eax&0xFFFF); eax=(eax&0xFFFF0000u)|((n/dv)&0xFFFF); edx=(edx&0xFFFF0000u)|((n%dv)&0xFFFF);} }"]
+                    out += ["{u32 dv=(" + rd(d, 2) + ")&0xFFFF; if(!dv) js_div0(0x" + f"{ins.address:x}" + "u); else {u32 n=((edx&0xFFFF)<<16)|(eax&0xFFFF); eax=(eax&0xFFFF0000u)|((n/dv)&0xFFFF); edx=(edx&0xFFFF0000u)|((n%dv)&0xFFFF);} }"]
                 else:
-                    out += ["{u32 dv=" + rd(d, d.size) + "; if(dv){u64 n=((u64)edx<<32)|eax; eax=(u32)(n/dv); edx=(u32)(n%dv);} }"]
+                    out += ["{u32 dv=" + rd(d, d.size) + "; if(!dv) js_div0(0x" + f"{ins.address:x}" + "u); else {u64 n=((u64)edx<<32)|eax; eax=(u32)(n/dv); edx=(u32)(n%dv);} }"]
             elif m == "idiv" and len(ops) == 1:
                 if d.size == 1:
-                    out += ["{i32 dv=(i32)(i8)(" + rd(d, 1) + "); if(dv){i32 n=(i32)(i16)(eax&0xFFFF); eax=(eax&0xFFFF0000u)|((u32)(n/dv)&0xFF)|(((u32)(n%dv)&0xFF)<<8);} }"]
+                    out += ["{i32 dv=(i32)(i8)(" + rd(d, 1) + "); if(!dv) js_div0(0x" + f"{ins.address:x}" + "u); else {i32 n=(i32)(i16)(eax&0xFFFF); eax=(eax&0xFFFF0000u)|((u32)(n/dv)&0xFF)|(((u32)(n%dv)&0xFF)<<8);} }"]
                 elif d.size == 2:
-                    out += ["{i32 dv=(i32)(i16)(" + rd(d, 2) + "); if(dv){i32 n=(i32)((((u32)edx&0xFFFF)<<16)|(eax&0xFFFF)); eax=(eax&0xFFFF0000u)|((u32)(n/dv)&0xFFFF); edx=(edx&0xFFFF0000u)|((u32)(n%dv)&0xFFFF);} }"]
+                    out += ["{i32 dv=(i32)(i16)(" + rd(d, 2) + "); if(!dv) js_div0(0x" + f"{ins.address:x}" + "u); else {i32 n=(i32)((((u32)edx&0xFFFF)<<16)|(eax&0xFFFF)); eax=(eax&0xFFFF0000u)|((u32)(n/dv)&0xFFFF); edx=(edx&0xFFFF0000u)|((u32)(n%dv)&0xFFFF);} }"]
                 else:
-                    out += ["{i32 dv=(i32)" + rd(d, d.size) + "; if(dv){i64 n=((i64)(i32)edx<<32)|(u32)eax; eax=(u32)(i32)(n/dv); edx=(u32)(i32)(n%dv);} }"]
+                    out += ["{i32 dv=(i32)" + rd(d, d.size) + "; if(!dv) js_div0(0x" + f"{ins.address:x}" + "u); else {i64 n=((i64)(i32)edx<<32)|(u32)eax; eax=(u32)(i32)(n/dv); edx=(u32)(i32)(n%dv);} }"]
             elif m == "cdq":
                 out += ["edx = (eax & 0x80000000) ? 0xFFFFFFFFu : 0u;"]
             elif m == "cwde":

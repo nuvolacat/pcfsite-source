@@ -17,9 +17,15 @@
 
 // Mapa de memoria del invitado (direcciones x86 = índices en MEM)
 namespace mm {
-constexpr u32 TEB = 0x00000000;          // fs:[x] lee MEM[x] (el lifter ignora los segmentos)
-constexpr u32 PEB = 0x00001000;
-constexpr u32 SCRATCH = 0x00002000;      // cadenas fijas del proceso (línea de órdenes, entorno…)
+// PCF7_BAJO (layout.h, solo si se traduce con la variable PCF7_BAJO): dónde van el TEB, el PEB y las cadenas del
+// proceso. De fábrica en 0, y entonces fs:[x] es MEM[x]. Con otro valor la página 0 queda vacía y se puede vigilar:
+// un acceso a un puntero nulo, que en Windows cierra el juego y aquí pasaba en silencio, se anota (PCF7_NULLTRAP).
+#ifndef PCF7_BAJO
+#define PCF7_BAJO 0u
+#endif
+constexpr u32 TEB = PCF7_BAJO;           // fs:[x] lee MEM[TEB + x] (el lifter suma PCF7_BAJO a los accesos con fs:)
+constexpr u32 PEB = PCF7_BAJO + 0x1000;
+constexpr u32 SCRATCH = PCF7_BAJO + 0x2000;      // cadenas fijas del proceso (línea de órdenes, entorno…)
 #ifdef PCF7_STACK_LO
 constexpr u32 STACK_LO = PCF7_STACK_LO;  // pila del hilo principal (el juego la sube si su programa es grande)
 #else

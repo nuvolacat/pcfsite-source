@@ -31,6 +31,7 @@ extern u8 MEM[];
 
 void js_bad(u32 a);                       /* acceso fuera de MEM */
 void js_missing(u32 a);                   /* llamada indirecta a una dirección sin traducir */
+void js_div0(u32 sitio);                 /* div/idiv con divisor 0: en Windows es una excepción (#DE) */
 void js_dbg(u32 tag, u32 a, u32 b);       /* sonda de depuración */
 void js_abort(void);
 

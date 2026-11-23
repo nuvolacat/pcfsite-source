@@ -573,6 +573,7 @@ def main():
           "#define PCF7_TRAMP_BASE 0x%xu\n#define PCF7_HOSTFN_BASE 0x%xu\n#define PCF7_HEAP_LO 0x%xu\n"
           % (lk.TRAMP_BASE, HOSTFN_BASE, lk.TRAMP_BASE + 0x100000)
           + ("#define PCF7_STACK_LO 0x%xu\n" % pila if pila else "")
+          + ("#define PCF7_BAJO 0x%xu\n" % int(os.environ["PCF7_BAJO"], 16) if os.environ.get("PCF7_BAJO") else "")
           + _dos_layout())
     hi = max(m.base + m.pe.OPTIONAL_HEADER.SizeOfImage for m in lk.mods if m.base < 0x2000000)
     if hi > (pila or 0x1000000):

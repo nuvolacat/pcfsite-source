@@ -5,6 +5,19 @@ Cada entrada lleva la versión que **de verdad se distribuyó**; dos empaquetado
 
 ## @VERSION@ — @FECHA@
 
+- **PC Fútbol 7 Plus: dos comprobaciones que le faltaban al juego original tras cada partido** (foro t/667). En el
+  «Análisis en proceso» el juego busca el club de cada jugador y usa el resultado sin comprobarlo: (1) al repasar las
+  plantillas, si un jugador figura como de un club con un código que ya no existe (0x4d79c5), y (2) al ver a quién se
+  puede convocar, que recorre TODOS los jugadores de la base (0x4afce7). En Windows el original se cierra ahí («Por
+  alguna razón el manager no ha podido continuar»); en la app leía lo que hubiera en la dirección 0 (el bloque del
+  hilo) y seguía con datos sin sentido. Los dos van como parches en `core/juegos/pcf7plus/juego.json`, con código
+  nuevo en el relleno de `.text` (`texto_relleno`), los mismos que lleva el MANAGER.EXE de los mods del editor.
+  Comprobado con la partida de mario666 (jornada 23 → 24).
+- **Herramientas para encontrar estos fallos** (desactivadas salvo que se pidan): una división por cero ya no se
+  salta en silencio, se anota dónde (`js_div0`, en Windows sería una excepción); y traduciendo con `PCF7_BAJO=10000`
+  el bloque del hilo deja de estar en la dirección 0, y con `PCF7_NULLTRAP=1` cada acceso a un puntero nulo se anota
+  con su pila (solo macOS/Linux).
+
 - **Con un mod de muchos ficheros sueltos, el juego ya no se queda en negro al arrancar** (foro t/588: 2-3 minutos con
   el mod «Actualización 26/27» del 2001 en Windows). Para montar la memoria inicial, la app busca cada EXE y DLL del
   juego por todas las carpetas de la instalación y de los mods, y lo hacía una vez por módulo y por capa: con los

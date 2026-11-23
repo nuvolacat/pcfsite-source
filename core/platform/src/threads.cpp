@@ -82,14 +82,14 @@ void switch_from(GThread *me, std::unique_lock<std::mutex> &lk) {
     }
     if (!next) return;
     save_cpu(me->cpu);
-    me->teb.assign(MEM, MEM + TEB_BYTES);
+    me->teb.assign(MEM + mm::TEB, MEM + mm::TEB + TEB_BYTES);
     me->can_run = false;
     next->can_run = true;
     g_cur = next;
     next->cv.notify_one();
     if (me->done) return;              // el hilo termina: no espera
     me->cv.wait(lk, [&] { return me->can_run; });
-    std::memcpy(MEM, me->teb.data(), TEB_BYTES);
+    std::memcpy(MEM + mm::TEB, me->teb.data(), TEB_BYTES);
     load_cpu(me->cpu);
 }
 
@@ -98,7 +98,7 @@ void *thread_main(void *p) {
     {
         std::unique_lock<std::mutex> lk(g_mx);
         t->cv.wait(lk, [&] { return t->can_run; });
-        std::memcpy(MEM, t->teb.data(), TEB_BYTES);
+        std::memcpy(MEM + mm::TEB, t->teb.data(), TEB_BYTES);
     }
     esp = t->stack_hi - 16;
     ebp = 0;
@@ -211,7 +211,7 @@ STUB(ext_kernel32_dll_CreateThread) {
     t->stack_lo = heap_alloc(sz, true);
     t->stack_hi = t->stack_lo + sz;
     // TEB propio: copia del actual con cadena SEH vacía, pila propia y TLS a cero (salvo el estático)
-    t->teb.assign(MEM, MEM + TEB_BYTES);
+    t->teb.assign(MEM + mm::TEB, MEM + mm::TEB + TEB_BYTES);
     auto put = [&](u32 off, u32 v) { std::memcpy(&t->teb[off], &v, 4); };
     put(0x00, 0xFFFFFFFFu);
     put(0x04, t->stack_hi);

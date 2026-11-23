@@ -42,6 +42,26 @@
         "0x4d7673",
         "8b34910fb7467085c074093b43100f852a030000",
         "tras cada partido (0x4d75d0) el juego recorre las plantillas y, si un jugador es de otro equipo, busca ese equipo (0x4ce2c0) y lo usa sin comprobar (0x4d74e0, 0x4d6080): con un jugador de equipo 0 (mods ampliados) la búsqueda da NULL; en Windows el juego se cierra («el manager no ha podido continuar»), aquí leía basura de la página 0. Ahora el jugador de equipo 0 cuenta como de la plantilla en la que está (foro #667; mismo arreglo que lleva el MANAGER.EXE de los mods del editor)"
+      ],
+      [
+        "0x4d79bc",
+        "e93f2f350090909090",
+        "tras cada partido (0x4d75d0), si un jugador figura como de un equipo que NO EXISTE (un código que ya no está en la base), la búsqueda (0x4ce2c0) da NULL y el original lo usa igual en 0x4d79c5; en Windows se cierra («el manager no ha podido continuar»), aquí leía basura de la página 0. Ahora 0x4d79bc salta a código nuevo en el hueco del final de .text (0x82a900): si la búsqueda da NULL sigue con el jugador siguiente (foro #667; mismo arreglo que el MANAGER.EXE de los mods del editor)"
+      ],
+      [
+        "0x82a900",
+        "85c00f84c6d0caff8bf88bcfe8cfcbcaffe9afd0caff",
+        "tras cada partido (0x4d75d0), si un jugador figura como de un equipo que NO EXISTE (un código que ya no está en la base), la búsqueda (0x4ce2c0) da NULL y el original lo usa igual en 0x4d79c5; en Windows se cierra («el manager no ha podido continuar»), aquí leía basura de la página 0. Ahora 0x4d79bc salta a código nuevo en el hueco del final de .text (0x82a900): si la búsqueda da NULL sigue con el jugador siguiente (foro #667; mismo arreglo que el MANAGER.EXE de los mods del editor)"
+      ],
+      [
+        "0x4afce7",
+        "e934ac3700909090909090",
+        "convocatorias tras cada partido (0x4af950 recorre todos los jugadores de la base y busca el club de cada uno con 0x4ce2c0): si el club no existe la búsqueda da NULL y el original lo usa igual en 0x4afce7; en Windows se cierra en el «Análisis en proceso», aquí leía basura de la página 0. Ahora 0x4afce7 salta a código nuevo en el hueco del final de .text (0x82a920): si el club no existe el jugador no es convocable (foro #667, mario666; mismo arreglo que el MANAGER.EXE de los mods del editor)"
+      ],
+      [
+        "0x82a920",
+        "8b54241485d20f843a54c8ff817a10de260000e9ba53c8ff",
+        "convocatorias tras cada partido (0x4af950 recorre todos los jugadores de la base y busca el club de cada uno con 0x4ce2c0): si el club no existe la búsqueda da NULL y el original lo usa igual en 0x4afce7; en Windows se cierra en el «Análisis en proceso», aquí leía basura de la página 0. Ahora 0x4afce7 salta a código nuevo en el hueco del final de .text (0x82a920): si el club no existe el jugador no es convocable (foro #667, mario666; mismo arreglo que el MANAGER.EXE de los mods del editor)"
       ]
     ]
   },
@@ -107,5 +127,8 @@
     "MFC42.DLL": "85ce7d2d0444f4b37a4d056c55c9e734bfa077ba48e72a5683d35968e6bf4772",
     "MSVCRT.DLL": "e390b0529fb9ee1214bb68302a4658b578134d92ab76bc5eb48f3badd843d210",
     "playvid.exe": "d3fa990468519af176c7736c7b47ccd10a5151c9024d88f910143b3dc92229ba"
-  }
+  },
+  "texto_relleno": [
+    "manager.exe"
+  ]
 }

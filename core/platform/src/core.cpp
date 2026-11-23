@@ -1,6 +1,10 @@
 // PCF7 — núcleo de la capa de plataforma: memoria y CPU del invitado, llamadas host→invitado,
 // montículo, diagnóstico.
 #include "plat.h"
+#ifndef _WIN32
+#include <csignal>
+#include <sys/mman.h>
+#endif
 
 #include <cstdarg>
 #include <algorithm>
@@ -11,7 +15,7 @@
 #include <vector>
 
 extern "C" {
-u8 MEM[MEMSZ];
+alignas(16384) u8 MEM[MEMSZ];   // alineado a página: PCF7_NULLTRAP protege la página 0
 u32 eax, ecx, edx, ebx, esp, ebp, esi, edi, CF, ZF, SF, OF, PF, t, DF;
 u32 cur_fn; u32 fnring[256]; u32 fnring_i;
 u32 w_steps;
@@ -121,7 +125,59 @@ int g_watch = [] {
 // PCF7_TRACE_RANGE=inicio-fin (hex): anota cada entrada a una función de ese rango (hasta PCF7_TRACE_MAX, 400000), con su
 // dirección de retorno y los dos primeros argumentos
 u32 g_rango_ecx = 0;   // ecx de la última entrada a una función de PCF7_TRACE_RANGE (para PCF7_FATAL_LISTA=ecx:…)
+// PCF7_NULLTRAP=1 (con el TEB fuera de la dirección 0, PCF7_BAJO): la página 0 del invitado queda sin permisos y cada
+// acceso a ella —un puntero nulo— se anota con las direcciones de retorno de la pila del invitado (cur_fn solo es fiable
+// en los grupos de funciones; la primera dirección de la pila es la buena). Tras anotarlo se abre la página (a cero)
+// para que el juego siga como hasta ahora, y se vuelve a cerrar en la siguiente entrada a función. Se engancha en
+// range_trace, así que hace falta también PCF7_TRACE_RANGE (cualquier tramo; p. ej. 401000-401001).
+// Uso: PCF7_BAJO=10000 al traducir (recomp/build.py) y PCF7_NULLTRAP=1 PCF7_TRACE_RANGE=401000-401001 al jugar.
+#ifndef _WIN32
+static volatile int g_p0_abierta = 0;
+static int g_nulos = 0;
+static void nulo_trap(int sig, siginfo_t *si, void *) {
+    u8 *a = (u8 *)si->si_addr;
+    if (a >= MEM && a < MEM + 0x4000) {
+        mprotect(MEM, 0x4000, PROT_READ | PROT_WRITE);
+        g_p0_abierta = 1;
+        if (g_nulos++ < 400) {
+            char pila[200]; int n = 0, k = 0; pila[0] = 0;   // direcciones de retorno plausibles de la pila del invitado
+            for (u32 p = esp; p < esp + 0x300 && p < MEMSZ - 4 && k < 8; p += 4) {
+                u32 r; std::memcpy(&r, MEM + p, 4);
+                if (r >= 0x401006 && r < 0x2800000 && (MEM[r - 5] == 0xE8 || MEM[r - 6] == 0xFF || MEM[r - 2] == 0xFF || MEM[r - 3] == 0xFF)) {
+                    n += std::snprintf(pila + n, sizeof pila - n, " %x", r); k++;
+                }
+            }
+            plog("puntero nulo: acceso a +0x%lx en f_%x; pila:%s (en Windows el juego se cerraría aquí)", (long)(a - MEM), cur_fn, pila);
+        }
+        return;
+    }
+    signal(sig, SIG_DFL);
+    raise(sig);
+}
+static void nulo_instala() {
+    static bool hecho = false;
+    if (hecho) return;
+    hecho = true;
+    if (!std::getenv("PCF7_NULLTRAP") || mm::TEB == 0) return;
+    struct sigaction sa {};
+    sa.sa_sigaction = nulo_trap;
+    sa.sa_flags = SA_SIGINFO;
+    sigaction(SIGBUS, &sa, nullptr);
+    sigaction(SIGSEGV, &sa, nullptr);
+    std::memset(MEM, 0, 0x4000);
+    mprotect(MEM, 0x4000, PROT_NONE);
+    plog("PCF7_NULLTRAP: página 0 vigilada (TEB en 0x%x)", mm::TEB);
+}
+#else
+static void nulo_instala() {}   // solo en macOS/Linux (mprotect + SIGSEGV)
+static const int g_p0_abierta = 0;
+#endif
+
 static void range_trace(u32 fn) {
+    nulo_instala();
+#ifndef _WIN32
+    if (g_p0_abierta) { g_p0_abierta = 0; std::memset(MEM, 0, 0x4000); mprotect(MEM, 0x4000, PROT_NONE); }
+#endif
     static const char *e = std::getenv("PCF7_TRACE_RANGE");
     static u32 lo = e ? (u32)std::strtoul(e, nullptr, 16) : 0;
     static u32 hi = e && std::strchr(e, '-') ? (u32)std::strtoul(std::strchr(e, '-') + 1, nullptr, 16) : 0;
@@ -403,6 +459,14 @@ extern "C" void js_bad(u32 a) {
     static u32 n = 0;
     if (n++ < 8) { plog("acceso fuera de memoria: 0x%08x (en f_%x)", a, cur_fn); if (n == 1) dump_ring(); }
     if (n > 100000) fatal("demasiados accesos fuera de memoria");
+}
+
+// div/idiv con divisor 0. En un x86 de verdad es la excepción #DE, y en estos juegos acaba en «Por alguna razón el
+// manager no ha podido continuar». Aquí la instrucción se salta (eax y edx se quedan como estaban) y la partida sigue,
+// pero se anota dónde: es justo lo que hace falta para arreglar los cierres que solo se ven en el juego original.
+extern "C" void js_div0(u32 sitio) {
+    static int n = 0;
+    if (n++ < 60) plog("división por cero en 0x%x (en f_%x): en Windows el juego se cerraría aquí", sitio, cur_fn);
 }
 
 extern "C" void js_missing(u32 a) {
