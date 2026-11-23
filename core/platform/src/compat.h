@@ -6,6 +6,7 @@
 //   setenv/unsetenv   el entorno del proceso Y el del CRT (los hijos heredan el primero, getenv lee el segundo)
 //   mkdir(ruta, modo) _mkdir; lstat → stat; timegm → _mkgmtime; strcasecmp → _stricmp
 //   O_BINARY          0 fuera de Windows (en Windows open() abre en modo texto si no se pide)
+//   win_lista_dir     listar una carpeta sin stat() por fichero (FindFirstFile)
 //   pcf_rename        rename que sustituye el destino si existe (en Windows rename() falla si existe)
 //   plat_thread_*     hilos con pila grande: en Windows CreateThread con STACK_SIZE_PARAM_IS_A_RESERVATION (pthread_create
 //                     de winpthreads *compromete* toda la pila: 1 GB de memoria de verdad)
@@ -42,6 +43,8 @@ static inline int pcf_mkdir(const char *p, int) { return _mkdir(p); }
 
 int setenv(const char *k, const char *v, int sobrescribir);
 int unsetenv(const char *k);
+// las entradas de una carpeta con FindFirstFile: nombre y si es carpeta, sin un stat() por fichero (imagen.cpp)
+void win_lista_dir(const char *dir, void (*cb)(const char *nombre, int es_dir, void *ctx), void *ctx);
 ssize_t pread(int fd, void *buf, size_t n, int64_t off);
 ssize_t pwrite(int fd, const void *buf, size_t n, int64_t off);
 int futimens(int fd, const struct timespec ts[2]);

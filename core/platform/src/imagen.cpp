@@ -26,6 +26,7 @@
 #include <algorithm>
 #include <cstring>
 #include <fstream>
+#include <map>
 #include <strings.h>
 #include <vector>
 
@@ -52,21 +53,59 @@ bool lee(const std::string &p, std::vector<unsigned char> &out, u32 tam_esperado
     return (u32)in.gcount() == tam_esperado;
 }
 
-// busca `nombre` (sin distinguir mayúsculas) bajo `dir`, hasta `prof` niveles
-void busca(const std::string &dir, const char *nombre, int prof, std::vector<std::string> &out) {
+// los ficheros que hay bajo `dir`, hasta `prof` niveles: (nombre, ruta). Cada carpeta se recorre UNA sola vez y se
+// guarda: `busca` se llama por cada módulo y por cada capa (dos veces con mods), y con un mod de decenas de miles de
+// ficheros sueltos eso era más de un millón de stat() antes de pintar nada. En Windows, donde stat() es lento, el juego
+// se quedaba 2-3 minutos en negro al arrancar (foro t/588, mod «Actualización 26/27» del 2001: 46.938 ficheros × 11
+// módulos × 2; medido en un PC rápido con SSD: 21 s frente a 16-32 ms). En Windows además se lista con FindFirstFile
+// (compat_win.cpp), que ya dice si es carpeta sin consultar cada fichero.
+typedef std::vector<std::pair<std::string, std::string>> Listado;
+
+void lista(const std::string &dir, int prof, Listado &out) {
+    std::vector<std::string> sub;
+#ifdef _WIN32
+    struct Ctx { const std::string &dir; int prof; std::vector<std::string> &sub; Listado &out; } ctx{dir, prof, sub, out};
+    win_lista_dir(dir.c_str(), [](const char *nombre, int es_dir, void *v) {
+        Ctx &c = *(Ctx *)v;
+        if (nombre[0] == '.') return;
+        std::string p = c.dir + "/" + nombre;
+        if (es_dir) { if (c.prof > 0) c.sub.push_back(p); }
+        else c.out.push_back({nombre, p});
+    }, &ctx);
+#else
     DIR *d = opendir(dir.c_str());
     if (!d) return;
-    std::vector<std::string> sub;
     while (dirent *e = readdir(d)) {
         if (e->d_name[0] == '.') continue;
         std::string p = dir + "/" + e->d_name;
-        struct stat st;
-        if (::stat(p.c_str(), &st) != 0) continue;
-        if (S_ISDIR(st.st_mode)) { if (prof > 0) sub.push_back(p); }
-        else if (strcasecmp(e->d_name, nombre) == 0) out.push_back(p);
+        bool es_dir;
+        if (e->d_type == DT_DIR) es_dir = true;
+        else if (e->d_type == DT_REG) es_dir = false;
+        else {   // enlace simbólico o sistema de ficheros que no lo dice: se pregunta
+            struct stat st;
+            if (::stat(p.c_str(), &st) != 0) continue;
+            es_dir = S_ISDIR(st.st_mode);
+        }
+        if (es_dir) { if (prof > 0) sub.push_back(p); }
+        else out.push_back({e->d_name, p});
     }
     closedir(d);
-    for (auto &s : sub) busca(s, nombre, prof - 1, out);
+#endif
+    for (auto &s : sub) lista(s, prof - 1, out);
+}
+
+const Listado &listado(const std::string &dir, int prof) {
+    static std::map<std::pair<std::string, int>, Listado> visto;
+    auto k = std::make_pair(dir, prof);
+    auto it = visto.find(k);
+    if (it == visto.end()) { it = visto.emplace(k, Listado()).first; lista(dir, prof, it->second); }
+    return it->second;
+}
+
+// busca `nombre` (sin distinguir mayúsculas) bajo `dir`, hasta `prof` niveles
+void busca(const std::string &dir, const char *nombre, int prof, std::vector<std::string> &out) {
+    for (const auto &np : listado(dir, prof))
+        if (strcasecmp(np.first.c_str(), nombre) == 0) out.push_back(np.second);
 }
 
 // el fichero de un módulo: el que tiene el nombre, el tamaño y el SHA-256 esperados

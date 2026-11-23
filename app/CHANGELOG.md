@@ -3,6 +3,15 @@
 Versión = `1.AA.MMDD.HHMM` con la hora real del empaquetado (`app/mac/empaquetar.sh`, el mismo esquema que pcfsite.com).
 Cada entrada lleva la versión que **de verdad se distribuyó**; dos empaquetados en el mismo minuto van en una sola entrada.
 
+## @VERSION@ — @FECHA@
+
+- **Con un mod de muchos ficheros sueltos, el juego ya no se queda en negro al arrancar** (foro t/588: 2-3 minutos con
+  el mod «Actualización 26/27» del 2001 en Windows). Para montar la memoria inicial, la app busca cada EXE y DLL del
+  juego por todas las carpetas de la instalación y de los mods, y lo hacía una vez por módulo y por capa: con los
+  46.938 ficheros de ese mod, más de un millón de consultas de fichero antes de pintar nada (21 s en un PC rápido con
+  SSD, medido). Ahora cada carpeta se recorre una sola vez, y en Windows sin consultar cada fichero. De momento en el
+  PC Fútbol 2001; el resto de juegos lo llevarán cuando se vuelvan a compilar.
+
 ## 1.26.1113.1104 — 13-nov-2026
 
 - **PC Fútbol 2000: el sorteo de las copas ya no se puede quedar colgado si la lista trae un equipo repetido.** El 2000

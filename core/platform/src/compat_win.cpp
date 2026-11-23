@@ -10,6 +10,8 @@
 #endif
 #include <windows.h>
 
+#include <string>
+
 int setenv(const char *k, const char *v, int) {
     SetEnvironmentVariableA(k, v);
     return _putenv_s(k, v);
@@ -17,6 +19,15 @@ int setenv(const char *k, const char *v, int) {
 int unsetenv(const char *k) {
     SetEnvironmentVariableA(k, nullptr);
     return _putenv_s(k, "");
+}
+
+void win_lista_dir(const char *dir, void (*cb)(const char *nombre, int es_dir, void *ctx), void *ctx) {
+    WIN32_FIND_DATAA fd;
+    HANDLE h = FindFirstFileA((std::string(dir) + "/*").c_str(), &fd);
+    if (h == INVALID_HANDLE_VALUE) return;
+    do cb(fd.cFileName, (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0, ctx);
+    while (FindNextFileA(h, &fd));
+    FindClose(h);
 }
 
 ssize_t pread(int fd, void *buf, size_t n, int64_t off) {
