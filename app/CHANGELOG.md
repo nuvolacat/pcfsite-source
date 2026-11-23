@@ -11,6 +11,13 @@ Cada entrada lleva la versión que **de verdad se distribuyó**; dos empaquetado
   46.938 ficheros de ese mod, más de un millón de consultas de fichero antes de pintar nada (21 s en un PC rápido con
   SSD, medido). Ahora cada carpeta se recorre una sola vez, y en Windows sin consultar cada fichero. De momento en el
   PC Fútbol 2001; el resto de juegos lo llevarán cuando se vuelvan a compilar.
+- **PC Fútbol 2001: la traducción propia del mod «Actualización 26/27» pasa a la versión que se descarga hoy.** El
+  mod cambió su `manager.exe` después del 1 de noviembre y la app dejó de reconocerlo: arrancaba el 2001 3.6 con los
+  valores del mod encima, y cada llamada al código nuevo del mod se quedaba «sin traducir» (16 en los dos primeros
+  minutos de una partida; candidato al «código 70» al pasar de los amistosos de pretemporada, foro t/526). El
+  ejecutable nuevo lleva los mismos desvíos (0x4c552a, 0x8155da y el código del relleno de `.text`), así que se
+  traduce con la misma configuración; con él no queda ninguna llamada sin traducir. Quien tenga el `manager.exe`
+  anterior del mod sigue pudiendo jugar, pero con el 2001 3.6 y los valores del mod, como antes del 1 de noviembre.
 
 ## 1.26.1113.1104 — 13-nov-2026
 
