@@ -3,7 +3,7 @@
 Versión = `1.AA.MMDD.HHMM` con la hora real del empaquetado (`app/mac/empaquetar.sh`, el mismo esquema que pcfsite.com).
 Cada entrada lleva la versión que **de verdad se distribuyó**; dos empaquetados en el mismo minuto van en una sola entrada.
 
-## @VERSION@ — @FECHA@
+## 1.26.1123.2006 — 23-nov-2026
 
 - **PC Fútbol 7 Plus: dos comprobaciones que le faltaban al juego original tras cada partido** (foro t/667). En el
   «Análisis en proceso» el juego busca el club de cada jugador y usa el resultado sin comprobarlo: (1) al repasar las
@@ -17,7 +17,6 @@ Cada entrada lleva la versión que **de verdad se distribuyó**; dos empaquetado
   salta en silencio, se anota dónde (`js_div0`, en Windows sería una excepción); y traduciendo con `PCF7_BAJO=10000`
   el bloque del hilo deja de estar en la dirección 0, y con `PCF7_NULLTRAP=1` cada acceso a un puntero nulo se anota
   con su pila (solo macOS/Linux).
-
 - **Con un mod de muchos ficheros sueltos, el juego ya no se queda en negro al arrancar** (foro t/588: 2-3 minutos con
   el mod «Actualización 26/27» del 2001 en Windows). Para montar la memoria inicial, la app busca cada EXE y DLL del
   juego por todas las carpetas de la instalación y de los mods, y lo hacía una vez por módulo y por capa: con los
