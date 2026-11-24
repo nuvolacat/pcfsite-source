@@ -3,6 +3,18 @@
 Versión = `1.AA.MMDD.HHMM` con la hora real del empaquetado (`app/mac/empaquetar.sh`, el mismo esquema que pcfsite.com).
 Cada entrada lleva la versión que **de verdad se distribuyó**; dos empaquetados en el mismo minuto van en una sola entrada.
 
+## @VERSION@ — @FECHA@
+
+- **PC Fútbol 2000: una partida con jugadores que ya no existen en la plantilla se carga sin huecos** (foro t/626,
+  PiiTuU7: la partida se estropeaba al cambiar de temporada). Al cargar una partida (0x4b4b70) el juego lee la
+  plantilla de cada equipo como números de jugador y los busca en la tabla de jugadores (0x4a5640); si alguno ya no
+  existe, deja el hueco vacío en la lista y luego la recorre sin comprobarlo (0x48bac0 y otros): en Windows el juego
+  se cerraría ahí; aquí leía el bloque del hilo de la dirección 0 y seguía con datos sin sentido. En la partida de
+  PiiTuU7 hay una plantilla de 20 con dos huecos: más de 400 accesos a un puntero nulo nada más cargarla. Ahora un
+  parche (0x4b51a9 → código nuevo en el relleno de `.text`, 0x895320/0x895350) quita los huecos de la plantilla y de
+  la segunda lista de jugadores al cargar, y el juego sigue con los que existen. Con su partida: hasta la jornada 34
+  sin un solo acceso nulo.
+
 ## 1.26.1123.2006 — 23-nov-2026
 
 - **PC Fútbol 7 Plus: dos comprobaciones que le faltaban al juego original tras cada partido** (foro t/667). En el

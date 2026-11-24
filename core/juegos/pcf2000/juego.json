@@ -90,6 +90,21 @@
         "0x5bd5c8",
         "450faf4424148b4c24209981e2ff7f000001d0c1f80f668b04416685c074b98b54242483c23e8b4c241c4181fd00000100720d81fd00000200731889fa6a0159663b027493663b4202748d81c2ac000000e2ed668906eb8090909090909090909090",
         "sorteo de copa (0x5bd320 y su variante 0x5bd540, la misma función de Dinamic que en el 7 Plus): si la lista trae un equipo repetido no hay plaza para todos y el original buscaba para siempre (cuelgue en «Calculando fechas» al cambiar de temporada; foro #626). Contador de intentos por cruce: pasados 65536 el equipo sorteado solo se compara con su rival de ese cruce y pasados 131072 se acepta sin más. Con listas sin repetidos el sorteo es el mismo (variante: elegir equipo y comprobarlo antes de escribirlo)"
+      ],
+      [
+        "0x4b51a9",
+        "e972013e009090",
+        "al cargar una partida (0x4b4b70), la plantilla de cada equipo y su segunda lista de jugadores se leen como números de jugador y se buscan en la tabla de jugadores (0x4a5640); si alguno ya no existe la búsqueda da NULL y el hueco se queda en la lista. Luego el juego recorre esas listas sin comprobarlo (0x48bac0 y otros): en Windows se cierra; aquí leía el bloque del hilo de la dirección 0 y la partida acababa colgándose o cerrándose al cambiar de temporada (foro t/626, PiiTuU7: dos huecos en una plantilla de 20). Ahora 0x4b51a9 salta a código nuevo en el relleno de .text (0x895320) que quita los huecos de las dos listas (0x895350) y sigue como siempre"
+      ],
+      [
+        "0x895320",
+        "8d4f18e8280000008d4f4ce8200000008b168bceff5210e974fec1ff",
+        "al cargar una partida (0x4b4b70), la plantilla de cada equipo y su segunda lista de jugadores se leen como números de jugador y se buscan en la tabla de jugadores (0x4a5640); si alguno ya no existe la búsqueda da NULL y el hueco se queda en la lista. Luego el juego recorre esas listas sin comprobarlo (0x48bac0 y otros): en Windows se cierra; aquí leía el bloque del hilo de la dirección 0 y la partida acababa colgándose o cerrándose al cambiar de temporada (foro t/626, PiiTuU7: dos huecos en una plantilla de 20). Ahora 0x4b51a9 salta a código nuevo en el relleno de .text (0x895320) que quita los huecos de las dos listas (0x895350) y sigue como siempre"
+      ],
+      [
+        "0x895350",
+        "5653558b118b690431c031db39e8730e8b34824085f674f489349a43ebee8959045d5b5ec3",
+        "al cargar una partida (0x4b4b70), la plantilla de cada equipo y su segunda lista de jugadores se leen como números de jugador y se buscan en la tabla de jugadores (0x4a5640); si alguno ya no existe la búsqueda da NULL y el hueco se queda en la lista. Luego el juego recorre esas listas sin comprobarlo (0x48bac0 y otros): en Windows se cierra; aquí leía el bloque del hilo de la dirección 0 y la partida acababa colgándose o cerrándose al cambiar de temporada (foro t/626, PiiTuU7: dos huecos en una plantilla de 20). Ahora 0x4b51a9 salta a código nuevo en el relleno de .text (0x895320) que quita los huecos de las dos listas (0x895350) y sigue como siempre"
       ]
     ]
   },
@@ -163,5 +178,8 @@
     "MFC42.DLL": "aa8c615c8bbcd8ad4a9b624addb512e0702223eb5f266ce8f6a9a005f718a483",
     "MSVCRT.DLL": "2d5670881a6d13a100e37da297f6eeb876f68b63073a28eb5d650625c60f9bf7",
     "utils.dll": "060c923784fe39bbec72b641ead2d06278f95b7640580677b71f2d2856acf616"
-  }
+  },
+  "texto_relleno": [
+    "manager.exe"
+  ]
 }

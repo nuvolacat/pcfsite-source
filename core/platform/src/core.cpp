@@ -152,6 +152,17 @@ static void nulo_trap(int sig, siginfo_t *si, void *) {
                 }
             }
             plog("puntero nulo: acceso a +0x%lx en f_%x; pila:%s (en Windows el juego se cerraría aquí)", (long)(a - MEM), cur_fn, pila);
+            if (std::getenv("PCF7_NULLTRAP_REGS"))   // diagnóstico: registros del invitado (ecx, [ecx+18] y [ecx+1c]: lista y cuenta)
+                plog("  eax=%x ebx=%x ecx=%x edx=%x esi=%x edi=%x [ecx+18]=%x [ecx+1c]=%x pila: %x %x %x %x", eax, ebx, ecx, edx, esi, edi,
+                     ecx < MEMSZ - 0x20 ? rd32(ecx + 0x18) : 0, ecx < MEMSZ - 0x20 ? rd32(ecx + 0x1c) : 0, rd32(esp), rd32(esp + 4), rd32(esp + 8), rd32(esp + 12));
+            if (std::getenv("PCF7_NULLTRAP_REGS") && g_nulos <= 2 && ecx < MEMSZ - 0x40) {
+                char b[700]; int n = 0;
+                for (u32 i = 0; i < 0x40; i += 4) n += std::snprintf(b + n, sizeof b - n, " %x", rd32(ecx + i));
+                plog("  objeto:%s", b); n = 0;
+                u32 l = rd32(ecx + 0x18), c = rd32(ecx + 0x1c);
+                for (u32 i = 0; i < c && i < 40 && l < MEMSZ - 160; i++) { u32 e = rd32(l + 4 * i); n += std::snprintf(b + n, sizeof b - n, " %x:%x", e, e && e < MEMSZ - 4 ? rd32(e) : 0); }
+                plog("  lista:%s", b);
+            }
         }
         return;
     }
