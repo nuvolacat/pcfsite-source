@@ -3,7 +3,7 @@
 Versión = `1.AA.MMDD.HHMM` con la hora real del empaquetado (`app/mac/empaquetar.sh`, el mismo esquema que pcfsite.com).
 Cada entrada lleva la versión que **de verdad se distribuyó**; dos empaquetados en el mismo minuto van en una sola entrada.
 
-## @VERSION@ — @FECHA@
+## 1.26.1124.1529 — 24-nov-2026
 
 - **PC Fútbol 2000: una partida con jugadores que ya no existen en la plantilla se carga sin huecos** (foro t/626,
   PiiTuU7: la partida se estropeaba al cambiar de temporada). Al cargar una partida (0x4b4b70) el juego lee la
